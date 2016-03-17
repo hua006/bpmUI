@@ -1,0 +1,287 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+body{ font-family:Tahoma,'\5B8B\4F53';font-size:12px; color:#333; background:#fbfcfe;}
+h1,h2,h3,h4,h5,h6{ font-size:12px; font-weight:normal;}
+
+a{ text-decoration:none;}
+a:link{color:#036ed0;}
+a:hover{color:#036ed0;}
+a:visited{color:#036ed0;}
+
+ul{ list-style:none;}
+img{ border:0px;}
+textarea{font-family:Tahoma;font-size:12px;}
+input.justBottomBorder{border-bottom:1px solid #CBCBCB;border-left-width:0px;border-right-width:0px;border-top-width:0px;}
+
+/*----------------------------- global styles -----------------------------------------*/
+.left{text-align:left;}
+.right{text-align:right;}
+.middle{text-align:center;}
+.blod{ font-weight:bold;}
+.highlight{ background:#fef0c1; padding:5px 3px;}
+.red{ color:red; vertical-align:middle}
+.readonly {  font-style: normal; background: #E6E6E6;}
+.wtoogle {background-color:#d4e3f6;margin:0;overflow:hidden;}
+.detailItem{width:200px;background-color:#E6E6E6;color:#808080;}
+
+/*----------------------------- framePoint  -----------------------------------------*/
+.framePoint {background-color:#d4e3f6;margin:0;overflow:hidden;}
+.framePointA {font-size:12px;text-decoration:none;font-weight:normal;}
+
+/*----------------------------- progress bar -----------------------------------------*/
+.progress {border:1px solid #1F4061; background-color:#EFF8FF; height:100px; width:450px; margin-top:20px; margin-left: 20px;}
+.progressbar{width:400px;height:10px;border:1px solid black;background-color: white;}
+.progressbar .bar {height:10px;background-color:#DF5B59;width:0;}
+
+/*----------------------------- tab styles -----------------------------------------*/
+#tabs{ margin-top:1px;margin-bottom:3px;margin-left:5px;height:21px;border-bottom:solid 3px #a4c1e1;}
+#tabs ul{ margin-left:26px;}
+#tabs li{ float:left;margin-left:-11px;position:relative;}
+#tabs b{ background:url(../images/tabdownleft.png) no-repeat; width:21px; height:22px; display:block; float:left;}
+#tabsl b{ background:url(../images/tabupleft.png) no-repeat; width:21px; height:22px; display:block; float:left;}
+#tabs a span{ height:21px; line-height:21px; padding-right:18px; padding-left:11px; background:#dbe7f5; display:block; float:left; border-top:1px solid #9fc0e1; border-right:1px solid #9fc0e1;color:#333;}
+#tabsl{ margin-left:-11px; position:relative; z-index:40;}
+#tabsl a span{ height:21px; line-height:21px; padding-right:18px; padding-left:11px; background:#a4c1e1; display:block; float:left; border-top:1px solid #88a9c8; border-right:1px solid #88a9c8;font-weight:bold;}
+
+/*----------------------------- fieldset styles -----------------------------------------*/
+fieldset {border:1px solid #c3d3ea;font-size:12px; margin-top:10px; margin-left:5px; margin-bottom:5px;} 
+fieldset legend{ margin-left:13px; +margin-left:5px; padding-left:10px;	padding-right:10px;}
+
+/*----------------------------- form grid -----------------------------------------*/
+.formgrid{border:none; border-collapse:collapse;margin-left:5px;margin-top:10px; margin-bottom:10px;}
+.formgrid td { white-space:nowarp; font-size: 12px;	padding-top:4px; padding-right:15px;}
+.formgrid td.th20 {	padding-right: 10px; height: 25px; text-align: right;}
+.formgrid td.td20left {	padding-left: 10px; height: 25px; text-align: left;}
+.formgrid td.td20center {	padding-left: 10px; height: 25px; text-align: center;}
+
+/*----------------------------- data grid -----------------------------------------*/
+.datagrid{width:99.5%;white-space:nowarp; border:1px solid #bdcbd8; border-collapse: collapse;margin-left:5px;margin-top:3px; margin-bottom:1px;}
+.datagrid tr:hover{ background:#e5e5e5;}
+.datagrid th {
+	font-size: 12px;
+	border-right:1px solid #bbc9d6;
+	border-bottom:1px solid #93a8bd;
+	background:#d7e4f4;
+	color:#2A3959; 
+	white-space:nowarp;
+	height:24px; 
+	line-height:24px;
+	padding-left:3px;
+	padding-right:3px;
+}
+.datagrid td {
+	font-size: 12px;
+	padding-left:5px;
+	border-bottom:1px solid #eaedf4;
+	white-space:nowrap;
+	height:24px; 
+	line-height:22px;
+}
+
+/*----------------------------- page -----------------------------------------*/
+.datagrid tr.pageColor {background-color: #D7E4F4;color: #2A3959;font-family:Tahoma;font-size:12px;font-weight:bold;padding:3px;border:none;border-top:0px;border-left:0px;border-top:0px;}
+.datagrid tr.pageColor th {background-color: #D7E4F4;color: #2A3959;border-top:1px solid #93A8BD;height:24px;line-height:22px;}
+
+/*----------------------------- page grid -----------------------------------------*/
+.pagegrid td {font-family:Tahoma;border-width: 0px;padding: 0px;margin: 0px;font-weight: normal;background-color:#D7E4F4;color: #2A3959;height:24px; line-height:22px;}
+.pagegrid td a {text-decoration: none;}
+.pagegrid td a:link {text-decoration: none;}
+.pagegrid td a:visited {text-decoration: none;}
+.pagegrid td a:hover {text-decoration: none;}
+
+/*--提示样式--*/
+.tip_wrong{ background: #f3d9da url(../images/icon_wrong.gif) no-repeat 10px 7px ; border:1px solid #d3b0aa;  min-height:41px; margin:7px 5px;+width:99%; +overflow:hidden;}
+.tip_wrong h2{ color:#3a5f1c;  line-height:18px; padding:13px 20px 13px 48px; font-weight:bold;}
+.tip_wrong h3{ color:#333; line-height:18px; padding:0px 20px 13px 48px;}
+
+.tip_success{ background: #e4f0d8 url(../images/icon_success.gif) no-repeat 10px 7px ; border:1px solid #b1c67b;  min-height:41px; margin:7px 5px;+width:99%; +overflow:hidden;}
+.tip_success h2{ color:#3a5f1c;  line-height:18px; padding:13px 20px 13px 48px; font-weight:bold;}
+.tip_success h3{ color:#333; line-height:18px; padding:0px 20px 13px 48px;}
+
+.tip_warning{ background: #f5f4e0 url(../images/icon_warning.gif) no-repeat 10px 7px ; border:1px solid #ceceac;  min-height:41px; margin:7px 5px;+width:99%; +overflow:hidden;}
+.tip_warning h2{ color:#3a5f1c;  line-height:18px; padding:13px 20px 13px 48px; font-weight:bold;}
+.tip_warning h3{ color:#333; line-height:18px; padding:0px 20px 13px 48px;}
+
+.tip_tip{ background: #f5f4e0 url(../images/icon_tip.gif) no-repeat 10px 7px ; border:1px solid #ceceac;  min-height:41px; margin:7px 5px;+width:99%; +overflow:hidden;}
+.tip_tip h2{ color:#3a5f1c;  line-height:18px; padding:13px 20px 13px 48px; font-weight:bold;}
+.tip_tip h3{ color:#333; line-height:18px; padding:0px 20px 13px 48px;}
+
+.tip_info{ background: #d7eaf1 url(../images/icon_info.gif) no-repeat 10px 7px ; border:1px solid #b9cada;  min-height:41px; margin:7px 5px;+width:99%; +overflow:hidden;}
+.tip_info h2{ color:#3a5f1c;  line-height:18px; padding:13px 20px 13px 48px; font-weight:bold;}
+.tip_info h3{ color:#333; line-height:18px; padding:0px 20px 13px 48px;}
+
+.tip_wrong a,.tip_success a,.tip_warning a,.tip_info a,.tip_tip a{ color:#2e55a2}
+/*--end提示样式--*/
+
+/*----------------------------- survey grid -----------------------------------------*/
+.surveygrid{border:none; border-collapse:collapse;}
+.surveygrid tr.lightHeader{background-color:#E0E5E0;color:black;}
+.surveygrid tr.strongHeader{background-color:#0A246A;color:white;}
+
+/*----------------------------- qa grid -----------------------------------------*/
+.qaTable{border-top: 1px solid #B6C9D8;border-left: 1px solid #B6C9D8;}
+.qaTable tr th {border-right:1px solid #bbc9d6;border-bottom:1px solid #bbc9d6;background:#d7e4f4;color:#2A3959;height:24px;line-height:24px;}
+.qaTable tr td{border-right:1px solid #B6C9D8;border-bottom:1px solid #B6C9D8;height:26px;line-height:26px;}
+
+/*----------------------------- other td -----------------------------------------*/
+.title{height:24px; border-bottom:1px solid #93a8bd; line-height:24px; text-indent:8px;text-align:center; background:#dbe7f5; color:#4d4d4f; font-weight:bold;}
+
+/*----------------------------- button -----------------------------------------*/
+.btn_search{ background:url(../images/search_btn_blue.jpg)  no-repeat; width:87px; height:23px; border:none; font-size:0px; cursor: pointer !important; cursor:hand; font-family:Tahoma,'\5B8B\4F53'; font-size:0px;vertical-align:top;}
+.btn_blue{ border:1px solid #1c66ad;background:url(../images/btn_blue.gif) repeat-x;height:23px; line-height:21px; padding-left:18px; padding-right:17px;+padding-left:8px; +padding-right:8px; color:#f5f9fb; font-weight:bold; cursor: pointer !important; cursor:hand;}
+.btn_gray{ border:1px solid #cbcbcb;background:url(../images/btn_gray.gif) repeat-x;height:23px; line-height:21px; padding-left:18px; padding-right:17px;+padding-left:8px; +padding-right:8px; color:#555; font-weight:bold; cursor: pointer !important; cursor:hand;}
+.btn_rule{ border:1px solid #cbcbcb;height:20px; line-height:19px;padding-left:9px; padding-right:9px;+padding-left:3px; +padding-right:3px; color:#555; cursor: pointer !important; cursor:hand;}
+
+/*----------------------------- layout define add by shirely at 2015-08-26 -----------------------------------------*/
+.container{
+	width:100%;height:100%; margin-right:auto; margin-left:auto; background:#EFEFEF;
+}
+
+.row{
+	width:100%; clear:both;
+}
+
+.row_splitter{
+	clear:both; width:100%; height:25px; line-height:25px; background:#6699CC;text-align:center;
+}
+
+.col_left{
+	float:left; width:25%; background:#A6A6A6;
+}
+
+.col_splitter{
+	width:25px;height:100%; background:#6699CC; float:left;
+}
+
+.col_right{
+	float:left; width:60%; background:#A6A6A6;
+}
+
+.page{
+	width:100%;height:100%; background:#EFEFEF;position:absolute;left:10px;top:10px;clear:both;
+}
+
+/*--top page style--*/
+.top{ background:#305599; height:74px; white-space:nowrap; min-width:1259px; color:#97b4c4;}
+.logo{ margin-left:24px; margin-top:17px; display:block; background:url(../images/logo.jpg) no-repeat; width:242px; height:35px;}
+.userInfo{ text-align:right; padding-right:20px; padding-top:17px;}
+
+.userInfo h2 b{ background:url(../images/user.gif) no-repeat left 2px;+background:url(../images/user.gif) no-repeat left 0px; padding-left:16px;}
+.userInfo h2 i{font-style:normal}
+.userInfo h2 a{ color:#c2d3ef;}
+.userInfo h4{ padding-top:10px;}
+.userInfo h4 a{ color:#c2d3ef;text-decoration:underline;}
+.userInfo h2 a:hover{ text-decoration: underline; color:#b0c8dd;}
+.userInfo .line{ background:#506f9e; height:10px; width:1px; overflow: hidden; display:inline-block; margin-left:10px; margin-right:10px;}
+.userInfo a.getout{color:#97b4c4;}
+.userInfo h3{ margin-top:10px;}
+/*--end top page style--*/
+
+/*--welcome page style--*/
+h2.titleall{ background:#c0d7f6; height:28px; line-height:28px; border:1px solid #9db8d4; color:#3f5169; font-size:14px; font-weight:bold; padding-left:13px; white-space:nowarp; width:auto !important; min-width:1043px; +min-width:1038px;}
+.content{ position:absolute; overflow:auto;	width:99.88%; border:1px solid #c8c8c8; border-top:none; background: #fbfcfe; margin: auto;	min-width:1056px; +min-width:1045px; min-height:93%;}
+
+.indexbg{ background:#fbfcfe url(../images/index_bg.jpg) no-repeat bottom right; width:100%; height:547px; padding:0px;osition:absolute;overflow:auto;height:100%; min-height:640px;}
+.welcome{ background:url(../images/welcome.jpg) no-repeat; min-width:228px; min-height:105px; display:block; overflow:hidden; margin-top:64px; margin-left:40px;}
+/*--end welcome page style--*/
+
+/*---login page style----*/
+.center {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: 50%;
+    margin-top: -150px;
+    margin-left: -150px;
+	width:427px;
+}
+
+.angle-left-up {
+	background-image: url(../images/login/login_top.jpg);
+	background-repeat: no-repeat;
+	height: 43px;
+}
+.edge-up {
+	background-image: url(../images/login/edge_top.gif);
+	background-repeat: repeat-x;
+	font-size: 18px;
+	padding-left: 19px;
+	font-weight: bold;
+	color: #555;
+}
+.angle-right-up {
+	background-image: url(../images/login/angle_right_up.gif);
+	background-repeat: no-repeat;
+	height: 40px;
+}
+.edge-left {
+	background-image: url(../images/login/edge_left.gif);
+	background-repeat: repeat-y;
+}
+.edge-right {
+	background-image: url(../images/login/edge_right.gif);
+	background-repeat: repeat-y;
+}
+.angle-left-down {
+	background-image: url(../images/login/angle_left_down.gif);
+	background-repeat: no-repeat;
+}
+.edge-down {
+	background-image: url(../images/login/edge_down.gif);
+	background-repeat: repeat-x;
+}
+.angle-right-down {
+	background-image: url(../images/login/angle_right_down.gif);
+	background-repeat: no-repeat;
+}
+.login-bg {
+	background-color: #fefefe;
+	text-align: center;
+ padding-top:28px; padding-bottom:28px;
+}
+.login-table{ width:269px; margin:0 auto;}
+
+.alert {
+	font-size:12px;
+	line-height: 18px;
+	color: #F00;
+	padding-bottom:12px;
+}
+
+.input_user {
+	background-repeat: no-repeat;
+	height: 36px;
+	width: 234px;
+	border-width: 0px;
+	padding-left: 35px;
+	color: #a5a5a5;
+	line-height: 36px;
+	background-image: url(../images/login/input_user.jpg);
+}
+
+.input_password {
+	background-repeat: no-repeat;
+	height: 36px;
+	width: 234px;
+	border-width: 0px;
+	padding-left: 35px;
+	color: #a5a5a5;
+	line-height: 36px;
+	background-image: url(../images/login/input_password.jpg);
+}
+
+.btn-login{
+    background-image: url(../images/login/btn_bg_login.gif);
+    background-repeat: no-repeat;
+    font-size: 14px;
+    font-weight: bold;
+    color:#fff;
+    height: 34px;
+    width: 269px;
+    border-width: 0px;
+	
+	cursor: pointer !important; cursor:hand;
+}
+/*****---end login page style--******/

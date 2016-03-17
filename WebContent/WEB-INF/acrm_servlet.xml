@@ -1,0 +1,90 @@
+	<!-- application init -->
+	<servlet>
+		<servlet-name>Application-init</servlet-name>
+		<servlet-class>com.arvato.acrm.application.ApplicationInit</servlet-class>
+		<init-param>
+			<param-name>language</param-name>
+			<param-value>zh</param-value>
+		</init-param>
+		<init-param>
+			<param-name>country</param-name>
+			<param-value>CN</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<!--end application init-->
+
+	<!-- file upload -->
+	<servlet>
+	  <servlet-name>fileUpload</servlet-name>
+	  <servlet-class>com.arvato.acrm.commons.util.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileUpload</servlet-name>
+		<url-pattern>/acrm/fileUpload</url-pattern>
+	</servlet-mapping>
+	<!--end file upload-->
+
+	<!-- file download -->
+	<servlet>
+	  <servlet-name>fileDownload</servlet-name>
+	  <servlet-class>com.arvato.acrm.commons.util.FileDownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>fileDownload</servlet-name>
+		<url-pattern>/acrm/fileDownload</url-pattern>
+	</servlet-mapping>
+	<!--end file download-->
+	
+	<!-- action forward -->
+	<servlet>
+	  <servlet-name>actionForward</servlet-name>
+	  <servlet-class>com.arvato.acrm.commons.util.ActionForwardServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>actionForward</servlet-name>
+		<url-pattern>/acrm/actionForward</url-pattern>
+	</servlet-mapping>
+	<!-- end action forward-->
+	
+	<!-- output for ajax -->
+	<servlet>
+	  <servlet-name>dataOutput</servlet-name>
+	  <servlet-class>com.arvato.acrm.commons.util.DataOutputServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dataOutput</servlet-name>
+		<url-pattern>/acrm/dataOutput</url-pattern>
+	</servlet-mapping>
+	<!-- end for output for ajax-->
+
+	<!-- jor report-->
+	<servlet>
+		<servlet-name>jatoolsreport</servlet-name> 
+	    <servlet-class>jatools.server.JatoolsReportServlet</servlet-class>
+	</servlet> 
+	<servlet-mapping>
+		<servlet-name>jatoolsreport</servlet-name>
+		<url-pattern>/acrm/jatoolsreport</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>reportviewer</servlet-name> 
+		<jsp-file>/acrm/tools/jor/reportviewer.jsp</jsp-file> 
+	</servlet> 
+	<servlet-mapping>
+		<servlet-name>reportviewer</servlet-name>
+		<url-pattern>/acrm/reportviewer</url-pattern>
+	</servlet-mapping>
+	<!-- end jor report-->
+	
+	<!-- SMS Servlet-->
+	<servlet>
+		<servlet-name>etonert</servlet-name>
+		<servlet-class>com.arvato.acrm.interaction.sms.vendor.etone.EToneSingleReportReceiver</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>etonert</servlet-name>
+		<url-pattern>/etone/rt</url-pattern>
+	</servlet-mapping>
+	<!-- end SMS Servlet-->
