@@ -1,8 +1,10 @@
 /*
  designer 设计器
  container 容器
- top
- left
+ top 顶部操作栏
+ left 左侧工具栏
+ work 中部工作区
+ group/area 分组区域(暂时不需要)
  main
  node 节点
  hotArea  热点区域
@@ -97,24 +99,32 @@ function GooFlow(bgDiv,property){
 		this.$tool=this.$bgDiv.find(".GooFlow_tool div");
 		//未加代码：加入绘图工具按钮
 		this.$tool.append(
-			"<a href='javascript:void(0)' type='cursor' class='GooFlow_tool_btndown' id='"+this.$id+"_btn_cursor'><i class='ico_cursor'/></a>"
+			"<a href='javascript:void(0)' type='cursor' class='GooFlow_tool_btn' id='"+this.$id+"_btn_cursor'><i class='ico_cursor'/></a>"
 			+"<a href='javascript:void(0)' type='mutiselect' class='GooFlow_tool_btn' id='"+this.$id+"_btn_mutiselect'><i class='ico_mutiselect'/></a>"
 			+"<a href='javascript:void(0)' type='direct' class='GooFlow_tool_btn' id='"+this.$id+"_btn_direct'><i class='ico_direct'/></a>"
 		);
+		
 		if(property.toolBtns&&property.toolBtns.length>0){
 			tmp="<span/>";
-			tmp+="<ul class='icon_lists clear'>";
 			for(var i=0;i<property.toolBtns.length;++i){
-				var nodeType=property.toolBtns[i].split(" ")[0];
-				var iContent = property.iconContent[nodeType];
-				if(!iContent){
-					iContent="";
-				}
-				tmp+="<li><a href='javascript:void(0)' type='"+property.toolBtns[i]+"' id='"+this.$id+"_btn_"+nodeType+"' ><i class='icon iconfont'>"+iContent+"</i></a></li>";//加入自定义按钮
+				tmp+="<a href='javascript:void(0)' type='"+property.toolBtns[i]+"' id='"+this.$id+"_btn_"+property.toolBtns[i].split(" ")[0]+"' class='GooFlow_tool_btn'><i class='ico_"+property.toolBtns[i]+"'/></a>";//加入自定义按钮
 			}
-			tmp+="</ul>";
 			this.$tool.append(tmp);
 		}
+//		if(property.toolBtns&&property.toolBtns.length>0){
+//			tmp="<span/>";
+//			tmp+="<ul class='icon_lists'>";
+//			for(var i=0;i<property.toolBtns.length;++i){
+//				var nodeType=property.toolBtns[i].split(" ")[0];
+//				var iContent = property.iconContent[nodeType];
+//				if(!iContent){
+//					iContent="";
+//				}
+//				tmp+="<li><a href='javascript:void(0)' type='"+property.toolBtns[i]+"' class='GooFlow_tool_btndown2' id='"+this.$id+"_btn_"+nodeType+"' ><i class='icon iconfont'>"+iContent+"</i></a></li>";//加入自定义按钮
+//			}
+//			tmp+="</ul>";
+//			this.$tool.append(tmp);
+//		}
 		//加入区域划分框工具开关按钮
 		if(property.haveGroup)
 			this.$tool.append("<span/><a href='javascript:void(0)' type='group' class='GooFlow_tool_btn' id='"+this.$id+"_btn_group'><i class='ico_group'/></a>");

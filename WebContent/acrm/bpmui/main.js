@@ -7,27 +7,61 @@ jQuery.extend({
 	}
 });
 
+//bingxingfenzhi
+//bingxinghuijujiedian
+//branch
+//gaojiliucheng
+
+//jiediankaishi
+//jiedianjieshu
+//yonghurenwu
+//tiaojian
+//tongzhizhuangtai
+//ziliucheng
+//gaojiliucheng
+//gaojiliucheng2
+//jisuanqi
+//zidingyineirong
+
+//jisuanqi
+//jisuanqi-32-1.png
+//jisuanqi-32-2.png
+//juecefenzhijiedian
+//
 var property = {
 	width : 1200,
 	height : 600,
-	toolBtns : [ "start round", "end round", "task round", "node", "chat", "state", "plug", "join", "fork", "complex mix" ],
+//	toolBtns : [ "start round", "end round", "task round", "node", "chat", "state", "plug", "join", "fork", "complex mix" ],
+	toolBtns : [ "start round", "end round", "task round", "decision", "state", "subProcess", "join", "fork","math", "define" ],
 	haveHead : true,
 	headBtns : [ "new", "open", "save", "undo", "redo", "reload" ],// 如果haveHead=true，则定义HEAD区的按钮
 	haveTool : true,
-	haveGroup : true,
+	haveGroup : false,
 	useOperStack : true,
 	iconContent:{
-		start:"&#xe6dd;",
-		end:"&#xe6de;",
-		task:"&#xe67c;",
-		decision:"&#xe614;",
-		state:"&#xe66d;",
-		"sub-process":"&#xe64a;",
-		fork:"&#xe650;",
-		join:"&#xe650;",
-		math:"&#xe619;",
-		define:"&#xe7ab;",
+		start:"jiediankaishi",
+		end:"jiedianjieshu",
+		task:"yonghurenwu",
+		decision:"tiaojian",
+		state:"tongzhizhuangtai",
+		subProcess:"ziliucheng",
+		join:"join",
+		fork:"fork",
+		math:"jisuanqi",
+		define:"zidingyineirong",
 	}
+//	iconContent:{
+//		start:"&#xe6dd;",
+//		end:"&#xe6de;",
+//		task:"&#xe67c;",
+//		decision:"&#xe614;",
+//		state:"&#xe66d;",
+//		"sub-process":"&#xe64a;",
+//		fork:"&#xe650;",
+//		join:"&#xe650;",
+//		math:"&#xe619;",
+//		define:"&#xe7ab;",
+//	}
 };
 var remark = {
 	cursor : "选择指针",
@@ -47,11 +81,11 @@ var remark = {
 var demo;
 $(document).ready(function() {
 	demo = $.createGooFlow($("#demo"), property);
-	 demo.setNodeRemarks(remark);
+	demo.setNodeRemarks(remark);
 	// demo.onItemDel=function(id,type){
 	// return confirm("确定要删除该单元吗?");
 	// }
-	 demo.loadData(jsondata);
+	demo.loadData(jsondata);
 });
 var out;
 function Export() {

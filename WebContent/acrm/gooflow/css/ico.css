@@ -1,0 +1,15 @@
+
+.GooFlow .ico_group{background:url(../img/gooflow_icon.png) no-repeat -96px -20px}
+.GooFlow .ico_complex{background:url(../img/gooflow_icon.png) no-repeat -116px -20px}
+.GooFlow .ico_node{background:url(../img/gooflow_icon.png) no-repeat -19px -45px}
+.GooFlow .ico_chat{background:url(../img/gooflow_icon.png) no-repeat -38px -45px}
+.GooFlow .ico_plug{background:url(../img/gooflow_icon.png) no-repeat -135px -45px}
+.GooFlow .ico_menu{background:url(../img/gooflow_icon.png) no-repeat 1px -65px}
+.GooFlow .ico_sound{background:url(../img/gooflow_icon.png) no-repeat -18px -65px}
+.GooFlow .ico_topo{background:url(../img/gooflow_icon.png) no-repeat -117px -45px}
+
+.GooFlow_work .GooFlow_work_inner{background-image:url(../img/gooflow_blank2.gif);position:relative;overflow:hidden;}
+.GooFlow .b_l1{background:url(../img/GooFlow_line_oper.png) no-repeat 1px 1px}
+.GooFlow .b_l2{background:url(../img/GooFlow_line_oper.png) no-repeat 1px -14px}
+.GooFlow .b_l3{background:url(../img/GooFlow_line_oper.png) no-repeat 1px -29px}
+.GooFlow .b_x{background:url(../img/GooFlow_line_oper.png) no-repeat 1px -44px;margin-left:10px}
