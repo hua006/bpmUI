@@ -7,32 +7,11 @@ jQuery.extend({
 	}
 });
 
-//bingxingfenzhi
-//bingxinghuijujiedian
-//branch
-//gaojiliucheng
-
-//jiediankaishi
-//jiedianjieshu
-//yonghurenwu
-//tiaojian
-//tongzhizhuangtai
-//ziliucheng
-//gaojiliucheng
-//gaojiliucheng2
-//jisuanqi
-//zidingyineirong
-
-//jisuanqi
-//jisuanqi-32-1.png
-//jisuanqi-32-2.png
-//juecefenzhijiedian
-//
 var property = {
 	width : 1200,
 	height : 600,
 //	toolBtns : [ "start round", "end round", "task round", "node", "chat", "state", "plug", "join", "fork", "complex mix" ],
-	toolBtns : [ "start round", "end round", "task round", "decision", "state", "subProcess", "join", "fork","math", "define" ],
+	toolBtns : [ "start", "end", "task", "decision", "state", "subprocess", "join", "fork","math", "define" ],
 	haveHead : true,
 	headBtns : [ "new", "open", "save", "undo", "redo", "reload" ],// 如果haveHead=true，则定义HEAD区的按钮
 	haveTool : true,
@@ -50,33 +29,22 @@ var property = {
 		math:"jisuanqi",
 		define:"zidingyineirong",
 	}
-//	iconContent:{
-//		start:"&#xe6dd;",
-//		end:"&#xe6de;",
-//		task:"&#xe67c;",
-//		decision:"&#xe614;",
-//		state:"&#xe66d;",
-//		"sub-process":"&#xe64a;",
-//		fork:"&#xe650;",
-//		join:"&#xe650;",
-//		math:"&#xe619;",
-//		define:"&#xe7ab;",
-//	}
 };
+
 var remark = {
 	cursor : "选择指针",
+	mutiselect : "多选",
 	direct : "结点连线",
-	start : "入口结点",
+	start : "开始结点",
 	"end" : "结束结点",
 	"task" : "任务结点",
-	node : "自动结点",
-	chat : "决策结点",
+	decision : "判断结点",
 	state : "状态结点",
-	plug : "附加插件",
+	subprocess : "子流程",
 	fork : "分支结点",
-	"join" : "联合结点",
-	"complex mix" : "复合结点",
-	group : "组织划分框编辑开关"
+	"join" : "聚合结点",
+	math : "计算结点",
+	define : "赋值结点"
 };
 var demo;
 $(document).ready(function() {

@@ -1,0 +1,79 @@
+//bingxingfenzhi
+//bingxinghuijujiedian
+//branch
+//gaojiliucheng
+
+//jiediankaishi
+//jiedianjieshu
+//yonghurenwu
+//tiaojian
+//tongzhizhuangtai
+//ziliucheng
+//gaojiliucheng
+//gaojiliucheng2
+//jisuanqi
+//zidingyineirong
+
+//jisuanqi
+//jisuanqi-32-1.png
+//jisuanqi-32-2.png
+//juecefenzhijiedian
+//
+
+//	iconContent:{
+//		start:"&#xe6dd;",
+//		end:"&#xe6de;",
+//		task:"&#xe67c;",
+//		decision:"&#xe614;",
+//		state:"&#xe66d;",
+//		"subprocess":"&#xe64a;",
+//		fork:"&#xe650;",
+//		join:"&#xe650;",
+//		math:"&#xe619;",
+//		define:"&#xe7ab;",
+//	}
+
+var remark = {
+	cursor : "选择指针",
+	mutiselect : "多选",
+	direct : "结点连线",
+	start : "开始结点",
+	"end" : "结束结点",
+	"task" : "任务结点",
+	decision : "判断结点",
+	state : "状态结点",
+	subprocess : "子流程",
+	fork : "分支结点",
+	"join" : "聚合结点",
+	math : "计算结点",
+	define : "赋值结点"
+};
+
+	this.$tool = null;					// 左侧工具栏对象
+	this.$head = null;					// 顶部标签及工具栏按钮
+	this.$title = "newFlow_1";			// 流程图的名称
+	this.$nodeRemark = {};				// 每一种结点或按钮的说明文字,JSON格式,key为类名,value为用户自定义文字说明
+	this.$nowType = "cursor";			// 当前要绘制的对象类型:cursor,mutiselect,direct;
+										// start,end,task,decision,state,subprocess,fork,join,math,define;group;
+	this.$lineData = {};
+	this.$lineCount = 0;
+	this.$nodeData = {};
+	this.$nodeCount = 0;
+	this.$areaData = {};
+	this.$areaCount = 0;
+	this.$lineDom = {};
+	this.$nodeDom = {};
+	this.$areaDom = {};
+	this.$max = property.initNum || 1;	// 计算默认ID值的起始SEQUENCE
+	this.$focus = "";					// 当前被选定的结点/转换线ID,如果没选中或者工作区被清空,则为""
+	this.$cursor = "default";			// 鼠标指针在工作区内的样式
+	this.$editable = false;				// 工作区是否可编辑
+	this.$deletedItem = {};				// 在流程图的编辑操作中被删除掉的元素ID集合,元素ID为KEY,元素类型(node,line.area)为VALUE
+	this.$lineOper						// 选定一条转换线后出现的浮动操作栏，有改变线的样式和删除线等按钮。
+	var headHeight = 0;					// 顶部操作栏高度,应与".GooFlow_head"样式保持一致
+	var tmp = "";
+	
+	$workArea:{
+		lineStart:{"x":pe[0],"y":pe[1],"id":This.$lineData[This.$lineOper.data("tid")].to},
+		lineEnd:{"x":ps[0],"y":ps[1],"id":This.$lineData[This.$lineOper.data("tid")].from}
+	}

@@ -8,12 +8,13 @@
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/iconfont.css<%=s%>">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/gooflow/css/ico.css<%=s%>">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/ico.css<%=s%>">
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/default.css<%=s%>">
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/js/jquery-2.2.1.js"></script>
 <%-- <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/gooflow/js/GooFlow.js"></script> --%>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/designer.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/designerExt.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/designerExt.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/line.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/area.js<%=s%>"></script>
 
