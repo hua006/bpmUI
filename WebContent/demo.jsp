@@ -30,6 +30,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/main.js<%=s%>"></script>
 </head>
 <body>
+	<a href='/bpmUI/?<%=s%>'>刷新<a>
 	<div id="demo" style="margin: 10px"></div>
 	<input id="submit" type="button" value='导出结果' onclick="Export()" />
 	<textarea id="result" row="6"></textarea>

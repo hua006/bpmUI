@@ -67,6 +67,8 @@ $(document).ready(function() {
 	demo.onItemDblClick = function(id){
 		$('#'+dialogId).dialog( "open" );
 		$('#'+dialogId).find("[name='name']").val(id);
+		$('#'+dialogId).find("[name='assignType2'][value='group']").removeAttr('checked');
+		$('#'+dialogId).find("[name='assignType3'][value='group']").removeAttr('checked');
 	};
 	
 	demo.loadData(jsondata);
@@ -77,7 +79,9 @@ $(document).ready(function() {
 		modal : false,
 		hide : true,//点击关闭是隐藏
 		autoOpen : true,
-//		show : false,
+		width:startForm.width+50,
+		height:startForm.height+50,
+		show : false,
 		buttons : {
 			Ok : function() {
 				$('#'+dialogId).dialog( "close" );
@@ -127,15 +131,16 @@ var startForm=(function(){
 		name:'start',
 		title:'开始',
 		width:400,
-		height:600,
-		labelWidth: 90,
-		defaults: {width: 140, border:false},	// Default config options for child items
+		height:400,
+		labelWidth: 150,
+		defaults: {width: 140},	// Default config options for child items
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称',value:'',listeners:{change:this.textChange},items:[]},
-			{xtype:'textarea',name:'text',text:'描述',rows:5,style:'width:200px;'},
-			{xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',value:'分配到人'},{name:'group',value:'分配到组'}]},
-			{xtype:'radio',name:'assignType',text:'任务分配方式2'}
+			{xtype:'textarea',name:'text',text:'描述',props:{rows:5,style:'width:200px;'}},
+			{xtype:'select',name:'assignType',text:'任务分配方式',value:'group',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
+			{xtype:'checkbox',name:'assignType2',text:'任务分配方式2',value:'group',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
+			{xtype:'radio',name:'assignType3',text:'任务分配方式3',value:'group',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]}
 		]
 	}
 })();
@@ -166,98 +171,72 @@ function initAttrWindow(form){
 
 var htmlGenerator = {
 	createDialog:function($parent,formData){
+		formData.width = formData.width||400;
+		formData.height = formData.height||600;
 		var $dialog = $("<div/>").appendTo($parent).attr('id',"dialog-"+formData.name).attr('title',formData.title||'弹出窗口')
-			.attr('width',formData.width||400).attr('height',formData.height||600);
-		htmlGenerator.createForm($dialog,formData);
-		return dialog;
+			.attr('width',formData.width).attr('height',formData.height);
+		this.createForm($dialog,formData);
+		return $dialog;
 	},
 	createForm:function($parent,formData){
-		var formName = 'form-'+formData.name;
-//		"<form action='#' method='get'>" +
-		var $form = $("<form/>").appendTo($parent).attr('name',formName)
+		var $form = $("<form/>").appendTo($parent).attr('name','form-'+formData.name)
 			.attr('action',formData.action||'#').attr('method',formData.method||'get');
 		
-		var $table = $("<table/>").appendTo($form);
-		for(var i=0;i<formData.items.length;i++){
-			$("<tr/>").appendTo($table).append(htmlGenerator.getFormFieldHtml(formData.items[i],formData));
+		var $table = $("<table width='100%'></table>").appendTo($form).attr('width',formData.width);
+		for (var i = 0; i < formData.items.length; i++) {
+			var $tr = $("<tr></tr>").appendTo($table);
+			this.createField($tr, formData.items[i], formData);
 		}
-		return form;
 	},
-	getFormFieldHtml : function(item,formName) {
-		var str = '';
+	createField : function($tr,item,formData) {
+		var $td1 = $("<td>"+item.text+"</td>").appendTo($tr).attr('width', formData.labelWidth || 120+'px');
+		var $td2 = $("<td/>").appendTo($tr);
+		
+		var html = '';
 		if (item.xtype == 'text') {
-			str = "<td>{text}</td><td><input type='text' name='{name}' value='{value}' /></td>";
+			html = "<input type='text' name='{name}'/>";
 		}else if (item.xtype == 'textarea') {
-			str = "<td>{text}</td><td><textarea name='{name}' rows='{rows}' style='{style}'></textarea>";
+			html = "<textarea name='{name}'></textarea>";
 		}else if(item.xtype == 'select'){
-			str = "<td>{text}</td><td><select name='{name}' style='{style}'>";
+			html = "<select name='{name}'>";
 			// 若未设置默认值,则认为默认不选中
-			if (!item.value) {
-				str += "<option value=''>请选择</option>";
+			if (!item.required) {
+				html += "<option value=''>请选择</option>";
 			}
 			if (item.items && (item.items instanceof Array)) {
 				for (var i = 0; i < item.items.length; i++) {
-					var checked = "";
-					if (item.items[i].value == item.value) {
-						checked = "selected";
-					}
-					str += formatStr("<option value='{value}' " + checked + ">{name}</option>", item.items[i]);
+					html += formatStr("<option value='{name}'>{text}</option>", item.items[i]);
 				}
 			}
-			str += "</select></td>";
+			html += "</select>";
 		}else if(item.xtype == 'radio'||item.xtype == 'checkbox'){
-			str = "<td>{text}</td><td>";
 			if (item.items && (item.items instanceof Array)) {
 				for (var i = 0; i < item.items.length; i++) {
-					var checked = "";
-					if (item.items[i].value == item.value) {
-						checked = "checked='checked'";
-					}
-					str += formatStr("<input type='" + item.xtype + "' name='" + item.name + "' value='{value}' " + checked + ">{name}", item.items[i]);
+					html += formatStr("<input type='" + item.xtype + "' name='" + item.name + "' value='{name}'>{text}</input>", item.items[i]);
 				}
 			}
-			str += "</td>"
 		}
-		str = formatStr(str, item);
-		return str;
-	},
-	getFormFieldHtml : function(item,formName) {
-		var str = '';
-		if (item.xtype == 'text') {
-			str = "<td>{text}</td><td><input type='text' name='{name}' value='{value}' /></td>";
-		}else if (item.xtype == 'textarea') {
-			str = "<td>{text}</td><td><textarea name='{name}' rows='{rows}' style='{style}'></textarea>";
-		}else if(item.xtype == 'select'){
-			str = "<td>{text}</td><td><select name='{name}' style='{style}'>";
-			// 若未设置默认值,则认为默认不选中
-			if (!item.value) {
-				str += "<option value=''>请选择</option>";
+		
+		if(html){
+			html = formatStr(html, item);
+			
+			// 设置控件属性
+			var $field=$(html).appendTo($td2).attr(formData.defaults);
+			if(item.xtype == 'radio'||item.xtype == 'checkbox'){
+				$field.filter("[value='"+item.value+"']").attr("checked",'true');
+			}else{
+				$field.val(item.value);
 			}
-			if (item.items && (item.items instanceof Array)) {
-				for (var i = 0; i < item.items.length; i++) {
-					var checked = "";
-					if (item.items[i].value == item.value) {
-						checked = "selected";
-					}
-					str += formatStr("<option value='{value}' " + checked + ">{name}</option>", item.items[i]);
-				}
+			if(item.props)
+				$field.attr(item.props);
+			
+			if(item.listeners instanceof Object){
+				$.each(item.listeners,function(name,fn){
+					if(fn instanceof Function)
+						$field.on(name,fn);
+				});
 			}
-			str += "</select></td>";
-		}else if(item.xtype == 'radio'||item.xtype == 'checkbox'){
-			str = "<td>{text}</td><td>";
-			if (item.items && (item.items instanceof Array)) {
-				for (var i = 0; i < item.items.length; i++) {
-					var checked = "";
-					if (item.items[i].value == item.value) {
-						checked = "checked='checked'";
-					}
-					str += formatStr("<input type='" + item.xtype + "' name='" + item.name + "' value='{value}' " + checked + ">{name}", item.items[i]);
-				}
-			}
-			str += "</td>"
 		}
-		str = formatStr(str, item);
-		return str;
 	}
 }
 /*
