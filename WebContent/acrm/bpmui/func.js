@@ -100,3 +100,36 @@ function brgba(hex, opacity) {
         a = opacity;
     return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 }
+
+function formatStr(str) {
+	var json = arguments[1];
+	if(!json){
+		return str;
+	}
+	var retStr =str;
+//	var pattern = new RegExp("%([1-" + arguments.length + "])", "g");
+	if (json instanceof Array) {
+		var reg = /{(\d+)}/gm;
+		retStr = str.replace(reg, function(match, name) {
+			return json[~~name];
+		});
+	} else if(json instanceof Object) {
+		var reg = /{([^{}]+)}/gm;
+		retStr = str.replace(reg, function(match, name) {
+			return json[name];
+		});
+	} else{
+		var reg = /{(\d+)}/gm;
+		json = arguments;
+		retStr = str.replace(reg, function(match, name) {
+			alert(~~name+1);
+			alert(json[~~name+1]);
+			return json[~~name+1];
+		});
+	}
+//	alert(retStr)
+	return retStr;
+}
+// alert(formatStr("{a},23{b}",{a:1,b:2}));
+// alert(formatStr("{0},23{1}",['aa','bb']));
+// alert(formatStr("{0},23{1}",'aa','bb'));

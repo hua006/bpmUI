@@ -455,7 +455,7 @@ jsondata = {
 			"left" : 66,
 			"top" : 150,
 			"type" : "start",
-			"width" : 100,
+			"width" : 32,
 			"height" : 32,
 			"alt" : true
 		},
@@ -464,7 +464,7 @@ jsondata = {
 			"left" : 222,
 			"top" : 149,
 			"type" : "task",
-			"width" : 100,
+			"width" : 32,
 			"height" : 32,
 			"alt" : true
 		},
@@ -473,7 +473,7 @@ jsondata = {
 			"left" : 403,
 			"top" : 150,
 			"type" : "end",
-			"width" : 100,
+			"width" : 32,
 			"height" : 32,
 			"alt" : true
 		}

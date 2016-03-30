@@ -24,11 +24,23 @@ function GooFlow(bgDiv,property){
 	this.$id=bgDiv.attr("id");
 	this.$bgDiv=bgDiv;//最父框架的DIV
 	this.$bgDiv.addClass("GooFlow");
-	if(GooFlow.prototype.color.font){
-		this.$bgDiv.css("color",GooFlow.prototype.color.font);
+	if (GooFlow.prototype.color.font) {
+		this.$bgDiv.css("color", GooFlow.prototype.color.font);
 	}
-	var width = (property.width || 800) - 2;
-	var height = (property.height || 500) - 2;
+	
+	// 初始化数据,包括容器,节点,线段等初始化属性信息;
+	this.init(property);
+	
+	var containerX =this.$DataX.containerX;
+	var headX =this.$DataX.headX;
+	var toolX =this.$DataX.toolX;
+	var workAreaX =this.$DataX.workAreaX;
+	var nodeX =this.$DataX.nodeX;
+	
+	// 容器宽高
+	var width = containerX.width;
+	var height = containerX.height;
+	
 	this.$bgDiv.css({
 		width : width + "px",
 		height : height + "px"
@@ -53,23 +65,22 @@ function GooFlow(bgDiv,property){
 	this.$cursor = "default";			// 鼠标指针在工作区内的样式
 	this.$editable = false;				// 工作区是否可编辑
 	this.$deletedItem = {};				// 在流程图的编辑操作中被删除掉的元素ID集合,元素ID为KEY,元素类型(node,line.area)为VALUE
-	var headHeight = 0;					// 顶部操作栏高度,应与".GooFlow_head"样式保持一致
 	var tmp = "";
 	
 	// 初始化顶部操作栏
 	if(property.haveHead){
-		tmp = "<div class='GooFlow_head' " + (GooFlow.prototype.color.main ? "style='border-bottom-color:" + GooFlow.prototype.color.main + "'" : "") + ">";
+		var icoSize = headX.icoSize;
+		tmp = "<div class='GooFlow_head' style='height:"+headX.height+"px;" + (GooFlow.prototype.color.main ? "border-bottom-color:" + GooFlow.prototype.color.main: "") + "'>";
 		if (property.headLabel) {
-			tmp += "<label title='" + (property.initLabelText || "newFlow_1") + "' " + (GooFlow.prototype.color.main ? "style='background:" + GooFlow.prototype.color.main + "'" : "") + ">"
-					+ (property.initLabelText || "newFlow_1") + "</label>";
+			tmp += "<label title='" + (property.initLabelText || headX.title) + "' " + (GooFlow.prototype.color.main ? "style='background:" + GooFlow.prototype.color.main + "'" : "") + ">"
+					+ (property.initLabelText || headX.title) + "</label>";
 		}
 		for (var x = 0; x < property.headBtns.length; ++x) {
-			tmp += "<a href='javascript:void(0)' class='GooFlow_head_btn'><i class='ico_" + property.headBtns[x] + "'></i></a>"
+			tmp += "<a href='javascript:void(0)' class='GooFlow_head_btn'><i class='ico_" + property.headBtns[x] + "_"+icoSize+"'></i></a>"
 		}
 		tmp += "</div>";
 		this.$head = $(tmp);
 		this.$bgDiv.append(this.$head);
-		headHeight = 40+4;
 		
 		// 以下是当工具栏按钮被点击时触发的事件自定义(虚函数),格式为function(),因为可直接用THIS操作对象本身,不用传参；用户可自行重定义:
 		this.onBtnNewClick = null;// 新建流程图按钮被点中
@@ -83,8 +94,10 @@ function GooFlow(bgDiv,property){
 				if(tar.tagName=="DIV"||tar.tagName=="SPAN")	return;
 				else if(tar.tagName=="a")	tar=tar.childNode[0];
 				var This=e.data.inthis;
+				var cls = $(tar).attr("class").split(" ")[0];
 				//定义顶部操作栏按钮的事件
-				switch($(tar).attr("class")){
+				var cls = This.subRight($(tar).attr("class"),3);
+				switch(cls){
 					case "ico_new":		if(This.onBtnNewClick!=null)	This.onBtnNewClick();break;
 					case "ico_open":	if(This.onBtnOpenClick!=null)	This.onBtnOpenClick();break;
 					case "ico_save":	if(This.onBtnSaveClick!=null)	This.onBtnSaveClick();break;
@@ -97,28 +110,24 @@ function GooFlow(bgDiv,property){
 	}
 	
 	// 初始化左侧工具栏
-	var toolWidth=0;// 左侧工具栏宽度,应与".GooFlow_tool_div"样式保持一致
 	if(property.haveTool){
-		this.$bgDiv.append("<div class='GooFlow_tool'"+(property.haveHead? "":" style='margin-top:3px'")+"><div style='height:"+(height-headHeight-(property.haveHead? 7:10))+"px' class='GooFlow_tool_div'></div></div>");
+		var icoSize = toolX.icoSize;
+		this.$bgDiv.append("<div class='GooFlow_tool' style='width:"+toolX.width+"px;margin-top:"+toolX.h_Hack+"px;'><div style='height:"+toolX.height+"px' class='GooFlow_tool_div'></div></div>");
 		this.$tool=this.$bgDiv.find(".GooFlow_tool div");
 		//未加代码：加入绘图工具按钮
 		this.$tool.append(
-			"<a href='javascript:void(0)' type='cursor' class='GooFlow_tool_btndown' id='"+this.$id+"_btn_cursor'><i class='ico_cursor'/></a>"
-			+"<a href='javascript:void(0)' type='mutiselect' class='GooFlow_tool_btn' id='"+this.$id+"_btn_mutiselect'><i class='ico_mutiselect'/></a>"
-			+"<a href='javascript:void(0)' type='direct' class='GooFlow_tool_btn' id='"+this.$id+"_btn_direct'><i class='ico_direct'/></a>"
+			"<a href='javascript:void(0)' type='cursor' class='GooFlow_tool_btndown' id='"+this.$id+"_btn_cursor'><i class='ico_cursor_"+icoSize+"'/></a>"
+			+"<a href='javascript:void(0)' type='mutiselect' class='GooFlow_tool_btn' id='"+this.$id+"_btn_mutiselect'><i class='ico_mutiselect_"+icoSize+"'/></a>"
+			+"<a href='javascript:void(0)' type='direct' class='GooFlow_tool_btn' id='"+this.$id+"_btn_direct'><i class='ico_direct_"+icoSize+"'/></a>"
 		);
 		
 		if(property.toolBtns&&property.toolBtns.length>0){
 			tmp="<span/>";
 			for(var i=0;i<property.toolBtns.length;++i){
-				tmp+="<a href='javascript:void(0)' type='"+property.toolBtns[i]+"' id='"+this.$id+"_btn_"+property.toolBtns[i].split(" ")[0]+"' class='GooFlow_tool_btn'><i class='ico_"+property.toolBtns[i]+"'/></a>";//加入自定义按钮
+				tmp+="<a href='javascript:void(0)' type='"+property.toolBtns[i]+"' id='"+this.$id+"_btn_"+property.toolBtns[i].split(" ")[0]+"' class='GooFlow_tool_btn'><i class='ico_"+property.toolBtns[i]+"_"+icoSize+"'/></a>";//加入自定义按钮
 			}
 			this.$tool.append(tmp);
 		}
-		//加入区域划分框工具开关按钮
-		if(property.haveGroup)
-			this.$tool.append("<span/><a href='javascript:void(0)' type='group' class='GooFlow_tool_btn' id='"+this.$id+"_btn_group'><i class='ico_group'/></a>");
-		toolWidth=40;
 		this.$nowType="cursor";
 		//绑定各个按钮的点击事件
 		this.$tool.on("click",{inthis:this},function(e){
@@ -138,17 +147,15 @@ function GooFlow(bgDiv,property){
 	}
 	
 	// 初始化工作区
-	width=width-toolWidth-17;//减去固定宽度17
-	height=height-headHeight-(property.haveHead? 5:8);
-	this.$bgDiv.append("<div class='GooFlow_work' style='width:"+(width)+"px;height:"+(height)+"px;"+(property.haveHead? "":"margin-top:3px")+"'></div>");
-	this.$workArea=$("<div class='GooFlow_work_inner' style='width:"+width*3+"px;height:"+height*3+"px'></div>")
-		.attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});
+	this.$bgDiv.append("<div class='GooFlow_work' style='width:"+(workAreaX.width)+"px;height:"+(workAreaX.height)+"px;"+(property.haveHead? "":"margin-top:3px")+"'></div>");
+	this.$workArea=$("<div class='GooFlow_work_inner' style='width:"+workAreaX.width*3+"px;height:"+workAreaX.height*3+"px'></div>")
+		.attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});// 点击工作区不触发onblur事件;不被选中;禁止复制
 	this.$bgDiv.children(".GooFlow_work").append(this.$workArea);
 	this.$draw = null;// 画矢量线条的容器
-	this.initDraw("draw_" + this.$id, width, height);
+	this.initDraw("draw_" + this.$id, workAreaX.width, workAreaX.height);
 	this.$group = null;
 	if (property.haveGroup)
-		this.initGroup(width, height);
+		this.initGroup(workAreaX.width, workAreaX.height);
 	
 	// 将节点及连线的单击事件委托给工作区
 	if (this.$editable) {
@@ -363,6 +370,12 @@ function GooFlow(bgDiv,property){
 		//当用重色标注某个结点/转换线时触发的方法，返回FALSE可阻止重定大小/造型事件的发生
 		//格式function(id，type，mark)：id是单元的唯一标识ID,type是单元类型（"node"结点,"line"转换线），mark为布尔值,表示是要标注TRUE还是取消标注FALSE
 		this.onItemMark=null;
+		
+		// 新增
+		// 当节点双击时触发的方法,返回FALSE可阻止双击事件的发生
+		// 格式function(id，type)：id是双击的节点id
+		this.onItemDblClick=null;
+		
 		
 		if(property.useOperStack&&this.$editable){//如果要使用堆栈记录操作并提供“撤销/重做”的功能,只在编辑状态下有效
 			this.$undoStack=[];

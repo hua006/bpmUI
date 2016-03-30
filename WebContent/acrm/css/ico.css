@@ -1,22 +1,70 @@
-.GooFlow .ico_start{background:url(../img/jiediankaishi-32.png) no-repeat}
-.GooFlow .ico_end{background:url(../img/jiedianjieshu-32.png) no-repeat}
-.GooFlow .ico_task{background:url(../img/yonghurenwu-32.png) no-repeat}
-.GooFlow .ico_decision{background:url(../img/tiaojian-32.png) no-repeat}
-.GooFlow .ico_state{background:url(../img/tongzhizhuangtai-32.png) no-repeat}
-.GooFlow .ico_subprocess{background:url(../img/ziliucheng-32.png) no-repeat}
-.GooFlow .ico_fork{background:url(../img/fork-32.png) no-repeat}
-.GooFlow .ico_join{background:url(../img/join-32.png) no-repeat}
-.GooFlow .ico_math{background:url(../img/jisuanqi-32.png) no-repeat}
-.GooFlow .ico_define{background:url(../img/zidingyineirong-32.png) no-repeat}
+.GooFlow .ico_start_32{width:32px;height:32px;background:url(../img/jiediankaishi-32.png) no-repeat}
+.GooFlow .ico_end_32{width:32px;height:32px;background:url(../img/jiedianjieshu-32.png) no-repeat}
+.GooFlow .ico_task_32{width:32px;height:32px;background:url(../img/yonghurenwu-32.png) no-repeat}
+.GooFlow .ico_decision_32{width:32px;height:32px;background:url(../img/tiaojian-32.png) no-repeat}
+.GooFlow .ico_state_32{width:32px;height:32px;background:url(../img/tongzhizhuangtai-32.png) no-repeat}
+.GooFlow .ico_subprocess_32{width:32px;height:32px;background:url(../img/ziliucheng-32.png) no-repeat}
+.GooFlow .ico_fork_32{width:32px;height:32px;background:url(../img/fork-32.png) no-repeat}
+.GooFlow .ico_join_32{width:32px;height:32px;background:url(../img/join-32.png) no-repeat}
+.GooFlow .ico_math_32{width:32px;height:32px;background:url(../img/jisuanqi-32.png) no-repeat}
+.GooFlow .ico_define_32{width:32px;height:32px;background:url(../img/zidingyineirong-32.png) no-repeat}
 
-.GooFlow .ico_cursor{background:url(../img/cursor-32.png) no-repeat}
-.GooFlow .ico_mutiselect{background:url(../img/mutiselect-32.png) no-repeat}
-.GooFlow .ico_direct{background:url(../img/direct-32.png) no-repeat}
+.GooFlow .ico_cursor_32{width:32px;height:32px;background:url(../img/cursor-32.png) no-repeat}
+.GooFlow .ico_mutiselect_32{width:32px;height:32px;background:url(../img/mutiselect-32.png) no-repeat}
+.GooFlow .ico_direct_32{width:32px;height:32px;background:url(../img/direct-32.png) no-repeat}
 
-.GooFlow .ico_open{background:url(../img/open-32.png) no-repeat}
-.GooFlow .ico_new{background:url(../img/new-32.png) no-repeat}
-.GooFlow .ico_delete{background:url(../img/delete-32.png) no-repeat}
-.GooFlow .ico_reload{background:url(../img/reload-32.png) no-repeat}
-.GooFlow .ico_save{background:url(../img/save-32.png) no-repeat}
-.GooFlow .ico_undo{background:url(../img/undo-32.png) no-repeat}
-.GooFlow .ico_redo{background:url(../img/redo-32.png) no-repeat}
+.GooFlow .ico_open_32{width:32px;height:32px;background:url(../img/open-32.png) no-repeat}
+.GooFlow .ico_new_32{width:32px;height:32px;background:url(../img/new-32.png) no-repeat}
+.GooFlow .ico_delete_32{width:32px;height:32px;background:url(../img/delete-32.png) no-repeat}
+.GooFlow .ico_reload_32{width:32px;height:32px;background:url(../img/reload-32.png) no-repeat}
+.GooFlow .ico_save_32{width:32px;height:32px;background:url(../img/save-32.png) no-repeat}
+.GooFlow .ico_undo_32{width:32px;height:32px;background:url(../img/undo-32.png) no-repeat}
+.GooFlow .ico_redo_32{width:32px;height:32px;background:url(../img/redo-32.png) no-repeat}
+
+/*16*16*/
+.GooFlow .ico_start_16{width:16px;height:16px;background:url(../img/jiediankaishi-16.png) no-repeat}
+.GooFlow .ico_end_16{width:16px;height:16px;background:url(../img/jiedianjieshu-16.png) no-repeat}
+.GooFlow .ico_task_16{width:16px;height:16px;background:url(../img/yonghurenwu-16.png) no-repeat}
+.GooFlow .ico_decision_16{width:16px;height:16px;background:url(../img/tiaojian-16.png) no-repeat}
+.GooFlow .ico_state_16{width:16px;height:16px;background:url(../img/tongzhizhuangtai-16.png) no-repeat}
+.GooFlow .ico_subprocess_16{width:16px;height:16px;background:url(../img/ziliucheng-16.png) no-repeat}
+.GooFlow .ico_fork_16{width:16px;height:16px;background:url(../img/fork-16.png) no-repeat}
+.GooFlow .ico_join_16{width:16px;height:16px;background:url(../img/join-16.png) no-repeat}
+.GooFlow .ico_math_16{width:16px;height:16px;background:url(../img/jisuanqi-16.png) no-repeat}
+.GooFlow .ico_define_16{width:16px;height:16px;background:url(../img/zidingyineirong-16.png) no-repeat}
+
+.GooFlow .ico_cursor_16{width:16px;height:16px;background:url(../img/cursor-16.png) no-repeat}
+.GooFlow .ico_mutiselect_16{width:16px;height:16px;background:url(../img/mutiselect-16.png) no-repeat}
+.GooFlow .ico_direct_16{width:16px;height:16px;background:url(../img/direct-16.png) no-repeat}
+
+.GooFlow .ico_open_16{width:16px;height:16px;background:url(../img/open-16.png) no-repeat}
+.GooFlow .ico_new_16{width:16px;height:16px;background:url(../img/new-16.png) no-repeat}
+.GooFlow .ico_delete_16{width:16px;height:16px;background:url(../img/delete-16.png) no-repeat}
+.GooFlow .ico_reload_16{width:16px;height:16px;background:url(../img/reload-16.png) no-repeat}
+.GooFlow .ico_save_16{width:16px;height:16px;background:url(../img/save-16.png) no-repeat}
+.GooFlow .ico_undo_16{width:16px;height:16px;background:url(../img/undo-16.png) no-repeat}
+.GooFlow .ico_redo_16{width:16px;height:16px;background:url(../img/redo-16.png) no-repeat}
+
+/*64*64*/
+.GooFlow .ico_start_64{width:64px;height:64px;background:url(../img/jiediankaishi-64.png) no-repeat}
+.GooFlow .ico_end_64{width:64px;height:64px;background:url(../img/jiedianjieshu-64.png) no-repeat}
+.GooFlow .ico_task_64{width:64px;height:64px;background:url(../img/yonghurenwu-64.png) no-repeat}
+.GooFlow .ico_decision_64{width:64px;height:64px;background:url(../img/tiaojian-64.png) no-repeat}
+.GooFlow .ico_state_64{width:64px;height:64px;background:url(../img/tongzhizhuangtai-64.png) no-repeat}
+.GooFlow .ico_subprocess_64{width:64px;height:64px;background:url(../img/ziliucheng-64.png) no-repeat}
+.GooFlow .ico_fork_64{width:64px;height:64px;background:url(../img/fork-64.png) no-repeat}
+.GooFlow .ico_join_64{width:64px;height:64px;background:url(../img/join-64.png) no-repeat}
+.GooFlow .ico_math_64{width:64px;height:64px;background:url(../img/jisuanqi-64.png) no-repeat}
+.GooFlow .ico_define_64{width:64px;height:64px;background:url(../img/zidingyineirong-64.png) no-repeat}
+
+.GooFlow .ico_cursor_64{width:64px;height:64px;background:url(../img/cursor-64.png) no-repeat}
+.GooFlow .ico_mutiselect_64{width:64px;height:64px;background:url(../img/mutiselect-64.png) no-repeat}
+.GooFlow .ico_direct_64{width:64px;height:64px;background:url(../img/direct-64.png) no-repeat}
+
+.GooFlow .ico_open_64{width:64px;height:64px;background:url(../img/open-64.png) no-repeat}
+.GooFlow .ico_new_64{width:64px;height:64px;background:url(../img/new-64.png) no-repeat}
+.GooFlow .ico_delete_64{width:64px;height:64px;background:url(../img/delete-64.png) no-repeat}
+.GooFlow .ico_reload_64{width:64px;height:64px;background:url(../img/reload-64.png) no-repeat}
+.GooFlow .ico_save_64{width:64px;height:64px;background:url(../img/save-64.png) no-repeat}
+.GooFlow .ico_undo_64{width:64px;height:64px;background:url(../img/undo-64.png) no-repeat}
+.GooFlow .ico_redo_64{width:64px;height:64px;background:url(../img/redo-64.png) no-repeat}

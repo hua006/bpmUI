@@ -267,7 +267,7 @@ GooFlow.prototype={
 	},
 	//每一种类型结点及其按钮的说明文字
 	setNodeRemarks:function(remark){
-    if(this.$tool==null)  return;
+		if(this.$tool==null)  return;
 		this.$tool.children("a").each(function(){
 			this.title=remark[$(this).attr("id").split("btn_")[1]];
 		});
@@ -299,32 +299,55 @@ GooFlow.prototype={
 			this.pushOper("delNode",[id]);
 		}
 		var mark=json.marked? " item_mark":"";
-		if(json.type.indexOf(" round")<0){
-			if(!json.width||json.width<100)json.width=100;
-			if(!json.height||json.height<24)json.height=24;
-			if(!json.top||json.top<0)json.top=0;
-			if(!json.left||json.left<0)json.left=0;
+		var nodeX = this.$DataX.nodeX;
+		
+		// 设置工作区节点图标格式
+		if(json){
+			if (!json.width || json.width < nodeX.width)
+				json.width = nodeX.width;
+			if (!json.height || json.height < nodeX.height)
+				json.height = nodeX.height;
+			if (!json.top || json.top < 0)
+				json.top = 0;
+			if (!json.left || json.left < 0)
+				json.left = 0;
 			var hack=0;
-			if(navigator.userAgent.indexOf("8.0")!=-1)	hack=2;
-			this.$nodeDom[id]=$("<div class='GooFlow_item"+mark+"' id='"+id+"' style='top:"+json.top+"px;left:"+json.left+"px'><table cellspacing='1' style='width:"+(json.width-2)+"px;height:"+(json.height-2)+"px;'><tr><td class='ico'><i class='ico_"+json.type+"'></i></td><td>"+json.name+"</td></tr></table><div style='display:none'><div class='rs_bottom'></div><div class='rs_right'></div><div class='rs_rb'></div><div class='rs_close'></div></div></div>");
-		}else{
-			json.width=24;json.height=24;
-			this.$nodeDom[id]=$("<div class='GooFlow_item item_round"+mark+"' id='"+id+"' style='top:"+json.top+"px;left:"+json.left+"px'><table cellspacing='0'><tr><td class='ico'><i class='ico_"+json.type+"'></i></td></tr></table><div  style='display:none'><div class='rs_close'></div></div><div class='span'>"+json.name+"</div></div>");
-		}
-		if(GooFlow.prototype.color.node){
-			if(json.type.indexOf(" mix")>-1){
-				this.$nodeDom[id].css({"background-color":GooFlow.prototype.color.mix,"border-color":GooFlow.prototype.color.mix});
-			}else{
-				this.$nodeDom[id].css({"background-color":GooFlow.prototype.color.node,"border-color":GooFlow.prototype.color.node});
+			if(navigator.userAgent.indexOf("8.0")!=-1)
+				hack=2;
+			var args = {
+				mark : mark,
+				id : id,
+				top : json.top,
+				left : json.left,
+				width : (json.width - hack),
+				height : (json.height - hack),
+				icoSize: nodeX.icoSize,
+				type: json.type,
+				name : json.name
 			}
+			this.$nodeDom[id]=$(formatStr(
+					"<div class='GooFlow_item{mark}' id='{id}' style='top:{top}px;left:{left}px'>" +
+						"<table cellspacing='0' style='width:{width}px;height:{height}px;' title='{name}'>" +
+							"<tr>" +
+								"<td class='ico'><i class='ico_{type}_{icoSize}'></i></td>" +
+ 								(nodeX.showFont ? "<td>{name}</td>" : "") +
+							"</tr>" +
+						"</table>" +
+						"<div style='display:none'>" +
+							"<div class='rs_bottom'></div>" +
+							"<div class='rs_right'></div>" +
+							"<div class='rs_rb'></div>" +
+							"<div class='rs_close'></div>" +
+						"</div>" +
+					"</div>",args));
+		}
+		
+		if(GooFlow.prototype.color.node){
+			this.$nodeDom[id].css({"background-color":GooFlow.prototype.color.node,"border-color":GooFlow.prototype.color.node});
 			if(mark&&GooFlow.prototype.color.mark){
 				this.$nodeDom[id].css({"border-color":GooFlow.prototype.color.mark});
 			}
 		}
-		if(json.type.indexOf(" mix")>-1){
-			this.$nodeDom[id].addClass("item_mix");
-		}
-		
 		var ua=navigator.userAgent.toLowerCase();
 		if(ua.indexOf('msie')!=-1 && ua.indexOf('8.0')!=-1)
 			this.$nodeDom[id].css("filter","progid:DXImageTransform.Microsoft.Shadow(color=#94AAC2,direction=135,strength=2)");
@@ -336,6 +359,7 @@ GooFlow.prototype={
 			if(this.$deletedItem[id])	delete this.$deletedItem[id];//在回退删除操作时,去掉该元素的删除记录
 		}
 	},
+	// 增加节点事件绑定 
 	initWorkForNode:function(){
 		//绑定点击事件
 		this.$workArea.delegate(".GooFlow_item","click",{inthis:this},function(e){
@@ -397,15 +421,16 @@ GooFlow.prototype={
 		//绑定鼠标覆盖/移出事件
 		this.$workArea.delegate(".GooFlow_item","mouseenter",{inthis:this},function(e){
 			if(e.data.inthis.$nowType!="direct"&&!document.getElementById("GooFlow_tmp_line"))	return;
+			// 选中连线按钮,鼠标置于节点上时显示连线样式(十字,红色边框)
 			$(this).addClass("item_mark").addClass("crosshair").css("border-color",GooFlow.prototype.color.mark||"#ff3300");
 		});
 		this.$workArea.delegate(".GooFlow_item","mouseleave",{inthis:this},function(e){
 			if(e.data.inthis.$nowType!="direct"&&!document.getElementById("GooFlow_tmp_line"))	return;
 			$(this).removeClass("item_mark").removeClass("crosshair");
 			if(this.id==e.data.inthis.$focus){
-        $(this).css("border-color",GooFlow.prototype.color.line||"#3892D3");
+				$(this).css("border-color",GooFlow.prototype.color.line||"#3892D3");
 			}else{
-        $(this).css("border-color",GooFlow.prototype.color.node||"#A1DCEB");
+				$(this).css("border-color",GooFlow.prototype.color.node||"#A1DCEB");
 			}
 		});
 		//绑定连线时确定初始点
@@ -430,39 +455,27 @@ GooFlow.prototype={
 			if(lineStart&&!This.$mpTo.data("p")){
 				This.addLine(This.$id+"_line_"+This.$max,{from:lineStart.id,to:this.id,name:""});
 				This.$max++;
-			}
-			else{
+			}else{
 				if(lineStart){
 					This.moveLinePoints(This.$focus,lineStart.id,this.id);
 				}else if(lineEnd){
 					This.moveLinePoints(This.$focus,this.id,lineEnd.id);
 				}
 				if(!This.$nodeData[this.id].marked){
-          $(this).removeClass("item_mark");
-          if(this.id!=This.$focus){
-            $(this).css("border-color",GooFlow.prototype.color.node);
-          }
-          else{
-            $(this).css("border-color",GooFlow.prototype.color.line);
-          }
+					$(this).removeClass("item_mark");
+					if(this.id!=This.$focus){
+						$(this).css("border-color",GooFlow.prototype.color.node);
+					}else{
+						$(this).css("border-color",GooFlow.prototype.color.line);
+					}
 				}
 			}
 		});
-		//绑定双击编辑事件
-		this.$workArea.delegate(".GooFlow_item > .span","dblclick",{inthis:this},function(e){
-			var oldTxt=this.innerHTML;
-			var This=e.data.inthis;
-			var id=this.parentNode.id;
-			var t=getElCoordinate(This.$workArea[0]);
-			This.$textArea.val(oldTxt).css({display:"block",height:$(this).height(),width:100,
-				left:t.left+This.$nodeData[id].left-This.$workArea[0].parentNode.scrollLeft-24,
-				top:t.top+This.$nodeData[id].top-This.$workArea[0].parentNode.scrollTop+26})
-				.data("id",This.$focus).focus();
-			This.$workArea.parent().one("mousedown",function(e){
-				if(e.button==2)return false;
-				This.setName(This.$textArea.data("id"),This.$textArea.val(),"node");
-				This.$textArea.val("").removeData("id").hide();
-			});
+		// 绑定双击编辑事件
+		this.$workArea.delegate(".ico","dblclick",{inthis:this},function(e){
+			if(!e)e=window.event;
+			e.data.inthis.itemDblClick(e.data.inthis.$focus);
+			return false;
 		});
 		this.$workArea.delegate(".ico + td","dblclick",{inthis:this},function(e){
 			var oldTxt=this.innerHTML;
@@ -583,6 +596,9 @@ GooFlow.prototype={
 	},
 	//选定某个结点/转换线 bool:TRUE决定了要触发选中事件，FALSE则不触发选中事件，多用在程序内部调用。
 	focusItem:function(id,bool){
+		if (id && id == this.$focus) {
+			return;
+		}
 		var jq=$("#"+id);
 		if(jq.length==0)	return;
 		if(!this.blurItem())	return;//先执行"取消选中",如果返回FLASE,则也会阻止选定事件继续进行.
@@ -939,28 +955,36 @@ GooFlow.prototype={
 	
 	//重构整个流程图设计器的宽高
 	reinitSize:function(width,height){
-		var w=(width||800)-2;
-		var h=(height||500)-2;
+		
+		this.reSize(width,height);
+		
+		var containerX =this.$DataX.containerX;
+		var headX =this.$DataX.headX;
+		var toolX =this.$DataX.toolX;
+		var workAreaX =this.$DataX.workAreaX;
+		var nodeX =this.$DataX.nodeX;
+		
+		var w=containerX.width;
+		var h=containerX.height;
+		
 		this.$bgDiv.css({height:h+"px",width:w+"px"});
-		var headHeight=0,hack=10;
-		if(this.$head!=null){
-			headHeight=24;
-			hack=7;
-		}
+		var toolHeight = h-headX.height-headX.h_Hack; // 工具栏高度=容器高度-减去标题栏高度-标题栏偏移量
 		if(this.$tool!=null){
-			this.$tool.css({height:h-headHeight-hack+"px"});
+			this.$tool.css({height:toolHeight+"px"});
 		}
-		w-=39;
-		h=h-headHeight-(this.$head!=null? 5:8);
-		this.$workArea.parent().css({height:h+"px",width:w+"px"});
-		this.$workArea.css({height:h*3+"px",width:w*3+"px"});
+		
+		var workWidth = w - toolX.width - toolX.w_Hack - workAreaX.hack;// 工作区宽度=容器宽度-工具栏宽度-工具栏偏移量-工作区偏移量
+		var workHeight = toolHeight;
+		
+		this.$workArea.parent().css({height:workHeight+"px",width:workWidth+"px"});
+		this.$workArea.css({height:height*3+"px",width:workWidth*3+"px"});
 		if(GooFlow.prototype.useSVG==""){
-			this.$draw.coordsize = w*3+","+h*3;
+			this.$draw.coordsize = workWidth*3+","+height*3;
 		}
-		this.$draw.style.width = w*3 + "px";
-		this.$draw.style.height = +h*3 + "px";
+		this.$draw.style.width = workWidth*3 + "px";
+		this.$draw.style.height = +height*3 + "px";
 		if(this.$group==null){
-			this.$group.css({height:h*3+"px",width:w*3+"px"});
+			this.$group.css({height:height*3+"px",width:workWidth*3+"px"});
 		}
 	}
 }
