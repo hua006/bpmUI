@@ -1,6 +1,6 @@
 ///////////以下为有关画线的方法
 //绘制一条箭头线，并返回线的DOM
-var lineObject = {
+GlobalNS.lineObject = {
 
 	// 画直线
 	drawLine : function(id, sp, ep, mark, dash) {
@@ -624,4 +624,4 @@ var lineObject = {
 		}
 	}
 }
-$.extend(GooFlow.prototype, lineObject)
+$.extend(GooFlow.prototype, GlobalNS.lineObject)

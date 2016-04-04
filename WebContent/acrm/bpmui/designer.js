@@ -371,12 +371,6 @@ function GooFlow(bgDiv,property){
 		//格式function(id，type，mark)：id是单元的唯一标识ID,type是单元类型（"node"结点,"line"转换线），mark为布尔值,表示是要标注TRUE还是取消标注FALSE
 		this.onItemMark=null;
 		
-		// 新增
-		// 当节点双击时触发的方法,返回FALSE可阻止双击事件的发生
-		// 格式function(id，type)：id是双击的节点id
-		this.onItemDblClick=null;
-		
-		
 		if(property.useOperStack&&this.$editable){//如果要使用堆栈记录操作并提供“撤销/重做”的功能,只在编辑状态下有效
 			this.$undoStack=[];
 			this.$redoStack=[];

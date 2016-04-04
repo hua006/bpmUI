@@ -457,6 +457,13 @@ jsondata = {
 			"type" : "start",
 			"width" : 32,
 			"height" : 32,
+			// 工作流属性信息
+			wfDatas:{
+				name:'start',
+				text:"开始",
+				pos:"10,10",
+				"transition" :"toAccept"
+			},
 			"alt" : true
 		},
 		"demo_node_2" : {
@@ -466,7 +473,15 @@ jsondata = {
 			"type" : "task",
 			"width" : 32,
 			"height" : 32,
-			"alt" : true
+			"alt" : true,
+			wfDatas:{
+				name:'accept',
+				text:"咨询受理",
+				pos:"90,10",
+				assignType:"assignee",
+				assignExpr:"#{sysCurrentUser}",
+				transition :"toEnd"
+			}
 		},
 		"demo_node_3" : {
 			"name" : "结束",
@@ -475,7 +490,12 @@ jsondata = {
 			"type" : "end",
 			"width" : 32,
 			"height" : 32,
-			"alt" : true
+			"alt" : true,
+			wfDatas:{
+				name:'end',
+				text:"结单",
+				pos:"130,50"
+			}
 		}
 	},
 	"lines" : {
@@ -483,13 +503,24 @@ jsondata = {
 			"type" : "sl",
 			"from" : "demo_node_1",
 			"to" : "demo_node_2",
-			"name" : ""
+			"name" : "",
+			wfDatas:{
+				name:'toAccept',
+				to:"accept",
+				line:{begin:"50,20",end:"90,20"}
+			}
 		},
 		"demo_line_5" : {
 			"type" : "sl",
 			"from" : "demo_node_2",
 			"to" : "demo_node_3",
-			"name" : ""
+			"name" : "",
+			wfDatas:{
+				name:'toEnd',
+				to:"end",
+				text:"提交",
+				line:{begin:"130,20",end:"150,50",point:["150,20"]}
+			}
 		}
 	},
 	"areas" : {},

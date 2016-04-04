@@ -1,5 +1,5 @@
 ////////////////////////以下为区域分组块操作
-var areaObject = {
+GlobalNS.areaObject = {
 
 	moveArea : function(id, left, top) {
 		if (!this.$areaData[id])
@@ -110,4 +110,4 @@ var areaObject = {
 		}
 	}
 }
-$.extend(GooFlow.prototype, areaObject)
+$.extend(GooFlow.prototype, GlobalNS.areaObject)
