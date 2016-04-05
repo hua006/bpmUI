@@ -1,4 +1,13 @@
-GlobalNS.propertyObject = {
+/*
+ * 定义工作流属性窗口对象:包括属性窗口相关的方法
+ * */ 
+var MyProperty = function(body,parent) {
+	this.$body = body;		// 属性窗口的最外层控件
+	this.$p =  parent;		// 父对象:MyDesigner实例
+	this.$dialogIds = {};	// 维护的基础节点类型与属性窗口对应关系;
+}
+
+$.extend(MyProperty.prototype, {
 	initDialogs:function(formDatas){
 		this.$formDatas = formDatas;
 		for(var index in formDatas){
@@ -9,8 +18,8 @@ GlobalNS.propertyObject = {
 	initDialog:function(formData){
 		var dialogId = formData.id;
 		
-		var $dialog = this.appendDialog($('body'),formData);
-		var data=this.$nodeData;
+		var $dialog = this.appendDialog(this.$body,formData);
+		var data=this.$p.$nodeData;
 		
 		$dialog.dialog({
 			modal : false,
@@ -21,7 +30,7 @@ GlobalNS.propertyObject = {
 			show : false,
 			buttons : {
 				Ok : function() {
-					demo.hideWindow(dialogId);
+					demo.$wp.hideWindow(dialogId);
 				}
 			}
 		});
@@ -124,16 +133,16 @@ GlobalNS.propertyObject = {
 		// 若type为空,则为节点类型
 		if (!baseNodeType) {
 			if (!nodeData) {
-				nodeData = this.$nodeData[focusId];
+				nodeData = this.$p.$nodeData[focusId];
 			}
 			baseNodeType = nodeData.type;
 		} else if (!nodeData) {
 			
 			// 若type不为空,切nodeData为空,则根据type类型获取数据信息
 			if (baseNodeType == 'transition') {
-				nodeData = this.$lineData[focusId];
+				nodeData = this.$p.$lineData[focusId];
 			} else {
-				nodeData = this.$nodeData[focusId];
+				nodeData = this.$p.$nodeData[focusId];
 			}
 		}
 		
@@ -182,13 +191,14 @@ GlobalNS.propertyObject = {
 					nodeData[xtype] = {};
 				}
 				
+
 				var options = {};
 				options.nodeData = nodeData[xtype];
-				options.xtype=xtype
+				options.xtype = xtype
 				options.parentId = dialogId;
 				options.parentBaseNode = xtype;
 				options.dialogId = this.$dialogIds[xtype];
-				options.This=demo;
+				options.This = this;
 				
 				dialog.find("[name='"+name+"']").on("dblclick",options,function(event){
 					var datas = event.data;
@@ -205,8 +215,8 @@ GlobalNS.propertyObject = {
 	},
 	// 保存数据
 	savePropertyData:function(dialogId){
-		var formData = this.getFormData(dialogId);
-		var baseType = this.getBaseNodeType(dialogId);
+		var formData = this.$p.getFormData(dialogId);
+		var baseType = this.$p.getBaseNodeType(dialogId);
 		var focusId = formData.focusId;
 		var parentId = formData.parentId;
 		var parentBaseNode = formData.parentBaseNode;
@@ -215,7 +225,7 @@ GlobalNS.propertyObject = {
 		
 		var baseNodeData ={};
 		if(focusId){
-			baseNodeData = this.getBaseNodeData(focusId,baseType);
+			baseNodeData = this.$p.getBaseNodeData(focusId,baseType);
 		}
 		
 		var dialog = $('#'+dialogId);
@@ -250,7 +260,5 @@ GlobalNS.propertyObject = {
 			
 		}
 	}
-}
-
-$.extend(GooFlow.prototype, GlobalNS.propertyObject)
+});
 

@@ -11,7 +11,7 @@ GooFlow.prototype.color = {};
 // 将此类的构造函数加入至JQUERY对象中
 jQuery.extend({
 	createGooFlow : function(bgDiv, property) {
-		return new MyGooFlow(bgDiv, property);
+		return new MyDesigner(bgDiv, property);
 	}
 });
 
@@ -68,7 +68,7 @@ $(document).ready(function() {
 			type = this.getNodeType(focusId);
 		}
 		var dialogId = this.getDialogId(type);
-		this.showWindow(dialogId, focusId, type);
+		this.$wp.showWindow(dialogId, focusId, type);
 	};
 	demo.initDialogs(GlobalNS.formDatas);
 	

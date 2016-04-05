@@ -18,13 +18,13 @@
 <%-- <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/gooflow/js/GooFlow.js"></script> --%>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/globalNS.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/designer.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/designerExt.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooFlow-base.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooFlow-prototype.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/node.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/line.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/area.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/property.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myGooFlow.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myDesigner.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myProperty.js<%=s%>"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/initData.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/func.js<%=s%>"></script>
