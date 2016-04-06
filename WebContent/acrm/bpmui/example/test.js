@@ -14,25 +14,15 @@ var s = {
 				"pos" : "10,10",
 				"transition" : {
 					"name" : "toAccept",
-					"text" : "",
-					"to" : "accept",
-					"condition" : {},
-					"event-listener" : {}
-				},
-				"on" : {}
+					"to" : "demo_node_1"
+				}
 			},
-			"alt" : true,
-			"transition" : {},
-			"on" : {
-				"wfDatas" : "toAccept",
-				"condition" : {},
-				"event-listener" : {}
-			}
+			"alt" : true
 		},
 		"demo_node_2" : {
 			"name" : "外呼",
-			"left" : 222,
-			"top" : 149,
+			"left" : 253,
+			"top" : 342,
 			"type" : "task",
 			"width" : 64,
 			"height" : 64,
@@ -43,39 +33,7 @@ var s = {
 				"pos" : "90,10",
 				"assignType" : "assignee",
 				"assignExpr" : "#{sysCurrentUser}",
-				"transition" : "toEnd",
-				"userLevel" : "121",
-				"useAssignExcept" : "true",
-				"exceptNode" : "23",
-				"useAssignPrior" : "true",
-				"priorNode" : "12",
-				"autoMemoMethod" : "",
-				"onloadMethod" : "",
-				"type" : "form",
-				"formID" : "1",
-				"layoutID" : "1",
-				"maxCallCount" : "1",
-				"variable" : {
-					"name" : "a",
-					"text" : "32",
-					"showType" : "",
-					"validateType" : "",
-					"initExpr" : "",
-					"remark" : "",
-					"required" : "",
-					"access" : "",
-					"showFormat" : "",
-					"validateMethod" : "",
-					"validateMethodName" : "",
-					"item" : {}
-				},
-				"on" : {}
-			},
-			"variable" : {},
-			"transition" : {},
-			"on" : {
-				"wfDatas" : {},
-				"item" : {}
+				"transition" : "toEnd"
 			}
 		},
 		"demo_node_3" : {
@@ -89,25 +47,18 @@ var s = {
 			"wfDatas" : {
 				"name" : "end",
 				"text" : "结单",
-				"pos" : "130,50",
-				"on" : {
-					"event" : "12",
-					"to" : "3",
-					"event-listener" : {}
-				}
-			},
-			"on" : {
-				"wfDatas" : {},
-				"event-listener" : {}
+				"pos" : "130,50"
 			}
 		}
 	},
 	"lines" : {
 		"demo_line_4" : {
-			"type" : "sl",
+			"type" : "tb",
+			"M" : 319,
 			"from" : "demo_node_1",
 			"to" : "demo_node_2",
-			"name" : ""
+			"name" : "",
+			"alt" : true
 		},
 		"demo_line_5" : {
 			"type" : "sl",

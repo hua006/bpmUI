@@ -20,7 +20,14 @@ $.extend(MyProperty.prototype, {
 		
 		var $dialog = this.appendDialog(this.$body,formData);
 		var data=this.$p.$nodeData;
-		
+		var buttons = {
+				Ok : function() {
+					demo.$wp.hideWindow(dialogId);
+				}
+			};
+		if(formData.buttons){
+			buttons = formData.buttons;
+		}
 		$dialog.dialog({
 			modal : false,
 			hide : true,//点击关闭是隐藏
@@ -28,11 +35,7 @@ $.extend(MyProperty.prototype, {
 			width:formData.width+50,
 			height:formData.height+50,
 			show : false,
-			buttons : {
-				Ok : function() {
-					demo.$wp.hideWindow(dialogId);
-				}
-			}
+			buttons : buttons
 		});
 		this.$dialogIds[formData.name]=dialogId;
 	},
@@ -105,20 +108,57 @@ $.extend(MyProperty.prototype, {
 			if(item.props)
 				$field.attr(item.props);
 			
+			// 添加事件处理
 			if(item.listeners instanceof Object){
-				$.each(item.listeners,function(name,fn){
-					if(fn instanceof Function)
-						$field.on(name,fn);
-				});
+				
+				// 传递响应事件需要的参数
+				for(var key in item.listeners){
+					var fn = item.listeners[key];
+					if(fn instanceof Function){
+						
+						var options = {};
+						options.dialogId = formData.id;
+						options.name = item.name;
+						options.This = this;
+						options.fn = fn;
+						
+						$field.on(key,options,function(event){
+							var datas = event.data;
+							
+							if(datas.name.indexOf("EL-")==0){
+								datas.baseName = datas.name.substring(3);
+							}else{
+								datas.baseName = datas.name;
+							}
+							
+							// 数据来自baseName字段;
+							var nodeValue = $("#"+datas.dialogId).find("[name='"+datas.baseName+"']").val();
+							
+							datas.nodeData={};
+							if(datas.name.indexOf("EL-")==0){
+								if(nodeValue){
+									datas.nodeData.wfDatas = $.parseJSON(nodeValue);
+								}else{
+									datas.nodeData.wfDatas = {};
+								}
+							}else{
+								datas.nodeData = nodeValue;
+							}
+							
+							datas.fn.call(datas.This,datas);
+//							datas.This.fn(datas.dialogId, datas.focusId,datas.baseType, datas.nodeData, datas.parentId, datas.parentELName);
+						});
+					}
+				}
 			}
 		}
 	},
 	// 显示窗口,加载数据(参数:窗口ID,选中的节点/连线ID,基础节点类型,数据值)
-	showWindow : function(dialogId, focusId, baseNodeType, nodeData, parentId, parentBaseNode) {
-		this.loadPropertyData(dialogId, focusId, baseNodeType, nodeData, parentId, parentBaseNode);
+	showWindow : function(dialogId, focusId, baseNodeType, nodeData, parentId, parentELName) {
+		this.loadPropertyData(dialogId, focusId, baseNodeType, nodeData, parentId, parentELName);
 		$('#' + dialogId).dialog("open");
 	},
-	// 隐藏窗口
+	// 隐藏窗口,保存数据
 	hideWindow : function(dialogId) {
 		var dialog = $('#' + dialogId);
 		this.savePropertyData(dialogId);
@@ -127,7 +167,7 @@ $.extend(MyProperty.prototype, {
 	
 	// 数据操作----------------------------------------------------------------------------------
 	// 加载数据
-	loadPropertyData : function(dialogId, focusId, baseNodeType, nodeData, parentId, parentBaseNode) {
+	loadPropertyData : function(dialogId, focusId, baseNodeType, nodeData, parentId, parentELName) {
 		//dialogId不能为空,focusId可能为空
 		
 		// 若type为空,则为节点类型
@@ -157,7 +197,7 @@ $.extend(MyProperty.prototype, {
 		// 设置窗口运行时变量
 		formData['focusId'] = focusId;
 		formData['parentId'] = parentId;
-		formData['parentBaseNode'] = parentBaseNode;
+		formData['parentELName'] = parentELName;
 		
 		for(var i=0;i<items.length;i++){
 			if(!nodeData.wfDatas){
@@ -184,33 +224,34 @@ $.extend(MyProperty.prototype, {
 				}
 			}
 			
-			// 为子元素节点添加单击事件
-			if(name.indexOf("EL-")==0){
-				var xtype = name.substring(3);
-				if(!nodeData[xtype]){
-					nodeData[xtype] = {};
-				}
-				
-
-				var options = {};
-				options.nodeData = nodeData[xtype];
-				options.xtype = xtype
-				options.parentId = dialogId;
-				options.parentBaseNode = xtype;
-				options.dialogId = this.$dialogIds[xtype];
-				options.This = this;
-				
-				dialog.find("[name='"+name+"']").on("dblclick",options,function(event){
-					var datas = event.data;
-					var wfDatasStr = $("#"+datas.parentId).find("[name='"+datas.parentBaseNode+"']").val();
-					var wfDatas = {};
-					if(wfDatasStr){
-						wfDatas = $.parseJSON(wfDatasStr);
-					}
-					options.nodeData.wfDatas = wfDatas;
-					datas.This.showWindow(datas.dialogId, null,datas.xtype, options.nodeData, datas.parentId, datas.parentBaseNode);
-				});
-			}
+			// 为子元素节点添加事件:双击弹出属性窗口
+//			if(name.indexOf("EL-")==0){
+//				var childBaseType = name.substring(3);
+//				if(!nodeData[childBaseType]){
+//					nodeData[childBaseType] = {};
+//				}
+//				
+//				// 传递响应事件需要的参数
+//				var options = {};
+//				options.parentId = dialogId;
+//				options.parentELName = childBaseType;
+//				options.baseType = childBaseType;
+//				options.dialogId = this.$dialogIds[childBaseType];
+//				options.This = this;
+//				
+//				dialog.find("[name='"+name+"']").on("dblclick",options,function(event){
+//					var datas = event.data;
+//					// 弹出窗口的数据来自父窗口的parentELName字段;
+//					var wfDatasStr = $("#"+datas.parentId).find("[name='"+datas.parentELName+"']").val();
+//					var nodeData={};
+//					if(wfDatasStr){
+//						nodeData.wfDatas = $.parseJSON(wfDatasStr);
+//					}else{
+//						nodeData.wfDatas = {};
+//					}
+//					datas.This.showWindow(datas.dialogId, null,datas.baseType, nodeData, datas.parentId, datas.parentELName);
+//				});
+//			}
 		}
 	},
 	// 保存数据
@@ -219,8 +260,7 @@ $.extend(MyProperty.prototype, {
 		var baseType = this.$p.getBaseNodeType(dialogId);
 		var focusId = formData.focusId;
 		var parentId = formData.parentId;
-		var parentBaseNode = formData.parentBaseNode;
-		
+		var parentELName = formData.parentELName;
 		var items = formData.items;// 字段
 		
 		var baseNodeData ={};
@@ -228,36 +268,40 @@ $.extend(MyProperty.prototype, {
 			baseNodeData = this.$p.getBaseNodeData(focusId,baseType);
 		}
 		
+		
+		// 将控件内容保存至json对象中
 		var dialog = $('#'+dialogId);
-		for(var i=0;i<items.length;i++){
-			if(!baseNodeData.wfDatas){
-				baseNodeData.wfDatas={};
+		for (var i = 0; i < items.length; i++) {
+			if (!baseNodeData.wfDatas) {
+				baseNodeData.wfDatas = {};
 			}
 			var name = items[i].name;
-			
-			if(name.indexOf("EL-")==0){
-				// 字符串转json
-				name=name.substring(3);
-				var value = dialog.find("[name='"+name+"']").val();
-				if(value){
-					baseNodeData.wfDatas[name] = $.parseJSON(value);
-				}else{
-					baseNodeData.wfDatas[name]={};
-				}
-			}else{
-				baseNodeData.wfDatas[name]=dialog.find("[name='"+name+"']").val();
+
+			var flag =false;
+			if (name.indexOf("EL-") == 0) {
+				name = name.substring(3);
+				flag = true;
+			}
+						
+			var value = dialog.find("[name='" + name + "']").val();
+			if (value) {
+				baseNodeData.wfDatas[name] = flag ? $.parseJSON(value) : value;
+			} else {
+				delete baseNodeData.wfDatas[name];
 			}
 		}
 		
 		// 如果有父窗口,查找父窗口用于保存该字段的控件
 		// 转换为字符串保存
-		if (parentId && parentBaseNode) {
+		if (parentId && parentELName) {
 			var str = JSON.stringify(baseNodeData.wfDatas);
-			$('#' + parentId).find("[name='" + parentBaseNode + "']").val(str);
-			$('#' + parentId).find("[name='EL-" + parentBaseNode + "']").val(str);
-			alert($('#' + parentId).find("[name='" + parentBaseNode + "']"));
-		}else{
-			
+			$('#' + parentId).find("[name='" + parentELName + "']").val(str);
+			$('#' + parentId).find("[name='EL-" + parentELName + "']").val(str);
+		}
+		
+		// 刷新工作区
+		if(focusId){
+			this.refreshWorkArea(focusId, baseNodeData);
 		}
 	}
 });

@@ -68,6 +68,7 @@ $(document).ready(function() {
 			type = this.getNodeType(focusId);
 		}
 		var dialogId = this.getDialogId(type);
+		this.reloadWfData(focusId);
 		this.$wp.showWindow(dialogId, focusId, type);
 	};
 	demo.initDialogs(GlobalNS.formDatas);

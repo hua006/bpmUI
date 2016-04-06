@@ -5,6 +5,9 @@
 GlobalNS.formDatas={
 //	rootNodes:['start','end','task','decision','state','sub-process','fork','join','math','transition']
 };
+GlobalNS.fn={
+		
+}
 
 //GlobalNS.formDatas['demo']=(function(){
 //	var textChange = function(){
@@ -27,7 +30,39 @@ GlobalNS.formDatas={
 //		]
 //	}
 //})();
+
+/*
+ * 定义回调函数;
+ * 这里的this指MyProperty的一个实例对象;
+ * datas:{dialogId,baseName,focusId,nodeData}
+ * */
+GlobalNS.fn = {
+	'demo':function(datas){
+	},
+	'loadBaseNodeNames':function(datas){
+		var nodeDatas = this.$p.$nodeData;
+		var $field = $('#'+datas.dialogId).find("[name='"+datas.baseName+"']");
+		$field.empty();
+//		$field.remove();
+//		$("<option>请选择</option>").appendTo($field);
+		for(var key in nodeDatas){
+			$("<option>").val(key).text(nodeDatas[key].name).appendTo($field);
+		}
+	},
+	'openChildWindow':function(datas) {
+		var options = {};
+		options.dialogId = this.$formDatas[datas.baseName].id;
+		options.focusId = datas.focusId;
+		options.baseType = datas.baseName;
+		options.nodeData = datas.nodeData;
+		options.parentId = datas.dialogId;
+		options.parentELName = datas.baseName;
+		
+		this.showWindow(options.dialogId, options.focusId, options.baseType, options.nodeData, options.parentId, options.parentELName);
+	}
+};
 GlobalNS.formDatas['start']=(function(){
+	
 	return {
 		name:'start',
 		id:'dialog-start',
@@ -37,11 +72,16 @@ GlobalNS.formDatas['start']=(function(){
 		labelWidth: 150,
 		defaults: {width: 140},
 		cls:'',
+		buttons : {
+			'确定' : function() {
+				demo.$wp.hideWindow('dialog-start');
+			}
+		},
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
-			{xtype:'text',name:'EL-transition',text:'出口'},
-			{xtype:'text',name:'EL-on',text:'事件'}
+			{xtype:'textarea',name:'EL-transition',text:'出口',props:{readonly:true,rows:3},listeners:{'dblclick':GlobalNS.fn['openChildWindow']}},
+			{xtype:'text',name:'EL-on',text:'事件',listeners:{'dblclick':GlobalNS.fn['openChildWindow']}}
 		]
 	}
 })();
@@ -285,9 +325,9 @@ GlobalNS.formDatas['transition']=(function(){
 		defaults: {width: 140},
 		cls:'',
 		items:[
-			{xtype:'text',name:'name',text:'名称(default)'},
+			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
-			{xtype:'text',name:'to',text:'目的节点名称'},
+			{xtype:'select',name:'to',text:'目的节点名称',listeners:{'click':GlobalNS.fn['loadBaseNodeNames']}},
 			{xtype:'text',name:'EL-condition',text:'条件'},
 			{xtype:'text',name:'EL-event-listener',text:'自定义处理类'}
 		]
@@ -335,7 +375,7 @@ GlobalNS.formDatas['on']=(function(){
 		cls:'',
 		items:[
 			{xtype:'text',name:'event',text:'事件类型',items:[{name:'start',text:'start'},{name:'end',text:'end'},{name:'cancel',text:'cancel'},{name:'overTime',text:'overTime'}]},
-			{xtype:'text',name:'to',text:'目的节点名称'},
+			{xtype:'text',name:'to',text:'目的节点名称',listeners:{'click':GlobalNS.fn['loadBaseNodeNames']}},
 			{xtype:'text',name:'EL-event-listener',text:'自定义处理类'}
 		]
 	}
