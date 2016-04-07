@@ -852,6 +852,10 @@ GooFlow.prototype={
 	},
 	//把画好的整个流程图导出到一个变量中(其实也可以直接访问GooFlow对象的$nodeData,$lineData,$areaData这三个JSON属性)
 	exportData:function(){
+		for(var key in this.$nodeData){
+			this.reloadWfData(key);
+		}
+		
 		var ret={title:this.$title,nodes:this.$nodeData,lines:this.$lineData,areas:this.$areaData,initNum:this.$max};
 		for(var k1 in ret.nodes){
 			if(!ret.nodes[k1].marked){

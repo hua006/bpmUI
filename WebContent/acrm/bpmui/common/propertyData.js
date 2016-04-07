@@ -62,7 +62,38 @@ GlobalNS.fn = {
 	}
 };
 GlobalNS.formDatas['start']=(function(){
-	
+	var renderAdd = function(data) {
+//		var data = {
+//				dialogId : dialogId,	// 最父窗口ID
+//				itemName : name,		// grid面板名称
+//				record : obj,							// 记录
+//				idProperty: items[i].idProperty,		// 主键名称
+//				dataIndex : columns[i].dataIndex,		// 列名称 
+//				colIndex:i,								// 字段名称
+//				td:$td,									// 当前单元格
+//			};
+		
+		var $button = $('<a href="#">修改</a>').button().click(
+				{This:this,fn:GlobalNS.fn.openChildWindow,data:data},
+				function(event){
+					var datas = event.data.data;
+					var options = {};
+					options.dialogId = datas.dialogId;
+					options.baseType = datas.baseName;
+					options.nodeData = datas.nodeData;
+					options.parentId = datas.dialogId;
+					options.parentELName = datas.baseName;
+					GlobalNS.fn.openChildWindow.call(This,options);
+				}
+		).appendTo(data.td);
+		var $button = $('<a href="#">删除</a>').button().click(
+				{This:this,fn:GlobalNS.fn.openChildWindow,data:data},
+				function(event){
+					event.data.fn.call(This,event.data.data);
+				}
+			).appendTo(data.td);
+//		return formatStr('<a href="#" onclick="GlobalNS.fn.openChildWindow()">新增</a>', value);
+	};
 	return {
 		name:'start',
 		id:'dialog-start',
@@ -80,7 +111,15 @@ GlobalNS.formDatas['start']=(function(){
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
-			{xtype:'textarea',name:'EL-transition',text:'出口',props:{readonly:true,rows:3},listeners:{'dblclick':GlobalNS.fn['openChildWindow']}},
+			{xtype:'grid',name:'EL-transition',text:'出口',idProperty:'name',
+				tbar:[{text:'新增',fn:GlobalNS.fn['addChildWindow'],name:'add',data:{foo:'foo'}}],// 作用域:属性窗口;顶部工具栏
+				columns:[
+					{header: "名称",dataIndex: 'name'},
+					{header: "目的节点",dataIndex: 'to'},
+					{header: "操作",renderer: this.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
+				],
+//				items:[],
+				props:{readonly:true,rows:3},listeners:{'dblclick':GlobalNS.fn['openChildWindow']}},
 			{xtype:'text',name:'EL-on',text:'事件',listeners:{'dblclick':GlobalNS.fn['openChildWindow']}}
 		]
 	}

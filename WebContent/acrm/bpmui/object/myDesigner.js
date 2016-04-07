@@ -79,15 +79,15 @@ $.extend(MyDesigner.prototype, {
 	},
 	// 场景:工作区;更新节点的工作流信息;this.$lineData
 	reloadWfData : function(nodeId) {
-		var nodeData = this.$nodeData[focusId];
+		var nodeData = this.$nodeData[nodeId];
 		var lineDataMap = this.$lineData;
 		nodeData.wfDatas = nodeData.wfDatas || {};
 		var data = nodeData.wfDatas;
 		data.name = data.name||nodeId;
 		data.text = data.text||nodeData.name;
 		data.nodeType = data.text||nodeData.type;
-		data.transitions = data.transitions || [];
-		this.reloadTransitions(nodeId, data.transitions, lineDataMap);
+		data.transition = data.transition || [];
+		this.reloadTransitions(nodeId, data.transition, lineDataMap);
 	},
 	// 场景:工作区;修改属性信息,重新加载工作区
 	refreshWorkArea : function(nodeId, nodeData) {
@@ -99,7 +99,7 @@ $.extend(MyDesigner.prototype, {
 		// 修改节点名称
 		this.setName(nodeId, nodeData.name, 'node');
 		// 增加线段
-		var transitions = data.transitions
+		var transitions = data.transition;
 		if(transitions){
 			var trans = {};//{'demo_node_2':{name:'toAccept',condition:{expr:'#{task.accept.CONSULT_TYPE} equal "01"'},to:'demo_node_2'}}
 			for (var i = 0; i < transitions.length; i++) {
@@ -111,7 +111,7 @@ $.extend(MyDesigner.prototype, {
 				if(trans[transitions[i].to]){
 					continue;
 				}else{
-					trans[to] = transitions[i];
+					trans[transitions[i].to] = transitions[i];
 				}
 			}
 			

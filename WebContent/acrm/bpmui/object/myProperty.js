@@ -87,6 +87,36 @@ $.extend(MyProperty.prototype, {
 					html += formatStr("<input type='" + item.xtype + "' name='" + item.name + "' value='{name}'>{text}</input>", item.items[i]);
 				}
 			}
+		}else if (item.xtype == 'grid') {
+			var $table = $("<table width='100%' class='table-"+item.name+"'></table>").appendTo($td2);
+			var columns = item.columns||[];
+			var cols = columns.length;
+			
+			// 添加tbar
+			if(item.tbar){
+				var $tbar = $(formatStr('<td colspan={cols}></td>',cols));
+				$('<tr></tr>').appendTo($table).append($tbar);
+				for (var i = 0; i < item.tbar.length; i++) {
+					var button =item.tbar[i];
+					button.data = $.extend(button.data||{}, {
+						dialogId : formData.id,
+						itemName : item.name,
+						buttonName : button.name
+					});
+					var $button = $(formatStr('<a href="#">{text}</a>',button.text||'提交')).button().click(
+						{This:this,fn:button.fn,data:button.data},
+						function(event){
+							event.data.fn.call(This,event.data.data);
+						}
+					).appendTo($tbar);
+				}
+			}
+			
+			// 添加表头
+			var $tr = $("<tr></tr>").appendTo($table);
+			for (var i = 0; i < columns.length; i++) {
+				$('<td/>').text(columns[i].header).appendTo($tr);
+			}
 		}
 		
 		// 对于子元素,添加一个隐藏域,用来保存真正的值
@@ -178,7 +208,7 @@ $.extend(MyProperty.prototype, {
 			baseNodeType = nodeData.type;
 		} else if (!nodeData) {
 			
-			// 若type不为空,切nodeData为空,则根据type类型获取数据信息
+			// 若type不为空,且nodeData为空,则根据type类型获取数据信息
 			if (baseNodeType == 'transition') {
 				nodeData = this.$p.$lineData[focusId];
 			} else {
@@ -217,41 +247,43 @@ $.extend(MyProperty.prototype, {
 				if(value){
 					dialog.find("[name='"+name+"'][value='"+value+"']").attr("checked","true");
 				}
+			}if(xtype=='grid'){
+				// 渲染grid表格
+				var $table = dialog.find("'.table-" + name + "'");
+				value = nodeData.wfDatas[name.substring(3)]||[];
+				var columns=items[i].columns||[];
+				for (var i = 0; i < value.length; i++) {
+					var obj=value[i];
+					var $tr = $('<tr class=tr-"' + (value[items[i].idProperty]) + '"/>').appendTo($table);
+					for(var j=0;j<columns.length;j++){
+						var $td = $('<td/>').appendTo($tr);
+						var text = null;
+						if (columns[i].dataIndex) {
+							text = obj[columns[i].dataIndex];
+						}
+						if(columns[i].renderer){
+							var data = {
+								dialogId : dialogId,	// 最父窗口ID
+								itemName : name,		// grid面板名称
+								record : obj,							// 记录
+								idProperty: items[i].idProperty,		// 主键名称
+								dataIndex : columns[i].dataIndex,		// 列名称 
+								colIndex:i,								// 字段名称
+								td:$td,									// 当前单元格
+							};
+							text = columns[i].renderer.call(this,data);
+						}
+						if(text){
+							$td.text(text);
+						}
+					}
+				}
 			}else{
 				dialog.find("[name='"+name+"']").val(value);
 				if(name.indexOf("EL-")==0){
 					dialog.find("[name='"+name.substring(3)+"']").val(value);
 				}
 			}
-			
-			// 为子元素节点添加事件:双击弹出属性窗口
-//			if(name.indexOf("EL-")==0){
-//				var childBaseType = name.substring(3);
-//				if(!nodeData[childBaseType]){
-//					nodeData[childBaseType] = {};
-//				}
-//				
-//				// 传递响应事件需要的参数
-//				var options = {};
-//				options.parentId = dialogId;
-//				options.parentELName = childBaseType;
-//				options.baseType = childBaseType;
-//				options.dialogId = this.$dialogIds[childBaseType];
-//				options.This = this;
-//				
-//				dialog.find("[name='"+name+"']").on("dblclick",options,function(event){
-//					var datas = event.data;
-//					// 弹出窗口的数据来自父窗口的parentELName字段;
-//					var wfDatasStr = $("#"+datas.parentId).find("[name='"+datas.parentELName+"']").val();
-//					var nodeData={};
-//					if(wfDatasStr){
-//						nodeData.wfDatas = $.parseJSON(wfDatasStr);
-//					}else{
-//						nodeData.wfDatas = {};
-//					}
-//					datas.This.showWindow(datas.dialogId, null,datas.baseType, nodeData, datas.parentId, datas.parentELName);
-//				});
-//			}
 		}
 	},
 	// 保存数据
@@ -301,7 +333,7 @@ $.extend(MyProperty.prototype, {
 		
 		// 刷新工作区
 		if(focusId){
-			this.refreshWorkArea(focusId, baseNodeData);
+			this.$p.refreshWorkArea(focusId, baseNodeData);
 		}
 	}
 });

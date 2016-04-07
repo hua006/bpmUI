@@ -450,7 +450,7 @@ jsondata = {
 jsondata = {
 	'title' : 'demo流程',
 	'nodes' : {
-		'demo_node_1' : {			
+		'demo_node_1' : {
 			'name' : '开始',			// 节点显示名称(同wfDatas.text)	
 			'left' : 66,
 			'top' : 150,
@@ -463,12 +463,12 @@ jsondata = {
 				text:'开始',			// 工作流节点显示名称(text)
 				nodeType:'start',	// 工作流节点类型
 				pos:'10,10',		// 节点坐标
-				transitions :[{name:'toAccept',condition:{expr:'#{task.accept.CONSULT_TYPE} equal "01"'},to:'demo_node_2'},
+				transition :[{name:'toAccept',condition:{expr:'#{task.accept.CONSULT_TYPE} equal "01"'},to:'demo_node_2'},
 				              {name:'default',to:'demo_node_2'}],
 									// 工作流跳转
-				ons:[{event:'start','event-listener':['com.arvato.ext.ca.custom.CancelUnlineProc']}],
+				on:[{event:'start','event-listener':['com.arvato.ext.ca.custom.CancelUnlineProc']}],
 									// event-事件:start/end/cancel/overTime
-				variables:[{name:'userID','text':'客户名称',showType:'number',access:'write',maxLen:19,validateMethod:'show'}]
+				variable:[{name:'userID','text':'客户名称',showType:'number',access:'write',maxLen:19,validateMethod:'show'}]
 									// 字段信息
 			},
 			'alt' : true
@@ -516,7 +516,7 @@ jsondata = {
 			'type' : 'sl',
 			'from' : 'demo_node_2',
 			'to' : 'demo_node_3',
-			points:[{x:100,y:0},{x:100,y:200}],
+			point:[{x:100,y:0},{x:100,y:200}],
 			'name' : ''
 		}
 	},
