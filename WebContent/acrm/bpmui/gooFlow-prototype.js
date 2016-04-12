@@ -691,7 +691,10 @@ GooFlow.prototype={
 		var oldName;
 		if(type=="node"){//如果是结点
 			if(!this.$nodeData[id])	return;
-			if(this.$nodeData[id].name==name)	return;
+			if(this.$nodeData[id].name==name){
+				$('#'+id).find('table').attr('title',name);// 修改title显示
+				return;
+			}
 			if(this.onItemRename!=null&&!this.onItemRename(id,name,"node"))	return;
 			oldName=this.$nodeData[id].name;
 			this.$nodeData[id].name=name;

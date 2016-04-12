@@ -122,8 +122,6 @@ function formatStr(str) {
 		var reg = /{(\d+)}/gm;
 		json = arguments;
 		retStr = str.replace(reg, function(match, name) {
-			alert(~~name+1);
-			alert(json[~~name+1]);
 			return json[~~name+1];
 		});
 	}

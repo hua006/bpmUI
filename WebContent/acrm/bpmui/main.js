@@ -54,7 +54,7 @@ var remark = {
 	math : "计算结点",
 	define : "赋值结点"
 };
-var demo;
+var demo; // 设计器对象
 $(document).ready(function() {
 	demo = $.createGooFlow($("#demo"), property);
 	demo.setNodeRemarks(remark);
@@ -64,12 +64,25 @@ $(document).ready(function() {
 	};
 	demo.loadData(jsondata);
 	demo.onItemDblClick = function(focusId,type){
-		if(!type){
-			type = this.getNodeType(focusId);
+		var baseType = type;
+		if (type == 'line') {
+			baseType == 'transition';
+		} else {
+			baseType = this.getNodeType(focusId);
+			
+			// 更新节点工作流属性
+			this.reloadWfData(focusId);
 		}
-		var dialogId = this.getDialogId(type);
-		this.reloadWfData(focusId);
-		this.$wp.showWindow(dialogId, focusId, type);
+		if(!baseType){
+			return;
+		}
+
+		var nodeData = this.getBaseNodeData(focusId, baseType);
+		var window = this.getPropWindow(baseType);
+		if(!window){
+			alert('get window error:'+baseType);
+		}
+		window.showWindow(focusId, nodeData);
 	};
 	demo.initDialogs(GlobalNS.formDatas);
 	

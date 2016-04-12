@@ -2,6 +2,10 @@
 <%
 	long l = System.currentTimeMillis();
 	String s = "?num=" + l;
+	String flag =request.getParameter("flag");
+	if("false".equals(flag)){
+		s="";
+	}
 %>
 <html>
 <head>
@@ -23,8 +27,8 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/node.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/line.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/area.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myDesigner.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myProperty.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myDesigner.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myProperty.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/initData.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/func.js<%=s%>"></script>
@@ -35,7 +39,8 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/main.js<%=s%>"></script>
 </head>
 <body>                         
-	<a href='/bpmUI/?<%=s%>'>刷新<a>
+	<a href='/bpmUI/?num=<%=System.currentTimeMillis()%>'>强制刷新<a>
+	<a href='/bpmUI/?flag=false'>刷新<a>
 	<div id="demo" style="margin: 10px"></div>
 	<input id="submit" type="button" value='导出结果' onclick="Export()" />
 	<textarea id="result" row="6"></textarea>
