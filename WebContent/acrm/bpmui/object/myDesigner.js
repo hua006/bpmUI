@@ -66,7 +66,7 @@ $.extend(MyDesigner.prototype, {
 		var data = nodeData.wfDatas;
 		data.name = data.name||nodeId;
 		data.text = data.text||nodeData.name;
-		data.nodeType = data.text||nodeData.type;
+		data.nodeType = nodeData.type;
 		data.transition = data.transition || [];
 		this.reloadTransitions(nodeId, data.transition, lineDataMap);
 	},
@@ -74,8 +74,7 @@ $.extend(MyDesigner.prototype, {
 	refreshWorkArea : function(nodeId, nodeData) {
 		nodeData.wfDatas = nodeData.wfDatas || {};
 		var data = nodeData.wfDatas;
-		nodeData.name = data.text || nodeData.name;
-		nodeData.type = data.type|| nodeData.type;
+		nodeData.name = data.text || data.name;
 		
 		// 修改节点名称
 		this.setName(nodeId, nodeData.name, 'node');

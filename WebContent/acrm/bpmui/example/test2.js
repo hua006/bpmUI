@@ -124,10 +124,10 @@ GlobalNS.formDatas['state']=(function(){
 		]
 	}
 })();
-GlobalNS.formDatas['subprocess']=(function(){
+GlobalNS.formDatas['sub-process']=(function(){
 	return {
-		name:'subprocess',
-		id:'dialog-subprocess',
+		name:'sub-process',
+		id:'dialog-sub-process',
 		title:'子流程',
 		width:400,
 		height:400,
@@ -137,7 +137,7 @@ GlobalNS.formDatas['subprocess']=(function(){
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
-			{xtype:'text',name:'subprocess-key',text:'子流程名称'},
+			{xtype:'text',name:'sub-process-key',text:'子流程名称'},
 			{xtype:'text',name:'startNode',text:'子流程开始节点名称'},
 			{xtype:'text',name:'EL-transition',text:'出口'},
 			{xtype:'text',name:'EL-parameter-in',text:'入口字段'},

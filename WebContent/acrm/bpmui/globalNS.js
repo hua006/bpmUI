@@ -1,7 +1,7 @@
 // 一个全局命名空间,避免参数命名时冲突
 var GlobalNS={};
 GlobalNS.formDatas={
-//		rootNodes:['start','end','task','decision','state','subprocess','fork','join','math','transition']
+//		rootNodes:['start','end','task','decision','state','sub-process','fork','join','math','transition']
 	};
 GlobalNS.options={
 	showType:[

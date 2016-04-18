@@ -50,7 +50,7 @@ function GooFlow(bgDiv,property){
 	this.$title = "newFlow_1";			// 流程图的名称
 	this.$nodeRemark = {};				// 每一种结点或按钮的说明文字,JSON格式,key为类名,value为用户自定义文字说明
 	this.$nowType = "cursor";			// 当前要绘制的对象类型:cursor,mutiselect,direct;
-										// start,end,task,decision,state,subprocess,fork,join,math,define;group;
+										// start,end,task,decision,state,sub-process,fork,join,math,define;group;
 	this.$lineData = {};
 	this.$lineCount = 0;
 	this.$nodeData = {};

@@ -8,8 +8,8 @@ import com.arvato.acrm.commons.util.Tools;
 public class Position {
 	private int left = 0;		// 左边距
 	private int top = 0;		// 上边距
-	private int x = 80;			// x轴偏移量
-	private int y = 80;			// y轴偏移量
+	private int x = 120;			// x轴偏移量
+	private int y = 120;			// y轴偏移量
 	private int width = 1000;	// 画布宽度
 	private int height = 1000;	// 画布高度
 
@@ -54,6 +54,9 @@ public class Position {
 	 * @return
 	 */
 	public int getTop() {
+		if (top < 10) {
+			top = 10;
+		}
 		if (top + y > height) {
 			top -= y;
 		}

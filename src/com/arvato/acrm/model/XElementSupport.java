@@ -17,6 +17,8 @@ public class XElementSupport {
 
 	private static List<String> arrays = new ArrayList<String>();
 	private static List<String> nodes = new ArrayList<String>();
+	
+	private static Map<String,String> attrNames = new HashMap<String,String>();
 	static {
 		arrays.add("transition");
 		arrays.add("event-listener");
@@ -24,7 +26,7 @@ public class XElementSupport {
 		arrays.add("item");
 		arrays.add("on");
 
-		// start,end,task,decision,state,subprocess,fork,join,math,define;group;
+		// start,end,task,decision,state,sub-process,fork,join,math,define;group;
 		nodes.add("");
 		nodes.add("");
 		nodes.add("");
@@ -37,6 +39,9 @@ public class XElementSupport {
 		nodes.add("");
 		nodes.add("");
 		nodes.add("");
+		
+		// 工作流文件中的元素节点与属性名有重复的情况,需要对元素名称进行重命名;
+		attrNames.put("variable", "ATTR-variable");
 	}
 	
 	/**
@@ -72,13 +77,14 @@ public class XElementSupport {
 		Map<String, XElement> map = new HashMap<String, XElement>();
 		for (Iterator it = element.elementIterator(); it.hasNext();) {
 			Element e = (Element) it.next();
-			if (arrays.contains(e.getName())) {
-				childArray = map.get(e.getName());
+			String childName = e.getName();
+			if (arrays.contains(childName)) {
+				childArray = map.get(childName);
 				if (childArray == null) {
-					childArray = new XElement(e.getName(), "");
+					childArray = new XElement(childName, "");
 					parent.addChild(childArray);
 
-					map.put(e.getName(), childArray);
+					map.put(childName, childArray);
 					childArray.setType(1);
 				}
 				childArray.addChild(readElement(e));
@@ -97,7 +103,7 @@ public class XElementSupport {
 		List<XElement> list = new ArrayList<XElement>();
 		for (Iterator it = element.attributeIterator(); it.hasNext();) {
 			Attribute attribute = (Attribute) it.next();
-			list.add(new XElement(attribute.getName(), attribute.getText()));
+			list.add(new XElement(getAttributeName(attribute.getName()), attribute.getText()));
 		}
 		return list;
 	}
@@ -170,5 +176,26 @@ public class XElementSupport {
 				getChildAll(child, name, resultList);
 			}
 		}
+	}
+	
+	/**
+	 * 元素节点与属性名称有重复的情况,需要区分:解析元素的时候将元素名称重命名
+	 * @param name
+	 * @return
+	 */
+	public static String getAttributeName(String name){
+		if(attrNames.containsKey(name)){
+			return attrNames.get(name);
+		}
+		return name;
+	}
+
+	public static String getName(String attributeName) {
+		for (Entry<String, String> entry : attrNames.entrySet()) {
+			if (entry.getValue().equals(attributeName)) {
+				return entry.getKey();
+			}
+		}
+		return attributeName;
 	}
 }

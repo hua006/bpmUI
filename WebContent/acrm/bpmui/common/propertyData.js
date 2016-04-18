@@ -103,16 +103,16 @@ GlobalNS.formDatas['state']=(function(){
 		]
 	}
 })();
-GlobalNS.formDatas['subprocess']=(function(){
+GlobalNS.formDatas['sub-process']=(function(){
 	return {
-		name:'subprocess',
-		id:'dialog-subprocess',
+		name:'sub-process',
+		id:'dialog-sub-process',
 		title:'子流程',
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
-			{xtype:'text',name:'subprocess-key',text:'子流程名称'},
+			{xtype:'text',name:'sub-process-key',text:'子流程名称'},
 			{xtype:'text',name:'startNode',text:'子流程开始节点名称'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'text',name:'parameter-in',text:'入口字段'},
@@ -159,7 +159,7 @@ GlobalNS.formDatas['math']=(function(){
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
-			{xtype:'text',name:'variable',text:'变量名称'},
+			{xtype:'text',name:'ATTR-variable',text:'变量名称'},
 			{xtype:'select',name:'operator',text:'运算符',items:[{name:'add',text:'add'},{name:'sub',text:'sub'},{name:'mul',text:'mul'},{name:'div',text:'div'},{name:'mod',text:'mod'}]},
 			{xtype:'text',name:'value',text:'操作值'},
 			{xtype:'select',name:'unit',text:'操作单位',items:[{name:'month',text:'月'},{name:'day',text:'天'},{name:'hour',text:'小时'},{name:'minute',text:'分钟'},{name:'second',text:'秒'},{name:'workday',text:'工作日(结合配置表TBL_CONFIG_HOLIDAY计算工作日)'},{name:'workhour',text:'工作小时'}]},
@@ -251,7 +251,7 @@ GlobalNS.formDatas['transition']=(function(){
 	return {
 		name:'transition',
 		id:'dialog-transition',
-		idField:'name',
+		idField:'to',
 		title:'出口',
 		width:400,
 		height:400,

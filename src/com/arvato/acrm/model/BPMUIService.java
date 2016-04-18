@@ -50,15 +50,15 @@ public class BPMUIService {
 	private String getJsonData(String processName,String processDesc,Map<String, XElement> nodeMap,Map<String, XElement>  connMap){
 		
 		// 生成json数据
-		Map<String,String> nodeJsonMap = new HashMap<String,String>();
+		Map<String,Object> nodeJsonMap = new HashMap<String,Object>();
 		for(Map.Entry<String,XElement> entry: nodeMap.entrySet()){
-			String valueJson = entry.getValue().toJson();
+			Object valueJson = entry.getValue().toJson();
 			nodeJsonMap.put(entry.getKey(), valueJson);
 		}
 		
-		Map<String,String> lineJsonMap = new HashMap<String,String>();
+		Map<String,Object> lineJsonMap = new HashMap<String,Object>();
 		for(Map.Entry<String,XElement> entry: connMap.entrySet()){
-			String valueJson = entry.getValue().toJson();
+			Object valueJson = entry.getValue().toJson();
 			lineJsonMap.put(entry.getKey(), valueJson);
 		}
 		
@@ -127,11 +127,11 @@ public class BPMUIService {
 			// 工作流设计器节点属性信息
 			XElement xe = new XElement(nodeId, "");
 			xe.addChild(new XElement("name", text));
-			xe.addChild(new XElement("left", "" + p.getLeft(pos)));
-			xe.addChild(new XElement("top", "" + p.getTop()));
+			xe.addChild(new XElement("left", p.getLeft(pos)));
+			xe.addChild(new XElement("top", p.getTop()));
 			xe.addChild(new XElement("type", nodeName));
-			xe.addChild(new XElement("width", "64"));
-			xe.addChild(new XElement("height", "64"));
+			xe.addChild(new XElement("width", 32));
+			xe.addChild(new XElement("height", 32));
 			
 			// 读取元素信息,并将元素名称修改为wfDatas
 			XElement wf = support.readElement(element);
@@ -147,7 +147,7 @@ public class BPMUIService {
 	}
 	
 	/**
-	 * 获取连线信息
+	 * 获取连线信息6
 	 * @param nodeMap
 	 * @param keyMap
 	 * @param idBean
@@ -181,7 +181,7 @@ public class BPMUIService {
 			XElement nameElement = support.getChild(transitionNode, "name");
 			String name = "";
 			if (nameElement != null) {
-				name = nameElement.getValue();
+				name = Tools.trimToEmpty(nameElement.getValue());
 			}
 			
 			// 出口节点
@@ -199,11 +199,11 @@ public class BPMUIService {
 			if (childFrom == null) {
 				continue;
 			}
-			String fromNodeName = childFrom.getValue();
+			String fromNodeName = Tools.trimToEmpty(childFrom.getValue());
 
 			// 得到连线起止节点的ID
 			String from = keyMap.get(fromNodeName);
-			String to = childTo.getValue();
+			String to = Tools.trimToEmpty(childTo.getValue());
 
 			// 生成连线;
 			if (from.equals(to)) { // 入口节点=出口节点,不用画线
@@ -269,7 +269,7 @@ public class BPMUIService {
 			for (XElement element : destNodeList) {
 				
 				// 修改引用的节点名称为节点id
-				String value = element.getValue();
+				String value = Tools.trimToEmpty(element.getValue());
 				if (Tools.isBlank(value)) {
 					continue;
 				}
@@ -308,7 +308,7 @@ public class BPMUIService {
 		}
 		List<XElement> positionList = support.getChildList(element, positionName);
 		for (XElement positionNode : positionList) {
-			String pos = positionNode.getValue();
+			String pos = Tools.trimToEmpty(positionNode.getValue());
 			if (!Tools.isBlank(pos)) {
 				String[] array = pos.split(",");
 				if (array != null && array.length == 2) {
@@ -319,7 +319,7 @@ public class BPMUIService {
 		return list;
 	}
 	public static void main(String[] args) {
-		String fileName = "C:\\Users\\hua006\\Desktop\\workflow\\consultNew2.xml";
+		String fileName = "C:\\Users\\hua006\\Desktop\\workflow\\consultNew.xml";
 		BPMUIService s =new BPMUIService();
 		try {
 			s.readWorkFlow(fileName);

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.arvato.acrm.commons.util.Tools;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -13,7 +13,7 @@ import net.sf.json.JSONObject;
 public class XElement {
 	private XElement parent;
 	private String name;
-	private String value;
+	private Object value;
 	
 	/**
 	 * 类型,若为1则children中的元素在转换为json格式时应转为数组格式;
@@ -23,7 +23,7 @@ public class XElement {
 	private int type;
 	private List<XElement> children;
 	
-	public XElement(String name, String value) {
+	public XElement(String name, Object value) {
 		super();
 		this.name = name;
 		this.value = value;
@@ -37,10 +37,10 @@ public class XElement {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getValue() {
+	public Object getValue() {
 		return value;
 	}
-	public void setValue(String value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 	public List<XElement> getChildren() {
@@ -85,37 +85,43 @@ public class XElement {
 		this.parent = parent;
 	}
 	
+	private Object getJsonValue(){
+		Object json = value;
+		if (this.getType() == 1) {
+			json= "[]";
+		}else if (this.getType() == 2) {
+			json= "{}";
+		} else if (value == null){
+			json = "";
+		}
+		return json;
+	}
+	
 	/**
 	 * 将元素转换为json格式的字符串
 	 * @return
 	 */
-	public String toJson(){
-		Map<String,String>  map = new HashMap<String,String>();
-		String str="";
+	public Object toJson(){
+		Map<String,Object>  map = new HashMap<String,Object>();
+		Object json="";
 		if (this.getChildren() == null || this.getChildren().size() == 0) {
-			if (this.getType() == 1) {
-				str= "[]";
-			}else if (this.getType() == 2) {
-				str= "{}";
-			} else {
-				str = Tools.trimToEmpty(value);
-			}
+			json= getJsonValue();
 		} else {
 			if (this.getType() == 1) {
-				List<String>  m = new ArrayList<String>();
+				List<Object>  m = new ArrayList<Object>();
 				for (XElement child : children) {
 					m.add(child.toJson());
 				}
-				str = JSONArray.fromCollection(m).toString();
+				json = JSONArray.fromCollection(m).toString();
 			}else{
-				Map<String,String>  m = new HashMap<String,String>();
+				Map<String,Object>  m = new HashMap<String,Object>();
 				for (XElement child : children) {
 					m.put(child.getName(), child.toJson());
 				}
-				str = JSONObject.fromBean(m).toString();
+				json = JSONObject.fromBean(m).toString();
 			}
 		}
-		return str;
+		return json;
 	}
 	
 	public static void main(String[] args) {

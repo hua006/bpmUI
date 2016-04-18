@@ -151,7 +151,7 @@ var s = {
 			"name" : "node_9",
 			"left" : 330,
 			"top" : 291,
-			"type" : "subprocess",
+			"type" : "sub-process",
 			"width" : 64,
 			"height" : 64,
 			"alt" : true,

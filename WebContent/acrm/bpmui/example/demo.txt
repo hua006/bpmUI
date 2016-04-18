@@ -26,7 +26,7 @@
 //		task:"&#xe67c;",
 //		decision:"&#xe614;",
 //		state:"&#xe66d;",
-//		"subprocess":"&#xe64a;",
+//		"sub-process":"&#xe64a;",
 //		fork:"&#xe650;",
 //		join:"&#xe650;",
 //		math:"&#xe619;",
@@ -42,7 +42,7 @@ var remark = {
 	"task" : "任务结点",
 	decision : "判断结点",
 	state : "状态结点",
-	subprocess : "子流程",
+	sub-process : "子流程",
 	fork : "分支结点",
 	"join" : "聚合结点",
 	math : "计算结点",
@@ -54,7 +54,7 @@ var remark = {
 	this.$title = "newFlow_1";			// 流程图的名称
 	this.$nodeRemark = {};				// 每一种结点或按钮的说明文字,JSON格式,key为类名,value为用户自定义文字说明
 	this.$nowType = "cursor";			// 当前要绘制的对象类型:cursor,mutiselect,direct;
-										// start,end,task,decision,state,subprocess,fork,join,math,define;group;
+										// start,end,task,decision,state,sub-process,fork,join,math,define;group;
 	this.$lineData = {};
 	this.$lineCount = 0;
 	this.$nodeData = {};
