@@ -132,9 +132,12 @@ public class BPMUIService {
 			xe.addChild(new XElement("type", nodeName));
 			xe.addChild(new XElement("width", "64"));
 			xe.addChild(new XElement("height", "64"));
-			XElement wf = new XElement("wfDatas", "");
+			
+			// 读取元素信息,并将元素名称修改为wfDatas
+			XElement wf = support.readElement(element);
 			wf.setType(2);
-			support.readChildAll(wf,element);
+			wf.setName("wfDatas");
+			
 			xe.addChild(wf);
 			nodeMap.put(nodeId, xe);
 			keyMap.put(name, nodeId);
@@ -316,7 +319,7 @@ public class BPMUIService {
 		return list;
 	}
 	public static void main(String[] args) {
-		String fileName = "C:\\Users\\hua006\\Desktop\\workflow\\consultNew.xml";
+		String fileName = "C:\\Users\\hua006\\Desktop\\workflow\\consultNew2.xml";
 		BPMUIService s =new BPMUIService();
 		try {
 			s.readWorkFlow(fileName);

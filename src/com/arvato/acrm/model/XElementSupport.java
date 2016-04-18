@@ -40,14 +40,35 @@ public class XElementSupport {
 	}
 	
 	/**
+	 * 读取子元素及后代元素:
+	 * 包括元素名称,取值,属性,子元素
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public XElement readElement(Element element) {
+		
+		// 创建XElement对象
+		XElement xe = new XElement(element.getName(), element.getText());
+		
+		// 读取属性
+		xe.addChildren(readAttribute(element));
+		
+		// 读取子元素
+		readChildElement(xe, element);
+		return xe;
+	}
+	
+	/**
 	 * 读取子元素及后代元素;
 	 * 这里直接使用element.addChildren方法,是为了在设置子元素时,同时将子元素的父元素指向自己
 	 * @param parent
 	 * @param element
 	 */
-	public void readChildAll(XElement parent, Element element) {
-		// 读取元素的子元素
-		XElement childArray = null;
+	private void readChildElement(XElement parent, Element element) {
+		
+		// 读取元素的子元素,需区分子元素时是对象类型还是数组类型
+		XElement childArray = null;		// 若可包含多个元素,则需增加一个元素并标记数据类型为数组;
 		Map<String, XElement> map = new HashMap<String, XElement>();
 		for (Iterator it = element.elementIterator(); it.hasNext();) {
 			Element e = (Element) it.next();
@@ -60,39 +81,13 @@ public class XElementSupport {
 					map.put(e.getName(), childArray);
 					childArray.setType(1);
 				}
-				childArray.addChildren(readElement(e));
+				childArray.addChild(readElement(e));
 			} else {
-				parent.addChildren(readElement(e));
+				parent.addChild(readElement(e));
 			}
 		}
 	}
 	
-	/**
-	 * 读取子元素及后代元素:
-	 * 包括元素名称,取值,属性,子元素
-	 * 
-	 * @param element
-	 * @return
-	 */
-	private List<XElement> readElement(Element element) {
-		List<XElement> list = new ArrayList<XElement>();
-		for (Iterator it = element.elementIterator(); it.hasNext();) {
-			Element e = (Element) it.next();
-
-			// 读取元素名称&值
-			XElement xe = new XElement(e.getName(), e.getText());
-
-			// 读取元素属性
-			xe.addChildren(readAttribute(e));
-
-			// 读取元素子元素
-			readChildAll(xe, e);
-
-			list.add(xe);
-		}
-		return list;
-	}
-
 	/**
 	 * 读取元素属性
 	 * @param element

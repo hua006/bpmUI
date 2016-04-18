@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE web-app[
+ 	<!ENTITY acrm_servlet SYSTEM  "acrm_servlet.xml">
+]>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
@@ -68,6 +71,12 @@
 	</filter-mapping>
 	<!--end StaticResourceFilter-->
 	
+	<!-- ContextConfigLocation -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:conf/application.cfg.xml</param-value>
+	</context-param>
+	
 	<!-- Listener contextConfigLocation -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -83,8 +92,4 @@
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
 	<!-- end log4j -->
-	
-	<listener>
-		<listener-class>com.arvato.acrm.application.SessionListener</listener-class>
-	</listener>
 </web-app>

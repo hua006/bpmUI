@@ -11,9 +11,9 @@ public class NodeIDBean {
 		super();
 	}
 	public String getNodeID(){
-		return processKey+ "NODE" + (index++);
+		return processKey+ "-NODE-" + (index++);
 	}
 	public String getLineID(){
-		return processKey+ "LINE" + (index++);
+		return processKey+ "-LINE-" + (index++);
 	}
 }

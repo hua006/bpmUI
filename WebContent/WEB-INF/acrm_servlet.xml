@@ -1,18 +1,3 @@
-	<!-- application init -->
-	<servlet>
-		<servlet-name>Application-init</servlet-name>
-		<servlet-class>com.arvato.acrm.application.ApplicationInit</servlet-class>
-		<init-param>
-			<param-name>language</param-name>
-			<param-value>zh</param-value>
-		</init-param>
-		<init-param>
-			<param-name>country</param-name>
-			<param-value>CN</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<!--end application init-->
 
 	<!-- file upload -->
 	<servlet>
