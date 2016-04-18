@@ -70,20 +70,22 @@ $.extend(MyProperty.prototype, {
 		var $form = $("<form/>").appendTo($parent).attr('name','form-'+formData.name)
 			.attr('action',formData.action||'#').attr('method',formData.method||'get');
 		
-		var $table = $("<table width='100%'></table>").appendTo($form).attr('width',formData.width);
+		var $table = $("<div width='100%' class='table-form'></div>").appendTo($form).attr('width',formData.width);
 		if(!formData.items){
 			alert(formData);
 		}
 		for (var i = 0; i < formData.items.length; i++) {
-			var $tr = $("<tr></tr>").appendTo($table);
+			var $tr = $("<div class='x-form-item'></div>").appendTo($table);
 			this.appendField($tr, formData.items[i], formData);
 		}
 	},
 	// 添加字段控件
 	appendField : function($tr,item) {
 		var formData = this.$formData;
-		var $td1 = $("<td>"+item.text+"</td>").appendTo($tr).attr('width', formData.labelWidth || 120+'px');
-		var $td2 = $("<td/>").appendTo($tr);
+		var $td1 = $("<label class='x-form-item-label'>"+item.text+"</label>").appendTo($tr).css('width', formData.labelWidth || 120+'px');
+		var $td2 = $("<div class='x-form-element'></div>").appendTo($tr).css('padding-left', (formData.labelWidth || 120)+5+'px');
+		$tr.append('<div class="x-form-clear-left"></div>');
+		var $fieldDiv = $('<div class="div_'+item.name+'"></div>').appendTo($td2);
 		
 		var html = '';
 		if (item.xtype == 'text') {
@@ -106,14 +108,9 @@ $.extend(MyProperty.prototype, {
 			}
 			html += "</select>";
 		}else if(item.xtype == 'radio'||item.xtype == 'checkbox'){
-			if (item.items && (item.items instanceof Array)) {
-				for (var i = 0; i < item.items.length; i++) {
-					html += formatStr("<input type='{0}' name='{1}' value='{2}'>{3}</input>", 
-							item.xtype,item.name,item.items[i].name,item.items[i].text);
-				}
-			}
+			html += '<div class="x-form-clear-left"></div>';
 		}else if (item.xtype == 'grid') {
-			var $table = $(formatStr("<table width='100%' class='table-{0}'></table>",item.name)).appendTo($td2);
+			var $table = $(formatStr("<table width='100%' class='table-{0}' style='word-break:break-all; word-wrap:break-word;'></table>",item.name)).appendTo($fieldDiv);
 			var columns = item.columns||[];
 			var cols = columns.length;
 			
@@ -145,10 +142,13 @@ $.extend(MyProperty.prototype, {
 			// 添加表头
 			var $tr = $(formatStr('<tr class="th-{0}"></tr>',item.name)).appendTo($table);
 			for (var i = 0; i < columns.length; i++) {
-				$('<td/>').text(columns[i].header).appendTo($tr);
+				var $td = $('<td/>').text(columns[i].header).appendTo($tr);
+				if(columns[i].width){
+					$td.css('width',columns[i].width);
+				}
 			}
 		}else if (item.xtype == 'form') {
-			var $table = $(formatStr("<table width='100%' class='table-{0}'></table>",item.name)).appendTo($td2);
+			var $table = $(formatStr("<table width='100%' class='table-{0}'></table>",item.name)).appendTo($fieldDiv);
 			var cols = 2;
 			// 添加tbar
 			if(item.tbar){
@@ -180,15 +180,20 @@ $.extend(MyProperty.prototype, {
 			html = formatStr(html, item);
 			
 			// 设置控件默认属性
-			var $field=$(html).appendTo($td2).attr(formData.defaults);
 			// 设置默认值
 			if(item.xtype == 'radio'||item.xtype == 'checkbox'){
+				var $fieldWrap = $(html).appendTo($fieldDiv).attr(formData.defaults);
+				var $field = $fieldDiv.find('[name="' + item.name + '"]');
 				$field.filter("[value='"+item.value+"']").attr("checked",'true');
+				if(item.props)
+					$fieldWrap.attr(item.props);
 			}else{
+				var $field = $(html).appendTo($fieldDiv).attr(formData.defaults);
 				$field.val(item.value);
+				if(item.props){
+					$field.attr(item.props);
+				}
 			}
-			if(item.props)
-				$field.attr(item.props);
 			
 			// 添加事件处理
 			if(item.listeners instanceof Object){
@@ -202,7 +207,7 @@ $.extend(MyProperty.prototype, {
 							This : this,
 							fn : fn
 						};
-						$field.on(key, data, function(event) {
+						$fieldDiv.on(key, data, function(event) {
 							var datas = event.data;
 							var This = datas.This;
 							datas.value = This.getItemValue(datas.itemName);
@@ -313,6 +318,14 @@ $.extend(MyProperty.prototype, {
 		var item = this.getFormItem(itemName);
 		if (item.xtype == 'grid' || item.xtype == 'form') {
 			return this.$pData[itemName]
+		}else if (item.xtype == 'checkbox') {
+			var value=[];
+			this.$dialog.find('[name="' + itemName + '"]:checked').each(function(){
+				value.push($(this).val());
+			});
+			return value;
+		} else if (item.xtype == 'radio') {
+			return this.$dialog.find('[name="' + itemName + '"]:checked').val();
 		} else {
 			return this.$dialog.find('[name="' + itemName + '"]').val();
 		}
@@ -353,10 +366,7 @@ $.extend(MyProperty.prototype, {
 			// 刷新表单
 			this._refreshForm(itemName);
 		} else if (item.xtype == 'radio' || item.xtype == 'checkbox') {
-			this.$dialog.find("[name='" + itemName + "']").removeAttr('checked');
-			if (value) {
-				this.$dialog.find("[name='" + itemName + "'][value='" + value + "']").attr("checked", "true");
-			}
+			this._refreshBox(itemName,itemValue);
 		} else {
 			this.$dialog.find("[name='" + itemName + "']").val(itemValue);
 		}
@@ -424,7 +434,7 @@ $.extend(MyProperty.prototype, {
 		
 		// 校验主键
 		var idField = formData.idField;
-		if(idField){
+		if(idField&&formData.parentType){
 			var value = pData[idField];
 			var parentType = formData.parentType;
 			var parentWindow = this.getPropWindow(parentType);
@@ -546,6 +556,68 @@ $.extend(MyProperty.prototype, {
 			var $tr = $('<tr class="tr-' + formName + '"/>').appendTo($table);
 			$('<td/>').text(column.header).appendTo($tr);
 			$('<td/>').text(text).appendTo($tr);
+		}
+	},
+	_refreshBox:function(itemName,itemValue){
+		var $field = this.$dialog.find("[name='"+itemName+"']");
+		var $fieldDiv = this.$dialog.find('.div_'+itemName);
+		
+		// 取值,清空旧选项
+		var value = $field.val();
+		$fieldDiv.empty();
+		
+		// 生成新选项
+		var item  = this.getFormItem(itemName);
+		var items = item.items||[];
+		if (item.loadDataMethod) {
+			items = item.loadDataMethod.call(this, itemName);
+		} else if (item.url) {
+			$.ajax({
+				type : "post",
+				url : item.url,
+				data : {},
+				dataType : "json",
+				succuss : function(data) {
+					alert(data);
+				}
+			});
+		}
+		
+		var xtype = item.xtype;
+		var html='';
+		if (items && (items instanceof Array)) {
+			for (var i = 0; i < items.length; i++) {
+				var $wrap = $(formatStr(
+						'<div class="x-form-check-wrap">'
+						+'<input type="{0}" name="{1}" value="{2}" class="x-form-radio x-form-field"></input>'
+						+'<label class="x-form-cb-label">{3}</label>'
+						+'</div>',
+						xtype,itemName,items[i].name,items[i].text));
+				$wrap.css('float','left');
+				$fieldDiv.append($wrap);
+			}
+			$fieldDiv.append('<div class="x-form-clear-left"></div>');
+		}
+		// 设置控件默认属性
+		var $fieldEL = $fieldDiv.find('.x-form-check-wrap').attr(this.$formData.defaults);;
+		
+		// 设置选中
+		if (itemValue) {
+			if(itemValue instanceof Array){
+				for (var i = 0; i < itemValue.length; i++) {
+					this.$dialog.find("[name='" + itemName + "'][value='" + itemValue[i] + "']").each(function(){
+						$(this).attr('checked','true');
+					});
+				}
+			}else{
+				this.$dialog.find("[name='" + itemName + "'][value='" + itemValue + "']").each(function(){
+					$(this).attr('checked','true');
+				});
+			}
+		}
+		// 设置控件属性
+		if(item.props){
+			$fieldEL.attr(item.props);
 		}
 	},
 	clearNull : function(obj) {

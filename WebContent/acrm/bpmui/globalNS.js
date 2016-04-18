@@ -164,5 +164,26 @@ GlobalNS.fn = {
 				This.$pData[data.itemName] = array;
 			}
 		).appendTo(data.td);
+	},
+	getVariables:function(){
+		var nodeDatas = this.$p.$nodeData;
+		var items = [];
+		var vars = {};
+		for(var key in nodeDatas){
+			var data = nodeDatas[key];
+			if (data && data.wfDatas && data.wfDatas.variable) {
+				var variable = data.wfDatas.variable;
+				$.each(data.wfDatas.variable, function(key, obj) {
+					if (obj.name) {
+						vars[obj.name] = obj;
+					}
+				})
+			}
+		}
+		var array=[];
+		$.each(vars,function(key, obj){
+			array.push({name:obj.name,text:obj.text});
+		});
+		return array;
 	}
 };

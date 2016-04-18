@@ -4,7 +4,7 @@ var s = {
 		"demo_node_1" : {
 			"name" : "开始",
 			"left" : 66,
-			"top" : 150,
+			"top" : 152,
 			"type" : "start",
 			"width" : 64,
 			"height" : 64,
@@ -40,7 +40,10 @@ var s = {
 					"access" : "write",
 					"maxLen" : 19,
 					"validateType" : "show"
-				}
+				},
+				"useAssignExcept" : "",
+				"exceptNode" : [ "demo_node_1", "demo_node_2" ],
+				"useAssignPrior" : "true"
 			},
 			"alt" : true
 		},
@@ -246,7 +249,8 @@ var s = {
 			"type" : "sl",
 			"from" : "demo_node_1",
 			"to" : "demo_node_2",
-			"name" : ""
+			"name" : "toAccept",
+			"alt" : true
 		},
 		"demo_line_5" : {
 			"type" : "sl",
@@ -258,134 +262,117 @@ var s = {
 			"type" : "sl",
 			"from" : "demo_node_1",
 			"to" : "demo_node_7",
-			"name" : "",
+			"name" : "demo_transition_34",
 			"alt" : true
 		},
 		"demo_line_15" : {
 			"type" : "sl",
 			"from" : "demo_node_7",
 			"to" : "demo_node_8",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_16" : {
 			"type" : "sl",
 			"from" : "demo_node_8",
 			"to" : "demo_node_9",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_17" : {
 			"type" : "sl",
 			"from" : "demo_node_9",
 			"to" : "demo_node_10",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_18" : {
 			"type" : "sl",
 			"from" : "demo_node_10",
 			"to" : "demo_node_11",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_19" : {
 			"type" : "sl",
 			"from" : "demo_node_11",
 			"to" : "demo_node_12",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_20" : {
 			"type" : "sl",
 			"from" : "demo_node_12",
 			"to" : "demo_node_13",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_21" : {
 			"type" : "sl",
 			"from" : "demo_node_1",
 			"to" : "demo_node_8",
-			"name" : "",
+			"name" : "demo_transition_35",
 			"alt" : true
 		},
 		"demo_line_22" : {
 			"type" : "sl",
 			"from" : "demo_node_2",
 			"to" : "demo_node_8",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_23" : {
 			"type" : "sl",
 			"from" : "demo_node_2",
 			"to" : "demo_node_9",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_24" : {
 			"type" : "sl",
 			"from" : "demo_node_3",
 			"to" : "demo_node_10",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_25" : {
 			"type" : "sl",
 			"from" : "demo_node_3",
 			"to" : "demo_node_11",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_26" : {
 			"type" : "sl",
 			"from" : "demo_node_3",
 			"to" : "demo_node_12",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_27" : {
 			"type" : "sl",
 			"from" : "demo_node_3",
 			"to" : "demo_node_9",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_28" : {
 			"type" : "sl",
 			"from" : "demo_node_10",
 			"to" : "demo_node_12",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_29" : {
 			"type" : "sl",
 			"from" : "demo_node_11",
 			"to" : "demo_node_13",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_30" : {
 			"type" : "sl",
 			"from" : "demo_node_10",
 			"to" : "demo_node_3",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_31" : {
 			"type" : "sl",
 			"from" : "demo_node_2",
 			"to" : "demo_node_10",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		},
 		"demo_line_32" : {
 			"type" : "sl",
 			"from" : "demo_node_2",
 			"to" : "demo_node_11",
-			"name" : "",
-			"alt" : true
+			"name" : ""
 		}
 	},
 	"areas" : {},

@@ -68,3 +68,76 @@
 .GooFlow .ico_save_64{width:64px;height:64px;background:url(../img/save-64.png) no-repeat}
 .GooFlow .ico_undo_64{width:64px;height:64px;background:url(../img/undo-64.png) no-repeat}
 .GooFlow .ico_redo_64{width:64px;height:64px;background:url(../img/redo-64.png) no-repeat}
+
+.table-form{float:left}
+.table-tr{float:left;clear:both}
+.table-td-label{float:left}
+.table-td{float:left}
+
+/* Form Items CSS */
+.x-form-item {
+    display:block;
+    margin-bottom:4px;
+    zoom:1;
+}
+
+.x-form-item label.x-form-item-label {
+    display:block;
+    float:left;
+    width:100px;
+    padding:3px;
+    padding-left:0;
+    clear:left;
+    z-index:2;
+}
+
+.x-form-element {
+    padding-left:105px;
+}
+
+.x-form-invalid-msg {
+    padding:2px;
+    padding-left:18px;
+    background: transparent no-repeat 0 2px;
+    line-height:16px;
+    width:200px;
+}
+
+.x-form-label-left label.x-form-item-label {
+   text-align:left;
+}
+
+.x-form-label-right label.x-form-item-label {
+   text-align:right;
+}
+
+.x-form-label-top .x-form-item label.x-form-item-label {
+    width:auto;
+    float:none;
+    clear:none;
+    display:inline;
+    margin-bottom:4px;
+}
+
+.x-form-label-top .x-form-element {
+    padding-left:0;
+    padding-top:4px;
+}
+
+.x-form-label-top .x-form-item {
+    padding-bottom:4px;
+}
+.x-form-clear-left {
+    clear:left;
+    height:0;
+    overflow:hidden;
+    line-height:0;
+    font-size:0;
+}
+.x-form-check-wrap {
+    line-height:18px;
+    height: 22px;
+}
+.x-form-check-wrap input{
+    vertical-align: bottom;
+}

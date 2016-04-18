@@ -3,11 +3,88 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
-
 	<display-name>aCRM2.1_release</display-name>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>webapp.aCRM2.1_release</param-value>
+	</context-param>
+	<context-param>
+	    <param-name>project</param-name>
+	    <param-value>truck</param-value>
+	</context-param>
+	&acrm_servlet;
 	
 	<welcome-file-list>
 		<welcome-file>demo.jsp</welcome-file>
 	</welcome-file-list>
+<!-- filter -->
+	<filter>
+        <filter-name>i18nFilter</filter-name>
+        <filter-class>com.arvato.acrm.i18n.I18nFilter</filter-class>
+   </filter>
+   <filter-mapping>
+		<filter-name>i18nFilter</filter-name>
+        <url-pattern>*</url-pattern>
+	</filter-mapping>
+	
+    <filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
 
+		<init-param>
+			<param-name>config</param-name>
+			<param-value>struts-default.xml,struts-plugin.xml,conf/acrm_struts.xml,conf/bpmUI_struts.xml</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>*.action</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+	
+	<!-- StaticResourceFilter-->
+	<filter>
+		<filter-name>staticResourceFilter</filter-name>
+		<filter-class>com.arvato.acrm.application.StaticResourceFilter</filter-class>
+		<init-param>
+			<param-name>resourcePath</param-name>
+			<param-value>/acrm</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>staticResourceFilter</filter-name>
+		<url-pattern>/acrm/images/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>staticResourceFilter</filter-name>
+		<url-pattern>/acrm/js/*</url-pattern>
+	</filter-mapping>
+	<!--end StaticResourceFilter-->
+	
+	<!-- Listener contextConfigLocation -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<!-- log4j-->
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:conf/log4j.properties</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+	<!-- end log4j -->
+	
+	<listener>
+		<listener-class>com.arvato.acrm.application.SessionListener</listener-class>
+	</listener>
 </web-app>

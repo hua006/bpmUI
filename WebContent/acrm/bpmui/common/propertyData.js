@@ -10,7 +10,7 @@ GlobalNS.formDatas['start']=(function(){
 		title:'开始',
 		width:500,
 		height:600,
-		labelWidth: 100,
+		labelWidth: 150,
 		defaults: {style:'width:200px'},
 		cls:'',
 		items:[
@@ -21,13 +21,13 @@ GlobalNS.formDatas['start']=(function(){
 				columns:[
 					{header: "名称",dataIndex: 'name'},
 					{header: "目的节点",dataIndex: 'to'},
-					{header: "操作",renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
+					{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				]},
 			{xtype:'grid',name:'on',text:'事件',
 				columns:[
 				 	{header: "事件类型",dataIndex: 'event'},
 				 	{header: "目的节点名称",dataIndex: 'to'},
-				 	{header: "操作",renderer: GlobalNS.fn.renderAdd}
+				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}
 			    ]}
 		]
 	}
@@ -59,16 +59,16 @@ GlobalNS.formDatas['task']=(function(){
 			{xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
 			{xtype:'text',name:'userLevel',text:'受理人用户级别'},
 			{xtype:'select',name:'useAssignExcept',text:'是否使用分配避免',items:[{name:'true',text:'true'},{name:'false',text:'false'}]},
-			{xtype:'select',name:'exceptNode',text:'分配避免针对节点'},
+			{xtype:'checkbox',name:'exceptNode',text:'分配避免针对节点'},
 			{xtype:'select',name:'useAssignPrior',text:'是否使用分配优先',items:[{name:'true',text:'true'},{name:'false',text:'false'}]},
-			{xtype:'text',name:'priorNode',text:'分配优先针对的节点'},
+			{xtype:'checkbox',name:'priorNode',text:'分配优先针对的节点'},
 			{xtype:'text',name:'autoMemoMethod',text:'自动备注方法'},
 			{xtype:'text',name:'onloadMethod',text:'页面加载方法'},
 			{xtype:'select',name:'type',text:'任务类型',items:[{name:'form',text:'form'},{name:'survey',text:'survey'},{name:'layout',text:'layout'}]},
 			{xtype:'text',name:'formID',text:'DFL表单ID'},
 			{xtype:'text',name:'layoutID',text:'DFL布局ID'},
 			{xtype:'text',name:'maxCallCount',text:'最大外呼次数'},
-			{xtype:'grid',name:'variable',text:'字段信息'},
+			{xtype:'checkbox',name:'variable',text:'字段信息'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
@@ -78,6 +78,7 @@ GlobalNS.formDatas['decision']=(function(){
 	return {
 		name:'decision',
 		id:'dialog-decision',
+		idField:'name',
 		title:'判断',
 		cls:'',
 		items:[
@@ -114,8 +115,8 @@ GlobalNS.formDatas['subprocess']=(function(){
 			{xtype:'text',name:'subprocess-key',text:'子流程名称'},
 			{xtype:'text',name:'startNode',text:'子流程开始节点名称'},
 			{xtype:'grid',name:'transition',text:'出口'},
-			{xtype:'text',name:'EL-parameter-in',text:'入口字段'},
-			{xtype:'text',name:'EL-parameter-out',text:'出口字段'},
+			{xtype:'text',name:'parameter-in',text:'入口字段'},
+			{xtype:'text',name:'parameter-out',text:'出口字段'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
 	}
@@ -152,6 +153,7 @@ GlobalNS.formDatas['math']=(function(){
 	return {
 		name:'math',
 		id:'dialog-math',
+		idField:'name',
 		title:'计算',
 		cls:'',
 		items:[
@@ -186,6 +188,7 @@ GlobalNS.formDatas['variable']=(function(){
 	return {
 		name:'variable',
 		id:'dialog-variable',
+		idField:'name',
 		title:'变量',
 		width:400,
 		height:400,
@@ -259,8 +262,8 @@ GlobalNS.formDatas['transition']=(function(){
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
 			{xtype:'select',name:'to',text:'目的节点名称',listeners:{'click':GlobalNS.fn.loadBaseNodeNames}},
-			{xtype:'text',name:'EL-condition',text:'条件'},
-			{xtype:'text',name:'EL-event-listener',text:'自定义处理类'}
+			{xtype:'text',name:'condition',text:'条件'},
+			{xtype:'text',name:'event-listener',text:'自定义处理类'}
 		]
 	}
 })();
@@ -308,7 +311,7 @@ GlobalNS.formDatas['on']=(function(){
 		items:[
 			{xtype:'select',name:'event',text:'事件类型',items:[{name:'start',text:'start'},{name:'end',text:'end'},{name:'cancel',text:'cancel'},{name:'overTime',text:'overTime'}]},
 			{xtype:'select',name:'to',text:'目的节点名称'},
-			{xtype:'text',name:'EL-event-listener',text:'自定义处理类'}
+			{xtype:'text',name:'event-listener',text:'自定义处理类'}
 		]
 	}
 })();
@@ -371,25 +374,25 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				o.columns = [
 				 	{header: "名称",dataIndex: 'name'},
 				 	{header: "目的节点",dataIndex: 'to'},
-				 	{header: "操作",renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
+				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				 ];
 			}else if(item.name=='on'){
 				o.columns = [
 				 	{header: "事件类型",dataIndex: 'event'},
 				 	{header: "目的节点名称",dataIndex: 'to'},
-				 	{header: "操作",renderer: GlobalNS.fn.renderAdd}
+				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}
 				 ];
 			}else if(item.name=='variable'){
 				o.columns = [
 				             {dataIndex:'name',header:'变量名称'},
 				             {dataIndex:'text',header:'变量显示名称'},
-				             {header: "操作",renderer: GlobalNS.fn.renderAdd},
+				             {header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd},
 				             ]
 			}else if(item.name=='item'||item.name=='item-1'){
 				o.columns = [
 					{dataIndex:'id',header:'选项代码'},
 					{dataIndex:'text',header:'选项描述'},
-					{header: "操作",renderer: GlobalNS.fn.renderAdd}
+					{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}
 				]
 			}
 		} else if (item.xtype == 'select') {
@@ -397,6 +400,24 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				o.listeners={'click':GlobalNS.fn.loadBaseNodeNames};
 			}
 		} else if (item.xtype == 'checkbox') {
+			if(item.name=='exceptNode'||item.name=='priorNode'){
+				o.loadDataMethod = function(itemName){
+					var nodeDatas = this.$p.$nodeData;
+					var items = [];
+					for(var key in nodeDatas){
+						items.push({name:key,text:nodeDatas[key].name});
+					}
+					return items;
+				};
+				o.props={style:'width:100px;float:left;'};
+				
+			}else if(item.name=='variable'){
+				o.loadDataMethod = function(itemName){
+					return GlobalNS.fn.getVariables.call(this);
+				};
+				o.props={style:'width:100px;float:left;'};
+				
+			}
 		} else if (item.xtype == 'radio') {
 		}
 		
