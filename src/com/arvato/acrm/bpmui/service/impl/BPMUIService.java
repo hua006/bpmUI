@@ -1,4 +1,4 @@
-package com.arvato.acrm.model;
+package com.arvato.acrm.bpmui.service.impl;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -12,6 +12,10 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.arvato.acrm.bpmui.model.NodeIDBean;
+import com.arvato.acrm.bpmui.model.Position;
+import com.arvato.acrm.bpmui.model.XElement;
+import com.arvato.acrm.bpmui.util.XElementSupport;
 import com.arvato.acrm.commons.util.Tools;
 
 import net.sf.json.JSONObject;
@@ -222,20 +226,53 @@ public class BPMUIService {
 			connect.addChild(new XElement("to", to));
 			connect.addChild(new XElement("name", name));
 			
-			// 连线连线的线段信息
-			List<String[]> posList = getPositionList(transitionNode, "point");
-			if (posList != null && posList.size() > 0) {
-				XElement line = new XElement("point", "");
-				line.setType(1);
+			// 生成连线的线段信息
+			XElement lineNode = support.getChild(transitionNode, "line");
+			if(lineNode!=null){
+				XElement line = new XElement("line", "");
 				connect.addChild(line);
-				for (String[] array : posList) {
-					XElement linePoint = new XElement("point", array[0] + "," + array[1]);
-					linePoint.addChild(new XElement("x", array[0]));
-					linePoint.addChild(new XElement("y", array[1]));
-					line.addChild(linePoint);
+				
+				XElement beginAttr = support.getChild(lineNode, "begin");
+				if(beginAttr!=null){
+					String pos = beginAttr.getValue().toString();
+					if(!Tools.isBlank(pos)){
+						String[] array = pos.split(",");
+						if (array.length == 2) {
+							int x = Integer.parseInt(array[0]);
+							int y = Integer.parseInt(array[1]);
+							line.addChild(new XElement("X1", x));
+							line.addChild(new XElement("Y1", y));
+						}
+					}
+				}
+				
+				XElement endAttr = support.getChild(lineNode, "end");
+				if(endAttr!=null){
+					String pos = endAttr.getValue().toString();
+					if(!Tools.isBlank(pos)){
+						String[] array = pos.split(",");
+						if (array.length == 2) {
+							int x = Integer.parseInt(array[0]);
+							int y = Integer.parseInt(array[1]);
+							line.addChild(new XElement("X2", x));
+							line.addChild(new XElement("Y2", y));
+						}
+					}
+				}
+				
+				List<String[]> posList = getPositionList(lineNode, "point");
+				if (posList != null && posList.size() > 0) {
+					XElement point = new XElement("point", "");
+					point.setType(1);
+					line.addChild(point);
+					for (String[] array : posList) {
+						XElement linePoint = new XElement("point", array[0] + "," + array[1]);
+						linePoint.addChild(new XElement("X", array[0]));
+						linePoint.addChild(new XElement("Y", array[1]));
+						point.addChild(linePoint);
+					}
 				}
 			}
-			
 			connMap.put(connId, connect);
 		}
 		return connMap;

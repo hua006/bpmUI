@@ -13,22 +13,13 @@
 	</context-param>
 	<context-param>
 	    <param-name>project</param-name>
-	    <param-value>truck</param-value>
+	    <param-value>bpmUI</param-value>
 	</context-param>
 	&acrm_servlet;
 	
 	<welcome-file-list>
 		<welcome-file>demo.jsp</welcome-file>
 	</welcome-file-list>
-<!-- filter -->
-	<filter>
-        <filter-name>i18nFilter</filter-name>
-        <filter-class>com.arvato.acrm.i18n.I18nFilter</filter-class>
-   </filter>
-   <filter-mapping>
-		<filter-name>i18nFilter</filter-name>
-        <url-pattern>*</url-pattern>
-	</filter-mapping>
 	
     <filter>
 		<filter-name>struts2</filter-name>
@@ -36,7 +27,7 @@
 
 		<init-param>
 			<param-name>config</param-name>
-			<param-value>struts-default.xml,struts-plugin.xml,conf/acrm_struts.xml,conf/bpmUI_struts.xml</param-value>
+			<param-value>struts-default.xml,struts-plugin.xml,conf/acrm_struts2.xml,conf/bpmUI_struts.xml</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>
@@ -51,25 +42,6 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-	
-	<!-- StaticResourceFilter-->
-	<filter>
-		<filter-name>staticResourceFilter</filter-name>
-		<filter-class>com.arvato.acrm.application.StaticResourceFilter</filter-class>
-		<init-param>
-			<param-name>resourcePath</param-name>
-			<param-value>/acrm</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>staticResourceFilter</filter-name>
-		<url-pattern>/acrm/images/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>staticResourceFilter</filter-name>
-		<url-pattern>/acrm/js/*</url-pattern>
-	</filter-mapping>
-	<!--end StaticResourceFilter-->
 	
 	<!-- ContextConfigLocation -->
 	<context-param>

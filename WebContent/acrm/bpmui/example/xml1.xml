@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="" text="VOR紧急救援流程">
+	<task text="VOR任务初始化" onloadMethod="autoSubmit();" formID="2015060200000387" assignType="assignee" name="accept" assignExpr="#{sysCurrentUser}" nodeType="task" type="form" pos="130,10">
+		<transition to="VORArrange-NODE-2" text="提交" name="toAcceptDec" />
+	</task>
+	<decision text="acceptDec" name="acceptDec" nodeType="decision" pos="250,10">
+		<transition to="VORArrange-NODE-7">
+			<condition expr="#{task.accept.NEXT_TASK} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-25">
+			<condition expr="#{task.accept.NEXT_TASK} equal '2'" />
+		</transition>
+		<transition to="VORArrange-NODE-3" name="default" />
+	</decision>
+	<task text="救援受理" formID="2015042100000313" assignType="assignee" name="accept1" assignExpr="#{sysCurrentUser}" nodeType="task" type="form" pos="370,10">
+		<transition validateMethod="checkAccept1RequiredField()" to="VORArrange-NODE-4" text="提交" name="toIsContactCAC" />
+	</task>
+	<decision text="isContactCAC" name="isContactCAC" nodeType="decision" pos="490,10">
+		<transition to="VORArrange-NODE-5">
+			<event-listener />
+			<condition expr="#{task.accept.CONTACT_PERSON_TYPE} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-7" name="default">
+			<event-listener />
+		</transition>
+	</decision>
+	<task text="经销商呼入受理" onloadMethod="contactDealerLoad(1);" assignType="assignee" name="dealerAccept" layoutID="2015041400000055" assignExpr="#{sysCurrentUser}" nodeType="task" type="layout" pos="610,10">
+		<transition validateMethod="remoteSolve('DEALER1_CONTACT_RESULT');" to="VORArrange-NODE-47" text="问题解决并结单" name="toEnd" />
+		<transition to="VORArrange-NODE-6" text="提交" name="toDealerAcceptDec" />
+		<variable text="首家经销商联系人" maxLen="32" name="DEALER1_CONTACT_PERSON" showType="text" access="hidden" />
+		<variable text="首家经销商联系时间" maxLen="20" name="DEALER1_CONTACT_TIME" showType="datetime" access="read" initExpr="#{sysCurrentTime}" />
+		<variable dataType="number" text="首家经销商联系次数" name="DEALER1_CONTACT_TIMES" showType="text" validateType="number" access="read" />
+		<variable text="首家经销商联系结果" maxLen="16" name="DEALER1_CONTACT_RESULT" showType="select" access="write">
+			<item id="1" text="同意派工" />
+			<item id="2" text="拒绝服务" />
+			<item id="3" text="已远程解决" />
+		</variable>
+		<variable validateMethod="loadSMSToCustomer(1);" text="首次经销商联系信息" maxLen="512" name="DEALER1_CONTACT_INFO" validateMethodName="生成经销商联系信息" showType="textarea" access="write" />
+		<variable text="首次经销商拒绝原因" maxLen="32" name="DEALER1_REFUSE_REASON" showType="select" access="write">
+			<item id="1" text="经销商距离较远" />
+			<item id="2" text="客户不同意报价" />
+			<item id="3" text="经销商人手不足" />
+			<item id="4" text="经销商无服务车辆/工具" />
+			<item id="5" text="经销商无配件" />
+			<item id="6" text="其它(备注)" />
+		</variable>
+		<variable validateMethod="loadSMSToDealer(1);" text="发送给经销商的匹配短信" maxLen="512" name="DEALER_SMS" validateMethodName="生成短信" showType="textarea" access="write" />
+		<variable text="首次经销商反馈内容" maxLen="512" name="DEALER1_FEEDBACK" showType="textarea" access="write" />
+		<variable text="经销商与客户是否达成一致" maxLen="50" name="IS_REACH_AGREEMENT" showType="select" access="write" />
+		<variable text="预计出发时间" maxLen="20" name="EXPECT_GO_TIME" showType="datetime" access="write" />
+		<variable text="超过1小时出发原因" maxLen="512" name="DELAY_REASON_1H" showType="textarea" access="write" />
+		<variable text="下一步任务" maxLen="32" name="NEXT_TASK" showType="select" access="hidden">
+			<item id="1" text="首次联系经销商" />
+			<item id="2" text="核实经销商是否出发" />
+		</variable>
+	</task>
+	<decision text="dealerAcceptDec" name="dealerAcceptDec" nodeType="decision" pos="730,10">
+		<transition to="VORArrange-NODE-13">
+			<condition expr="#{task.accept.DEALER1_CONTACT_RESULT} equal '2'" />
+		</transition>
+		<transition to="VORArrange-NODE-20" name="default">
+			<event-listener />
+		</transition>
+	</decision>
+	<task text="首次联系经销商" onloadMethod="contactDealerLoad(1);" assignType="assignee" name="contactDealer" assignExpr="#{sysCurrentUser}" nodeType="task" pos="850,10">
+		<transition validateMethod="chkNextObTime('sysTaskDueTime')" text="下次继续外呼" name="myappoint" type="myappoint" />
+		<transition validateMethod="remoteSolve('DEALER1_CONTACT_RESULT');" to="VORArrange-NODE-47" text="问题解决并结单" name="toEnd" />
+		<transition validateMethod="ckContactResult1()" to="VORArrange-NODE-11" text="升级至AR" name="toUpgradeToAR" />
+		<transition to="VORArrange-NODE-8" text="提交" name="toIsMainFollowed" />
+		<variable text="临时处理时间" maxLen="20" name="TEMPPROCTIME" showType="datetime" access="hidden" initExpr="#{sysCurrentTime}" />
+		<variable validateMethod="showDealerDetail(1);" text="首次分配经销商" maxLen="32" name="DEALER1" showType="text" access="read" />
+		<variable text="首家经销商联系人" maxLen="32" name="DEALER1_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="首家经销商联系时间" maxLen="20" name="DEALER1_CONTACT_TIME" showType="datetime" access="read" initExpr="#{sysCurrentTime}" />
+		<variable dataType="number" text="首家经销商联系次数" name="DEALER1_CONTACT_TIMES" showType="text" access="read" />
+		<variable text="首家经销商联系结果" maxLen="16" name="DEALER1_CONTACT_RESULT" showType="select" access="write" />
+		<variable validateMethod="loadSMSToCustomer(1);" text="首次经销商联系信息" maxLen="512" name="DEALER1_CONTACT_INFO" validateMethodName="生成经销商联系信息" showType="textarea" access="write" />
+		<variable text="首次经销商拒绝原因" maxLen="32" name="DEALER1_REFUSE_REASON" showType="select" access="write" />
+		<variable validateMethod="loadSMSToDealer(1);" text="发送给经销商的匹配短信" maxLen="512" name="DEALER_SMS" validateMethodName="生成短信" showType="textarea" access="write" />
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write">
+			<item id="1" text="外呼成功" />
+			<item id="0" text="外呼失败" />
+		</variable>
+		<variable text="下次外呼时间" maxLen="20" name="sysTaskDueTime" showType="datetime" access="write" />
+		<variable text="外呼备注" maxLen="512" name="sysTaskMemo" showType="textarea" access="write" />
+	</task>
+	<decision text="isMainFollowed" name="isMainFollowed" nodeType="decision" pos="970,10">
+		<transition to="VORArrange-NODE-16">
+			<event-listener />
+			<condition expr="#{task.accept.DEALER1_CONTACT_RESULT} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-13">
+			<condition expr="#{task.accept.DEALER1_CONTACT_RESULT} equal '2'" />
+		</transition>
+		<transition to="VORArrange-NODE-7" name="default" />
+	</decision>
+	<task text="二次联系经销商" onloadMethod="contactDealerLoad(2);" assignType="assignee" name="contactDealer2" assignExpr="#{sysCurrentUser}" nodeType="task" pos="970,130">
+		<transition validateMethod="chkNextObTime('sysTaskDueTime')" text="下次继续外呼" name="myappoint" type="myappoint" />
+		<transition validateMethod="remoteSolve('DEALER2_CONTACT_RESULT');" to="VORArrange-NODE-47" text="问题解决并结单" name="toEnd" />
+		<transition validateMethod="ckContactResult2()" to="VORArrange-NODE-11" text="升级至AR" name="toUpgradeToAR" />
+		<transition to="VORArrange-NODE-10" text="提交" name="toIsMainFollowed2" />
+		<variable text="临时处理时间" maxLen="20" name="TEMPPROCTIME" showType="datetime" access="hidden" initExpr="#{sysCurrentTime}" />
+		<variable validateMethod="showDealerDetail(2);" dataType="number" text="二次分配经���商" maxLen="19" name="DEALER2" showType="text" access="read" />
+		<variable text="二次经销商联系人" maxLen="32" name="DEALER2_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="二次经销商联系时间" maxLen="20" name="DEALER2_CONTACT_TIME" showType="datetime" access="read" initExpr="#{sysCurrentTime}" />
+		<variable dataType="number" text="二次经销商联系次数" name="DEALER2_CONTACT_TIMES" showType="text" access="read" />
+		<variable text="二次经销商联系结果" maxLen="16" name="DEALER2_CONTACT_RESULT" showType="select" access="write">
+			<item id="1" text="同意派工" />
+			<item id="2" text="拒绝服务" />
+			<item id="3" text="已远程解决" />
+		</variable>
+		<variable validateMethod="loadSMSToCustomer(2);" text="二次经销商联系信息" maxLen="512" name="DEALER2_CONTACT_INFO" validateMethodName="生成经销商联系信息" showType="textarea" access="write" />
+		<variable text="二次经销商拒绝原因" maxLen="32" name="DEALER2_REFUSE_REASON" showType="select" access="write">
+			<item id="1" text="经销商距离较远" />
+			<item id="2" text="客户不同意报价" />
+			<item id="3" text="经销商人手不足" />
+			<item id="4" text="经销商无服务车辆/工具" />
+			<item id="5" text="经销商无配件" />
+			<item id="6" text="其它(备注)" />
+		</variable>
+		<variable validateMethod="loadSMSToDealer(2);" text="发送给经销商的匹配短信" maxLen="512" name="DEALER_SMS" validateMethodName="生成短信" showType="textarea" access="write" />
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="sysTaskDueTime" showType="datetime" access="write" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+	</task>
+	<end text="外呼失败，发送催促短信，结单" name="endFailCallout" nodeType="end" pos="850,610" />
+	<end text="外呼成功，结单" name="endCallout" nodeType="end" pos="970,610" />
+	<end text="经销商未做成服务,结单" name="endServiceFailure" nodeType="end" pos="970,490" />
+	<decision text="isReachAgreement" name="isReachAgreement" nodeType="decision" pos="250,250">
+		<transition to="VORArrange-NODE-21">
+			<event-listener />
+			<condition expr="#{task.accept.IS_REACH_AGREEMENT} equal 1" />
+		</transition>
+		<transition to="VORArrange-NODE-15">
+			<condition expr="#{task.accept.IS_REACH_AGREEMENT} equal 0 and (#{task.accept.DEALER2_CONTACT_RESULT} equal 1)" />
+		</transition>
+		<transition to="VORArrange-NODE-13">
+			<condition expr="#{task.accept.IS_REACH_AGREEMENT} equal 0 and #{task.accept.DEALER1_CONTACT_RESULT} equal 1" />
+		</transition>
+		<transition to="VORArrange-NODE-16" name="default" />
+	</decision>
+	<task text="经销商后续填写9天事件状态" onloadMethod="fieldInit('IS_REPAIR_FINISH','REPAIR_FINISH_TIME');" assignType="assignee" name="dealer9DAfterProc" assignExpr="#{task.accept.DEALER_USER_ID}" nodeType="task"
+		pos="850,490">
+		<transition validateMethod="dealer9DAfterProc('IS_REPAIR_FINISH');" to="VORArrange-NODE-47" text="处理" name="toEnd" />
+		<variable validateMethod="ctrlFinishTime('IS_REPAIR_FINISH','REPAIR_FINISH_TIME');" text="是否维修完成" maxLen="32" name="IS_REPAIR_FINISH" showType="select" required="true" access="write" />
+		<variable text="维修完成时间" maxLen="50" name="REPAIR_FINISH_TIME" showType="datetime" access="write" />
+	</task>
+	<end text="结单" name="end" nodeType="end" pos="730,610" />
+	<task text="核实经销商是否出发" assignType="group" name="verifyDealerIsGo" layoutID="2015041400000055" assignExpr="01" nodeType="task" type="layout" pos="850,250">
+		<transition validateMethod="chkNextObTime('GO_NEXT_OB_TIME')" to="VORArrange-NODE-26" text="下次继续外呼" name="toCalExpectGoTimesDue" />
+		<transition validateMethod="ctrlRequired('ACTUAL_GO_TIME','EXPECT_REACH_TIME')" to="VORArrange-NODE-27" text="提交" name="toVerifyDealerIsReachOB" />
+		<variable validateMethod="showDealerDetail();" dataType="number" text="最终分配经销商" maxLen="19" name="DEALER_FINAL" showType="text" access="read" />
+		<variable text="最终经销商联系人" maxLen="32" name="DEALER_FINAL_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="最终经销商联系信息" name="DEALER_FINAL_CONTACT_INFO" showType="textarea" access="read" />
+		<variable text="出发跟进时间" maxLen="20" name="GO_TRACK_TIME" showType="datetime" access="hidden" initExpr="#{sysCurrentTime}" />
+		<variable text="出发跟进人" maxLen="32" name="GO_TRACK_PERSON" showType="text" access="hidden" initExpr="#{sysCurrentUser}" />
+		<variable text="出发跟进结果" maxLen="512" name="GO_TRACK_RESULT" showType="textarea" access="write" />
+		<variable text="出发限定时间" maxLen="50" name="LIMIT_GO_TIME" showType="datetime" access="read" />
+		<variable dataType="number" text="预计出发时间变更次数" name="EXPECT_GO_TIMES" showType="text" access="read" />
+		<variable text="是否按时出发" maxLen="16" name="IS_GO_ONTIME" showType="select" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="预计出发时间" maxLen="50" name="EXPECT_GO_TIME" showType="datetime" access="write" initExpr="#{sysCurrentTime}" />
+		<variable text="延迟出发原因" maxLen="512" name="DELAY_GO_REASON" showType="textarea" access="write" />
+		<variable text="实际出发时间" maxLen="30" name="ACTUAL_GO_TIME" showType="datetime" access="write" />
+		<variable text="预计到达时间" maxLen="30" name="EXPECT_REACH_TIME" showType="datetime" access="write" />
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="GO_NEXT_OB_TIME" showType="datetime" access="write" initExpr="#{sysCurrentTime}" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+	</task>
+	<math unit="minute" text="calExpectGoTimesDue" name="calExpectGoTimesDue" value="0" ATTR-variable="#{sysTaskDueTime}" nodeType="math" initExpr="#{task.accept.GO_NEXT_OB_TIME}" operator="add"
+		pos="970,250">
+		<transition to="VORArrange-NODE-24" name="toCalExpectGoTimes" />
+	</math>
+	<math unit="minute" text="verifyDealerIsReachOB" name="verifyDealerIsReachOB" value="0" ATTR-variable="#{sysTaskDueTime}" nodeType="math" initExpr="#{task.accept.EXPECT_REACH_TIME}" operator="add"
+		pos="970,370">
+		<transition to="VORArrange-NODE-28" name="toCalExpectReachTimes" />
+	</math>
+	<math text="calExpectReachTimes" name="calExpectReachTimes" value="1" ATTR-variable="#{EXPECT_REACH_TIMES}" nodeType="math" initExpr="#{task.accept.EXPECT_REACH_TIMES}" operator="add" pos="850,370">
+		<transition to="VORArrange-NODE-29" name="toVerifyDealerIsReach" />
+	</math>
+	<decision text="assignToDTBC2Dec" name="assignToDTBC2Dec" nodeType="decision" pos="610,490">
+		<transition to="VORArrange-NODE-47">
+			<condition expr="#{task.accept.IS_REPAIR_FINISH} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-42">
+			<condition expr="#{task.accept.IS_REPAIR_FINISH} equal '0' and #{task.accept.IS_NEED_DTBC9D} equal '1'" />
+		</transition>
+	</decision>
+	<math unit="minute" text="calculateExpectGoTime" name="calculateExpectGoTime" value="20" ATTR-variable="#{EXPECT_GO_TIME}" nodeType="math" initExpr="#{sysCurrentTime}" operator="add" pos="370,250">
+		<transition to="VORArrange-NODE-22" name="toOBCustomer" />
+	</math>
+	<task text="9天DTBC涉及部门反馈" assignType="group" name="assignToDTBC2" layoutID="2015041400000055" assignExpr="#{task.accept.INCLUDE_DEPART9D}" nodeType="task" type="layout" pos="730,490">
+		<transition to="VORArrange-NODE-43" text="提交" name="toDealer9DAfterProc" />
+		<variable text="9天是否需要总部配合" maxLen="32" name="IS_NEED_DTBC9D" showType="select" access="read" />
+		<variable text="9天事件涉及部门" maxLen="32" name="INCLUDE_DEPART9D" showType="select" access="read" />
+		<variable text="9天DTBC部门反馈意见" maxLen="32" name="FEEDBACK_DTBC9D" showType="select" access="write" />
+		<variable text="9天DTBC反馈意见备注" maxLen="512" name="FEEDBACK_REMARK_DTBC9D" showType="textarea" access="write" />
+		<variable text="9天DTBC处理延迟原因" maxLen="512" name="DTBC_PROC_DELAY9D" showType="textarea" access="write" />
+	</task>
+	<task text="外呼客户告知情况" assignType="assignee" name="OBCustomer" assignExpr="#{sysCurrentUser}" nodeType="task" pos="490,250">
+		<transition validateMethod="chkNextObTime('sysTaskDueTime')" text="下次继续外呼" name="myappoint" type="myappoint" />
+		<transition to="VORArrange-NODE-23" text="提交" name="toVerifyDealerIsGoOB">
+			<event-listener />
+		</transition>
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="sysTaskDueTime" showType="datetime" access="write" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+		<variable validateMethod="showDealerDetail();" dataType="number" text="最终分配经销商" maxLen="19" name="DEALER_FINAL" showType="text" access="read" />
+		<variable text="最终经销商联系人" maxLen="32" name="DEALER_FINAL_CONTACT_PERSON" showType="text" access="read" />
+		<variable validateMethod="" text="最终经销商联系信息" maxLen="512" name="DEALER_FINAL_CONTACT_INFO" validateMethodName="" showType="textarea" access="read" />
+		<variable dataType="number" text="预计出发时间变更次数" name="EXPECT_GO_TIMES" showType="text" access="hidden" initExpr="0" />
+		<variable dataType="number" text="预计到达时间变更次数" name="EXPECT_REACH_TIMES" showType="text" access="hidden" initExpr="0" />
+	</task>
+	<math unit="minute" text="verifyDealerIsGoOB" name="verifyDealerIsGoOB" value="0" ATTR-variable="#{sysTaskDueTime}" nodeType="math" initExpr="#{task.accept.EXPECT_GO_TIME}" operator="add" pos="610,250">
+		<transition to="VORArrange-NODE-24" name="toCalExpectGoTimes" />
+	</math>
+	<math text="calExpectGoTimes" name="calExpectGoTimes" value="1" ATTR-variable="#{EXPECT_GO_TIMES}" nodeType="math" initExpr="#{task.accept.EXPECT_GO_TIMES}" operator="add" pos="730,250">
+		<transition to="VORArrange-NODE-25" name="toVerifyDealerIsGo" />
+	</math>
+	<task text="经销商填写9天事件状态" onloadMethod="inputIncidentLoad('9D');" assignType="assignee" name="inputIncident_9D" assignExpr="#{task.accept.DEALER_USER_ID}" nodeType="task" pos="490,490">
+		<transition validateMethod="inputIncidentSubmit('9D');" to="VORArrange-NODE-41" text="提交" name="toAssignToDTBC2Dec" />
+		<transition validateMethod="inputIncidentSubmit('9D');" to="VORArrange-NODE-41" text="提交并发送邮件" name="toAssignToDTBC2Dec_2">
+			<event-listener />
+			<event-listener />
+			<condition expr="#{task.inputIncident_9D.IS_REPAIR_FINISH} equal '1'" />
+		</transition>
+		<variable text="临时处理时间" maxLen="20" name="TEMPPROCTIME" showType="datetime" access="hidden" initExpr="#{sysCurrentTime}" />
+		<variable text="实际到达时间" maxLen="50" name="ACTUAL_REACH_TIME" showType="datetime" access="read" />
+		<variable validateMethod="repairFinishChange('9D');" text="是否维修完成" maxLen="32" name="IS_REPAIR_FINISH" showType="select" required="true" access="write" />
+		<variable validateMethod="repairFinishTimeChange('9D');" text="维修完成时间" maxLen="50" name="REPAIR_FINISH_TIME" showType="datetime" access="write" />
+		<variable text="9天是否需要总部配合" maxLen="32" name="IS_NEED_DTBC9D" showType="select" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="9天事件涉及部门" maxLen="32" name="INCLUDE_DEPART9D" showType="select" access="write">
+			<item id="020601" text="Parts ordering" />
+			<item id="020101" text="Technical-TPR" />
+			<item id="020501" text="Warranty-Goodwill" />
+		</variable>
+		<variable text="9天事件状态" maxLen="2" name="INCIDENT_STATE_9D" showType="select" access="hidden">
+			<item id="1" text="已完工" />
+			<item id="0" text="未完工" />
+		</variable>
+		<variable text="9天是否配合" maxLen="32" name="IS_COOPERATE_9D" showType="select" access="hidden">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="9天未完工原因" maxLen="32" name="UNFINISH_REASON_9D" showType="select" access="write">
+			<item id="1" text="报修未批复" />
+			<item id="2" text="技术诊断未果" />
+			<item id="3" text="经销商库存无货" />
+			<item id="4" text="DTBC大库无库存" />
+			<item id="5" text="路途遥远" />
+			<item id="6" text="客户原因" />
+		</variable>
+		<variable text="9天未完工原因备注" maxLen="2048" name="UNFINISH_REASON_REMARK_9D" showType="textarea" access="write" />
+		<variable validateMethod="loadEmailFor9D();" text="9天DTBC相关部门提醒邮件" maxLen="1024" name="UPTO_9D_EMAIL" validateMethodName="生成邮件" showType="textarea" required="false" access="text" />
+		<variable text="发件帐号" maxLen="50" name="sender" showType="text" required="false" access="hidden" initExpr="public@mbtruckcac.com" />
+		<variable text="Email地址" maxLen="200" name="email" showType="text" required="false" access="text" initExpr="" />
+		<variable text="邮件主题" maxLen="255" name="mailSubject" showType="text" required="false" access="hidden" initExpr="9天DTBC相关部门提醒邮件" />
+		<variable text="邮件内容" maxLen="1024" name="mailBody" showType="textarea" required="false" access="hidden" initExpr="UPTO_9D_EMAIL" />
+	</task>
+	<task text="核实经销商是否到达" assignType="group" name="verifyDealerIsReach" layoutID="2015041400000055" assignExpr="01" nodeType="task" type="layout" pos="730,370">
+		<transition validateMethod="chkNextObTime('REACH_NEXT_OB_TIME')" to="VORArrange-NODE-30" text="下次继续外呼" name="toCalExpectReachTimes" />
+		<transition validateMethod="ctrlRequired('ACTUAL_REACH_TIME','EXPECT_LEAVE_TIME')" to="VORArrange-NODE-31" text="提交" name="toVerifyDealerIsLeaveOB" />
+		<variable validateMethod="showDealerDetail();" dataType="number" text="最终分配经销商" maxLen="19" name="DEALER_FINAL" showType="text" access="read" />
+		<variable text="最终经销商联系人" maxLen="32" name="DEALER_FINAL_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="最终经销商联系信息" name="DEALER_FINAL_CONTACT_INFO" showType="textarea" access="read" />
+		<variable text="到达时间跟进时间" maxLen="20" name="REACH_TRACK_TIME" showType="datetime" access="hidden" initExpr="#{sysCurrentTime}" />
+		<variable text="到达时间跟进人" maxLen="32" name="REACH_TRACK_PERSON" showType="text" access="hidden" initExpr="#{sysCurrentUser}" />
+		<variable text="到达时间跟进结果" maxLen="512" name="REACH_TRACK_RESULT" showType="textarea" access="write" />
+		<variable dataType="number" text="预计到达时间变更次数" name="EXPECT_REACH_TIMES" showType="text" access="read" />
+		<variable text="是否按时到达" maxLen="16" name="IS_REACH_ONTIME" showType="select" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="未按时到达原因" maxLen="512" name="DELAY_REACH_REASON" showType="textarea" access="write" />
+		<variable text="预计到达时间" maxLen="50" name="EXPECT_REACH_TIME" showType="datetime" access="write" initExpr="#{sysCurrentTime}" />
+		<variable text="实际到达时间" maxLen="50" name="ACTUAL_REACH_TIME" showType="datetime" access="write" />
+		<variable text="预计离开（沟通）时间" maxLen="50" name="EXPECT_LEAVE_TIME" showType="datetime" access="write" />
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="REACH_NEXT_OB_TIME" showType="datetime" access="write" initExpr="#{sysCurrentTime}" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+	</task>
+	<math unit="minute" text="verifyDealerIsLeaveOB" name="verifyDealerIsLeaveOB" value="0" ATTR-variable="#{sysTaskDueTime}" nodeType="math" initExpr="#{task.accept.EXPECT_LEAVE_TIME}" operator="add"
+		pos="490,370">
+		<transition to="VORArrange-NODE-32" name="toVerifyDealerIsLeave" />
+	</math>
+	<math unit="minute" text="calExpectReachTimesDue" name="calExpectReachTimesDue" value="0" ATTR-variable="#{sysTaskDueTime}" nodeType="math" initExpr="#{task.accept.REACH_NEXT_OB_TIME}" operator="add"
+		pos="610,370">
+		<transition to="VORArrange-NODE-28" name="toCalExpectReachTimes" />
+	</math>
+	<decision text="continueContactDealer" name="continueContactDealer" nodeType="decision" pos="610,130">
+		<transition to="VORArrange-NODE-9">
+			<condition expr="#{task.accept.IS_AGREE_CON_DEALER2} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-7" name="default" />
+	</decision>
+	<decision text="inputIncidentDec" name="inputIncidentDec" nodeType="decision" pos="250,490">
+		<transition to="VORArrange-NODE-47">
+			<condition expr="#{task.accept.IS_REPAIR_FINISH} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-39">
+			<condition expr="#{task.accept.IS_NEED_DTBC} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-40" name="default" />
+	</decision>
+	<task text="更换经销商" onloadMethod="clearFieldValue();" assignType="assignee" name="changeDealer" assignExpr="#{sysCurrentUser}" nodeType="task" pos="490,130">
+		<transition validateMethod="chkNextObTime('sysTaskDueTime')" text="下次继续外呼" name="myappoint" type="myappoint" />
+		<transition to="VORArrange-NODE-14" text="提交" name="toChangeDealerDec" />
+		<transition to="VORArrange-NODE-15" text="升级至DTBC" name="toUpgradeToDTBC" />
+		<variable text="客户是否同意联系第二家" maxLen="32" name="IS_AGREE_CON_DEALER2" showType="select" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable validateMethod="" dataType="number" text="二次分配经销商" maxLen="19" name="DEALER2" validateMethodName="" showType="text" access="write" />
+		<variable text="派工类型" maxLen="2" name="DISPATCH_WORK_TYPE" showType="select" access="write" required="true">
+			<item id="1" text="坐席安排" />
+			<item id="2" text="客户意愿" />
+		</variable>
+		<variable text="选择远处经销商原因" maxLen="1024" name="SEL_FARTHER_REASON" showType="textarea" access="write" />
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="sysTaskDueTime" showType="datetime" access="write" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+	</task>
+	<start text="start" name="start" nodeType="start" pos="10,10">
+		<transition to="VORArrange-NODE-1" name="toAccept" />
+	</start>
+	<task text="2.5天DTBC涉及部门反馈" assignType="group" name="assignToDTBC" layoutID="2015041400000055" assignExpr="#{task.accept.INCLUDE_DEPART}" nodeType="task" type="layout" pos="370,490">
+		<transition to="VORArrange-NODE-40" text="转交回经销商" name="toInputIncident_9D" />
+		<variable text="2.5天经销商下一步计划" maxLen="512" name="NEXT_PLAN" showType="textarea" access="read" />
+		<variable text="2.5天是否需要总部配合" maxLen="32" name="IS_NEED_DTBC" showType="select" access="read" />
+		<variable text="2.5天计划涉及部门" maxLen="32" name="INCLUDE_DEPART" showType="select" access="read" />
+		<variable text="2.5天DTBC部门反馈意见" maxLen="32" name="FEEDBACK_DTBC" showType="select" access="write" />
+		<variable text="2.5天DTBC反馈意见备注" maxLen="512" name="FEEDBACK_REMARK_DTBC" showType="textarea" access="write" />
+		<variable text="2.5天DTBC处理延迟原因" maxLen="512" name="DTBC_PROC_DELAY" showType="textarea" access="write" />
+	</task>
+	<decision text="isMainFollowed2" name="isMainFollowed2" nodeType="decision" pos="850,130">
+		<transition to="VORArrange-NODE-16">
+			<event-listener />
+			<condition expr="#{task.accept.DEALER2_CONTACT_RESULT} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-15">
+			<condition expr="#{task.accept.DEALER2_CONTACT_RESULT} equal '2'" />
+		</transition>
+		<transition to="VORArrange-NODE-9" name="default" />
+	</decision>
+	<task text="经销商下一步计划" assignType="assignee" name="nextPlan" assignExpr="#{task.accept.DEALER_USER_ID}" nodeType="task" pos="10,490">
+		<transition to="VORArrange-NODE-37" text="经销商填写事件" name="toInputIncident" />
+		<variable text="客户ID" maxLen="32" name="CUST_ID" showType="text" required="true" access="read" />
+		<variable dataType="number" text="公司代码" maxLen="19" name="COMPANY_CODE" showType="text" access="read" />
+		<variable dataType="number" text="车辆代码" maxLen="19" name="VEHICLE_CODE" showType="text" access="read" />
+		<variable text="车辆故障地点" maxLen="512" name="VEHICLE_POSITION" showType="text" access="read" />
+		<variable text="经销商下一步计划" maxLen="512" name="NEXT_PLAN" showType="textarea" access="write" />
+		<variable text="实际回站时间" maxLen="50" name="ACTUAL_RETURN_TIME" showType="datetime" access="write" initExpr="#{sysCurrentTime}" />
+		<variable text="经销商下一步计划提醒邮件" maxLen="2048" name="NEXTPLAN_EMAIL" showType="textarea" access="hidden" />
+		<variable text="转交给DTBC提醒邮件" maxLen="2048" name="TODTBC_EMAIL" showType="textarea" access="hidden" />
+		<variable text="转交给DTBC负责人提醒邮件" maxLen="2048" name="TODTBC_LEADER_EMAIL" showType="textarea" access="hidden" />
+		<variable text="转交给CAC跟进提醒邮件" maxLen="2048" name="INPUTINCIDENT_EMAIL" showType="textarea" access="hidden" />
+		<variable text="是否升级到AR(经销商下一步计划)" maxLen="32" name="IS_UPTO_AR_2ND" showType="checkbox" access="hidden">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="升级到AR邮件内容(经销商下一步计划)" maxLen="2048" name="UPTO_AR_2ND_EMAIL" showType="textarea" access="hidden" />
+	</task>
+	<task text="联系经销商出现问题，升级到AR" assignType="assignee" name="upgradeToAR" assignExpr="#{sysCurrentUser}" nodeType="task" pos="730,130">
+		<transition to="VORArrange-NODE-12" text="继续联系经销商" name="toContinueContactDealer">
+			<event-listener />
+			<event-listener />
+		</transition>
+		<variable text="客户ID" maxLen="32" name="CUST_ID" showType="text" required="true" access="read" />
+		<variable text="升级到AR的原因" maxLen="1024" name="UPTO_AR_REASON" showType="textarea" required="true" access="write" />
+		<variable validateMethod="loadEmailToAR();" text="升级AR邮件内容" maxLen="1024" name="UPTO_AR_EMAIL" validateMethodName="生成邮件" showType="textarea" required="true" access="write" />
+		<variable text="发件帐号" maxLen="50" name="sender" showType="text" required="true" access="hidden" initExpr="public@mbtruckcac.com" />
+		<variable text="Email地址" maxLen="200" name="email" showType="text" required="true" access="hidden" initExpr="AR_DEALER1" />
+		<variable text="邮件主题" maxLen="255" name="mailSubject" showType="text" required="true" access="hidden" initExpr="VOR-联系经销商出现问题,升级给AR的邮件" />
+		<variable text="邮件内容" maxLen="1024" name="mailBody" showType="textarea" required="true" access="hidden" initExpr="UPTO_AR_EMAIL" />
+	</task>
+	<task text="经销商填写2.5天事件状态" onloadMethod="inputIncidentLoad('2D5');" assignType="assignee" name="inputIncident" assignExpr="#{task.accept.DEALER_USER_ID}" nodeType="task" pos="130,490">
+		<transition validateMethod="inputIncidentSubmit('2D5');" to="VORArrange-NODE-38" text="提交" name="toInputIncidentDec" />
+		<transition validateMethod="inputIncidentSubmit('2D5');" to="VORArrange-NODE-38" text="提交并发送邮件" name="toInputIncidentDec_2">
+			<event-listener />
+			<event-listener />
+			<condition expr="#{task.inputIncident_9D.IS_REPAIR_FINISH} equal '1'" />
+		</transition>
+		<variable text="临时处理时间" maxLen="20" name="TEMPPROCTIME" showType="datetime" access="hidden" initExpr="#{sysCurrentTime}" />
+		<variable text="实际到达时间" maxLen="50" name="ACTUAL_REACH_TIME" showType="datetime" access="read" />
+		<variable validateMethod="repairFinishChange('2D5');" text="2.5天是否维修完成" maxLen="32" name="IS_REPAIR_FINISH" showType="select" required="true" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable validateMethod="repairFinishTimeChange('2D5');" text="维修完成时间" maxLen="50" name="REPAIR_FINISH_TIME" showType="datetime" access="write" />
+		<variable text="2.5天是否需要总部配合" maxLen="32" name="IS_NEED_DTBC" showType="select" access="write" />
+		<variable text="计划涉及部门" maxLen="32" name="INCLUDE_DEPART" showType="select" access="write" />
+		<variable text="2.5天内事件状态" maxLen="2" name="INCIDENT_STATE_2D5" showType="select" access="hidden">
+			<item id="1" text="已完工" />
+			<item id="0" text="未完工" />
+		</variable>
+		<variable text="2.5天是否配合" maxLen="32" name="IS_COOPERATE_2D5" showType="select" access="hidden">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="2.5天未完工原因" maxLen="32" name="UNFINISH_REASON_2D5" showType="select" access="write">
+			<item id="1" text="报修未批复" />
+			<item id="2" text="技术诊断未果" />
+			<item id="3" text="经销商库存无货" />
+			<item id="4" text="DTBC大库无库存" />
+			<item id="5" text="路途遥远" />
+			<item id="6" text="客户原因" />
+		</variable>
+		<variable text="2.5天未完工原因备注" maxLen="2048" name="UNFINISH_REASON_REMARK_2D5" showType="textarea" access="write" />
+		<variable validateMethod="loadEmailFor2D5();" text="2.5天DTBC相关部门提醒邮件" maxLen="1024" name="UPTO_2D5_EMAIL" validateMethodName="生成邮件" showType="textarea" required="false" access="text" />
+		<variable text="发件帐号" maxLen="50" name="sender" showType="text" required="false" access="hidden" initExpr="public@mbtruckcac.com" />
+		<variable text="Email地址" maxLen="200" name="email" showType="text" required="false" access="text" initExpr="" />
+		<variable text="邮件主题" maxLen="255" name="mailSubject" showType="text" required="false" access="hidden" initExpr="2.5天DTBC相关部门提醒邮件" />
+		<variable text="邮件内容" maxLen="1024" name="mailBody" showType="textarea" required="false" access="hidden" initExpr="UPTO_2D5_EMAIL" />
+	</task>
+	<math unit="minute" text="waitDealerFeedback" name="waitDealerFeedback" value="20" ATTR-variable="#{sysTaskDueTime}" nodeType="math" initExpr="#{sysCurrentTime}" operator="add" pos="130,130">
+		<transition to="VORArrange-NODE-17" name="feedbackDealer" />
+	</math>
+	<task text="询问客户服务情况" assignType="assignee" name="inquiryCustomer" assignExpr="#{sysCurrentUser}" nodeType="task" pos="130,370">
+		<transition validateMethod="chkNextObTime('sysTaskDueTime')" text="下次继续外呼" name="myappoint" type="myappoint" />
+		<transition to="VORArrange-NODE-47" text="结单" name="toEnd">
+			<event-listener />
+		</transition>
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="sysTaskDueTime" showType="datetime" access="write" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+		<variable text="是否还需联系其它经销商" maxLen="32" name="IS_AGREE_CON_DEALER_X" showType="select" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable dataType="number" text="其它经销商" maxLen="19" name="DEALER_X" showType="text" access="write" />
+		<variable validateMethod="loadSMSToCustomer('X');" text="其它经销商联系信息" maxLen="512" name="DEALER_X_CONTACT_INFO" validateMethodName="生成经销商联系信息" showType="textarea" access="write" />
+	</task>
+	<decision text="feedbackDealer" name="feedbackDealer" nodeType="decision" pos="10,130">
+		<transition to="VORArrange-NODE-19">
+			<condition expr="#{task.accept.IS_AGREE_CON_DEALER2} equal 1" />
+		</transition>
+		<transition to="VORArrange-NODE-18" name="default" />
+	</decision>
+	<task text="转交给经销商" assignType="assignee" name="transferToDealer" assignExpr="#{sysCurrentUser}" nodeType="task" pos="10,370">
+		<transition to="VORArrange-NODE-36" text="转交" name="toNextPlan">
+			<event-listener />
+			<event-listener />
+		</transition>
+		<variable text="经销商用户ID" maxLen="512" name="DEALER_USER_ID" showType="text" access="write" />
+		<variable validateMethod="showDealerDetail();" dataType="number" text="最终分配经销商" maxLen="19" name="DEALER_FINAL" showType="text" access="read" />
+		<variable text="最终经销商联系人" maxLen="32" name="DEALER_FINAL_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="最终经销商联系信息" maxLen="512" name="DEALER_FINAL_CONTACT_INFO" showType="textarea" access="read" />
+		<variable validateMethod="loadEmailToDealer();" text="转交给经销商提醒邮件" maxLen="2048" name="TO_DEALER_EMAIL" validateMethodName="生成邮件" showType="textarea" access="write" />
+		<variable text="发件帐号" maxLen="50" name="sender" showType="text" required="true" access="hidden" initExpr="public@mbtruckcac.com" />
+		<variable text="Email地址" maxLen="200" name="email" showType="text" required="true" access="hidden" initExpr="DEALER_FINAL" />
+		<variable text="邮件主题" maxLen="255" name="mailSubject" showType="text" required="true" access="hidden" initExpr="VOR-CAC或DTBC处理完成转回Dealer提醒邮件" />
+		<variable text="邮件内容" maxLen="1024" name="mailBody" showType="textarea" required="true" access="hidden" initExpr="TO_DEALER_EMAIL" />
+	</task>
+	<decision text="changeDealerDec" name="changeDealerDec" nodeType="decision" pos="370,130">
+		<transition to="VORArrange-NODE-9">
+			<event-listener />
+			<condition expr="#{task.accept.IS_AGREE_CON_DEALER2} equal '1'" />
+		</transition>
+		<transition to="VORArrange-NODE-7" name="default" />
+	</decision>
+	<task text="核实经销商是否离开" assignType="group" name="verifyDealerIsLeave" layoutID="2015041400000055" assignExpr="01" nodeType="task" type="layout" pos="370,370">
+		<transition validateMethod="chkNextObTime('sysTaskDueTime')" text="下次继续外呼" name="myappoint" type="myappoint" />
+		<transition validateMethod="ctrlRequired('ACTUAL_LEAVE_TIME','EXPECT_RETURN_TIME')" to="VORArrange-NODE-33" text="提交" name="toNeedServiceDec" />
+		<variable validateMethod="showDealerDetail();" dataType="number" text="最终分配经销商" maxLen="19" name="DEALER_FINAL" showType="text" access="read" />
+		<variable text="最终经销商联系人" maxLen="32" name="DEALER_FINAL_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="最终经销商联系信息" name="DEALER_FINAL_CONTACT_INFO" showType="textarea" access="read" />
+		<variable text="经销商是否已经离开" maxLen="32" name="IS_DEALER_LEAVE" showType="select" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="预计离开（沟通）时间" maxLen="50" name="EXPECT_LEAVE_TIME" showType="datetime" access="write" initExpr="#{sysCurrentTime}" />
+		<variable text="离开时间跟进时间" maxLen="20" name="LEAVE_TRACK_TIME" showType="datetime" access="hidden" initExpr="#{sysCurrentTime}" />
+		<variable text="离开时间跟进人" maxLen="32" name="LEAVE_TRACK_PERSON" showType="text" access="hidden" initExpr="#{sysCurrentUser}" />
+		<variable text="离开时间跟进结果" maxLen="512" name="LEAVE_TRACK_RESULT" showType="textarea" access="write" />
+		<variable text="是否需要后续服务" maxLen="32" name="IS_CONTINUE_SERVICE" showType="select" access="write">
+			<item id="1" text="是" />
+			<item id="0" text="否" />
+		</variable>
+		<variable text="实际离开时间" maxLen="50" name="ACTUAL_LEAVE_TIME" showType="datetime" access="write" />
+		<variable text="预计回站时间" maxLen="50" name="EXPECT_RETURN_TIME" showType="datetime" access="write" />
+		<variable text="维修结果" maxLen="32" name="IS_SERVICE_SUCCESS" showType="select" access="write">
+			<item id="1" text="维修完成" />
+			<item id="0" text="没有做成服务" />
+		</variable>
+		<variable text="客户现场维修总结" maxLen="2000" name="CUST_SITE_REPAIR_SUMMARIZE" showType="textarea" required="true" access="write" />
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="sysTaskDueTime" showType="datetime" access="write" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+	</task>
+	<task text="升级到DTBC的通用问题处理部门" assignType="assignee" name="upgradeToDTBC" assignExpr="#{sysCurrentUser}" nodeType="task" pos="250,130">
+		<transition validateMethod="chkNextObTime('sysTaskDueTime')" text="下次继续外呼" name="myappoint" type="myappoint" />
+		<transition to="VORArrange-NODE-47" text="结单" name="toEnd">
+			<event-listener />
+			<event-listener />
+		</transition>
+		<variable text="客户ID" maxLen="32" name="CUST_ID" showType="text" required="true" access="read" />
+		<variable validateMethod="showDealerDetail(1);" text="首次分配经销商" maxLen="32" name="DEALER1" showType="text" access="read" />
+		<variable text="首家经销商联系人" maxLen="32" name="DEALER1_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="首家经销商联系时间" maxLen="20" name="DEALER1_CONTACT_TIME" showType="datetime" access="read" />
+		<variable dataType="number" text="首家经销商联系次数" name="DEALER1_CONTACT_TIMES" showType="text" access="read" />
+		<variable text="首家经销商联系结果" maxLen="16" name="DEALER1_CONTACT_RESULT" showType="select" access="read" />
+		<variable validateMethod="" text="首次经销商联系信息" maxLen="512" name="DEALER1_CONTACT_INFO" validateMethodName="" showType="textarea" access="read" />
+		<variable text="首次经销商拒绝原因" maxLen="32" name="DEALER1_REFUSE_REASON" showType="select" access="read" />
+		<variable text="首次经销商反馈内容" name="DEALER1_FEEDBACK" showType="textarea" access="read" />
+		<variable validateMethod="showDealerDetail(1);" dataType="number" text="二次分配经销商" maxLen="19" name="DEALER2" showType="text" access="read" />
+		<variable text="二次经销商联系人" maxLen="32" name="DEALER2_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="二次经销商联系时间" maxLen="20" name="DEALER2_CONTACT_TIME" showType="datetime" access="read" />
+		<variable dataType="number" text="二次经销商联系次数" name="DEALER2_CONTACT_TIMES" showType="text" access="read" />
+		<variable text="二次经销商联系结果" maxLen="16" name="DEALER2_CONTACT_RESULT" showType="select" access="read" />
+		<variable validateMethod="" text="二次经销商联系信息" name="DEALER2_CONTACT_INFO" validateMethodName="" showType="textarea" access="read" />
+		<variable text="二次经销商拒绝原因" maxLen="32" name="DEALER2_REFUSE_REASON" showType="select" access="read" />
+		<variable text="二次经销商反馈内容" name="DEALER2_FEEDBACK" showType="textarea" access="read" />
+		<variable text="经销商与客户是否达成一致" maxLen="50" name="IS_REACH_AGREEMENT" showType="select" access="read" />
+		<variable text="升级到DTBC的原因" maxLen="1024" name="UPTO_DTBC_REASON" showType="textarea" required="true" access="write" />
+		<variable validateMethod="loadEmailToDTBC();" text="升级DTBC邮件内容" maxLen="1024" name="UPTO_DTBC_EMAIL" validateMethodName="生成邮件" showType="textarea" required="true" access="write" />
+		<variable text="外呼结果" maxLen="32" name="sysTaskBusiState" showType="select" required="true" access="write" />
+		<variable text="下次外呼时间" maxLen="50" name="sysTaskDueTime" showType="datetime" access="write" />
+		<variable text="外呼备注" maxLen="1000" name="sysTaskMemo" showType="textarea" access="write" />
+		<variable text="发件帐号" maxLen="50" name="sender" showType="text" required="true" access="hidden" initExpr="public@mbtruckcac.com" />
+		<variable text="Email地址" maxLen="200" name="email" showType="text" required="true" access="hidden" initExpr="AR_DEALER1" />
+		<variable text="邮件主题" maxLen="255" name="mailSubject" showType="text" required="true" access="hidden" initExpr="VOR-客户拒绝更换经销商,升级到DTBC的邮件" />
+		<variable text="邮件内容" maxLen="1024" name="mailBody" showType="textarea" required="true" access="hidden" initExpr="UPTO_DTBC_EMAIL" />
+	</task>
+	<decision text="needServiceDec" name="needServiceDec" nodeType="decision" pos="250,370">
+		<transition to="VORArrange-NODE-35">
+			<condition expr="#{task.accept.IS_CONTINUE_SERVICE} equal 1" />
+		</transition>
+		<transition to="VORArrange-NODE-47">
+			<condition expr="(#{task.accept.IS_SERVICE_SUCCESS} equal 1) and (#{task.accept.IS_CONTINUE_SERVICE} equal 0)" />
+		</transition>
+		<transition to="VORArrange-NODE-34">
+			<condition expr="(#{task.accept.IS_SERVICE_SUCCESS} equal 0) and (#{task.accept.IS_CONTINUE_SERVICE} equal 0)" />
+		</transition>
+		<transition to="VORArrange-NODE-32" name="default" />
+	</decision>
+	<task text="首次经销商反馈" onloadMethod="disableGoTime();" assignType="group" name="feedbackDealer1" layoutID="2015041400000055" assignExpr="01" nodeType="task" type="layout" pos="10,250">
+		<transition validateMethod="fbDCheckRequired()" to="VORArrange-NODE-20" text="提交" name="toIsReachAgreement" />
+		<variable text="客户ID" maxLen="32" name="CUST_ID" showType="text" required="true" access="read" />
+		<variable text="车辆故障地点" maxLen="128" name="VEHICLE_POSITION" showType="text" access="read" />
+		<variable validateMethod="showDealerDetail(1);" text="首次分配经销商" maxLen="32" name="DEALER1" showType="text" access="read" />
+		<variable text="首家经销商联系人" maxLen="32" name="DEALER1_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="首家经销商联系时间" maxLen="20" name="DEALER1_CONTACT_TIME" showType="datetime" access="read" />
+		<variable dataType="number" text="首家经销商联系次数" name="DEALER1_CONTACT_TIMES" showType="text" access="read" />
+		<variable text="首家经销商联系结果" maxLen="16" name="DEALER1_CONTACT_RESULT" showType="select" access="read" />
+		<variable validateMethod="" text="首次经销商联系信息" name="DEALER1_CONTACT_INFO" validateMethodName="" showType="textarea" access="read" />
+		<variable text="首次经销商反馈内容" maxLen="512" name="DEALER1_FEEDBACK" showType="textarea" access="write" required="true" />
+		<variable validateMethod="ctrlGoTime();" text="经销商与客户是否达成一致" maxLen="50" name="IS_REACH_AGREEMENT" showType="select" access="write" required="true" />
+		<variable text="预计出发时间" maxLen="20" name="EXPECT_GO_TIME" showType="datetime" access="write" />
+		<variable text="超过1小时出发原因" maxLen="512" name="DELAY_REASON_1H" showType="textarea" access="write" />
+	</task>
+	<task text="二次经销商反馈" onloadMethod="disableGoTime();" assignType="group" name="feedbackDealer2" layoutID="2015041400000055" assignExpr="01" nodeType="task" type="layout" pos="130,250">
+		<transition validateMethod="fbDCheckRequired()" to="VORArrange-NODE-20" text="提交" name="toIsReachAgreement" />
+		<variable text="客户ID" maxLen="32" name="CUST_ID" showType="text" required="true" access="read" />
+		<variable text="车辆故障地点" maxLen="128" name="VEHICLE_POSITION" showType="text" access="read" />
+		<variable validateMethod="showDealerDetail(2);" dataType="number" text="二次分配经销商" maxLen="19" name="DEALER2" showType="text" access="read" />
+		<variable text="二次经销商联系人" maxLen="32" name="DEALER2_CONTACT_PERSON" showType="text" access="read" />
+		<variable text="二次经销商联系时间" maxLen="20" name="DEALER2_CONTACT_TIME" showType="datetime" access="read" />
+		<variable dataType="number" text="二次经销商联系次数" name="DEALER2_CONTACT_TIMES" showType="text" access="read" />
+		<variable text="二次经销商联系结果" maxLen="16" name="DEALER2_CONTACT_RESULT" showType="select" access="read" />
+		<variable validateMethod="" text="二次经销商联系信息" maxLen="512" name="DEALER2_CONTACT_INFO" validateMethodName="" showType="textarea" access="read" />
+		<variable text="二次经销商反馈内容" maxLen="512" name="DEALER2_FEEDBACK" showType="textarea" access="write" required="true" />
+		<variable validateMethod="ctrlGoTime();" text="经销商与客户是否达成一致" maxLen="50" name="IS_REACH_AGREEMENT" showType="select" access="write" />
+		<variable text="预计出发时间" maxLen="20" name="EXPECT_GO_TIME" showType="datetime" access="write" />
+		<variable text="超过1小时出发原因" maxLen="512" name="DELAY_REASON_1H" showType="textarea" access="write" />
+	</task>
+</process>
+

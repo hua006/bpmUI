@@ -1,4 +1,4 @@
-package com.arvato.acrm.model;
+package com.arvato.acrm.bpmui.model;
 
 import com.arvato.acrm.commons.util.Tools;
 

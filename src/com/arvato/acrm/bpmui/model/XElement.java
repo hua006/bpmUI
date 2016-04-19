@@ -1,11 +1,9 @@
-package com.arvato.acrm.model;
+package com.arvato.acrm.bpmui.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -126,8 +124,9 @@ public class XElement {
 	
 	public static void main(String[] args) {
 		Map<String,String>  map = new HashMap<String,String>();
-		map.put("1", "[]");
-		JSONObject jsonObj = JSONObject.fromBean(map);
+		map.put("class", "1212");
+		System.out.println(JSONObject.fromBean(map).toString());
+//		JSONObject jsonObj = JSONObject.fromBean(map);
 		
 		List<String>  m = new ArrayList<String>();
 		m.add("{'a':'b'}");

@@ -5,10 +5,10 @@
 
 <struts>
 	<package name="bpmui" extends="default" namespace="/bpmui">
-		<action name="loadFile" class="com.arvato.acrm.web.BpmUIAction" method="loadFile">
+		<action name="loadFile" class="com.arvato.acrm.bpmui.web.BPMUIAction" method="loadFile">
 			<result name="success">/acrm/dataOutput</result>
 		</action>
-		<action name="saveFile" class="com.arvato.acrm.web.BpmUIAction" method="saveFile">
+		<action name="saveFile" class="com.arvato.acrm.bpmui.web.BPMUIAction" method="saveFile">
 			<result name="success">/acrm/dataOutput</result>
 		</action>
 	</package>

@@ -1,4 +1,4 @@
-package com.arvato.acrm.model;
+package com.arvato.acrm.bpmui.model;
 
 public class NodeIDBean {
 	private int index = 0;

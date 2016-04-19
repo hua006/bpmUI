@@ -1,49 +1,21 @@
-package com.arvato.acrm.model;
+package com.arvato.acrm.bpmui.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 
-import com.arvato.acrm.commons.util.Tools;
+import com.arvato.acrm.bpmui.BPMUIConstants;
+import com.arvato.acrm.bpmui.model.XElement;
 
 public class XElementSupport {
 
-	private static List<String> arrays = new ArrayList<String>();
-	private static List<String> nodes = new ArrayList<String>();
-	
-	private static Map<String,String> attrNames = new HashMap<String,String>();
-	static {
-		arrays.add("transition");
-		arrays.add("event-listener");
-		arrays.add("variable");
-		arrays.add("item");
-		arrays.add("on");
-
-		// start,end,task,decision,state,sub-process,fork,join,math,define;group;
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		nodes.add("");
-		
-		// 工作流文件中的元素节点与属性名有重复的情况,需要对元素名称进行重命名;
-		attrNames.put("variable", "ATTR-variable");
-	}
-	
 	/**
 	 * 读取子元素及后代元素:
 	 * 包括元素名称,取值,属性,子元素
@@ -54,7 +26,7 @@ public class XElementSupport {
 	public XElement readElement(Element element) {
 		
 		// 创建XElement对象
-		XElement xe = new XElement(element.getName(), element.getText());
+		XElement xe = new XElement(element.getName(), element.getTextTrim());
 		
 		// 读取属性
 		xe.addChildren(readAttribute(element));
@@ -78,7 +50,7 @@ public class XElementSupport {
 		for (Iterator it = element.elementIterator(); it.hasNext();) {
 			Element e = (Element) it.next();
 			String childName = e.getName();
-			if (arrays.contains(childName)) {
+			if (BPMUIConstants.arrayNodes.contains(childName)) {
 				childArray = map.get(childName);
 				if (childArray == null) {
 					childArray = new XElement(childName, "");
@@ -103,7 +75,7 @@ public class XElementSupport {
 		List<XElement> list = new ArrayList<XElement>();
 		for (Iterator it = element.attributeIterator(); it.hasNext();) {
 			Attribute attribute = (Attribute) it.next();
-			list.add(new XElement(getAttributeName(attribute.getName()), attribute.getText()));
+			list.add(new XElement(BPMUIConstants.getAttributeName(attribute.getName()), attribute.getText()));
 		}
 		return list;
 	}
@@ -118,6 +90,17 @@ public class XElementSupport {
 		if (element.getChildren() != null && element.getChildren().size() > 0) {
 			for (XElement child : element.getChildren()) {
 				if (child.getName().equals(childName)) {
+					return child;
+				}
+			}
+		}
+		return null;
+	}
+	public XElement getAndRemoveChild(XElement element, String childName) {
+		if (element.getChildren() != null && element.getChildren().size() > 0) {
+			for (XElement child : element.getChildren()) {
+				if (child.getName().equals(childName)) {
+					element.getChildren().remove(child);
 					return child;
 				}
 			}
@@ -178,24 +161,4 @@ public class XElementSupport {
 		}
 	}
 	
-	/**
-	 * 元素节点与属性名称有重复的情况,需要区分:解析元素的时候将元素名称重命名
-	 * @param name
-	 * @return
-	 */
-	public static String getAttributeName(String name){
-		if(attrNames.containsKey(name)){
-			return attrNames.get(name);
-		}
-		return name;
-	}
-
-	public static String getName(String attributeName) {
-		for (Entry<String, String> entry : attrNames.entrySet()) {
-			if (entry.getValue().equals(attributeName)) {
-				return entry.getKey();
-			}
-		}
-		return attributeName;
-	}
 }

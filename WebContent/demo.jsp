@@ -37,6 +37,9 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/json2.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/util.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/main.js<%=s%>"></script>
+<script type="text/javascript">
+	var contextPath = '<%=request.getContextPath()%>';
+</script>
 </head>
 <body>                         
 	<a href='/bpmUI/?num=<%=System.currentTimeMillis()%>'>强制刷新<a>

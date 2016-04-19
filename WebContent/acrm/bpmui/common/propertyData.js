@@ -293,7 +293,7 @@ GlobalNS.formDatas['event-listener']=(function(){
 		defaults: {style:'width:140px'},
 		cls:'',
 		items:[
-			{xtype:'text',name:'class',text:'自定义处理类'}
+			{xtype:'text',name:'ATTR-class',text:'自定义处理类'}
 		]
 	}
 })();

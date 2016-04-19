@@ -1,4 +1,3 @@
-
 	<!-- file upload -->
 	<servlet>
 	  <servlet-name>fileUpload</servlet-name>
@@ -42,34 +41,3 @@
 		<url-pattern>/acrm/dataOutput</url-pattern>
 	</servlet-mapping>
 	<!-- end for output for ajax-->
-
-	<!-- jor report-->
-	<servlet>
-		<servlet-name>jatoolsreport</servlet-name> 
-	    <servlet-class>jatools.server.JatoolsReportServlet</servlet-class>
-	</servlet> 
-	<servlet-mapping>
-		<servlet-name>jatoolsreport</servlet-name>
-		<url-pattern>/acrm/jatoolsreport</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>reportviewer</servlet-name> 
-		<jsp-file>/acrm/tools/jor/reportviewer.jsp</jsp-file> 
-	</servlet> 
-	<servlet-mapping>
-		<servlet-name>reportviewer</servlet-name>
-		<url-pattern>/acrm/reportviewer</url-pattern>
-	</servlet-mapping>
-	<!-- end jor report-->
-	
-	<!-- SMS Servlet-->
-	<servlet>
-		<servlet-name>etonert</servlet-name>
-		<servlet-class>com.arvato.acrm.interaction.sms.vendor.etone.EToneSingleReportReceiver</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>etonert</servlet-name>
-		<url-pattern>/etone/rt</url-pattern>
-	</servlet-mapping>
-	<!-- end SMS Servlet-->

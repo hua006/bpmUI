@@ -33,10 +33,12 @@ $.extend(MyDesigner.prototype, {
 	// 场景:工作区;获取某个节点的出口规则
 	reloadTransitions:function(nodeId, transitions, lineDataMap){
 		// 查找from为当前节点的连线,若连线的to属性不在当前节点的transitions属性中,则为当前节点添加一条transition
+		// 20160419新增:更新transition节点的连线信息
 		for(var key in lineDataMap){
 			var to = null;
 			if (lineDataMap[key].from == nodeId) {
 				to = lineDataMap[key].to;
+				var line = lineDataMap[key].line||{};
 				if (!to) {
 					continue;
 				}
@@ -44,7 +46,8 @@ $.extend(MyDesigner.prototype, {
 				for (var i = 0; i < transitions.length; i++) {
 					if (transitions[i].to == to) {
 						find = true;
-						break;
+						transitions[i].line = line;
+						//break;
 					}
 				}
 				if (!find) {
@@ -52,7 +55,8 @@ $.extend(MyDesigner.prototype, {
 					this.$max++;
 					transitions.push({
 						name : tranName,
-						to : to
+						to : to,
+						line:line
 					});
 				}
 			}

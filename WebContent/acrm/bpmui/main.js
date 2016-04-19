@@ -59,10 +59,44 @@ $(document).ready(function() {
 	demo = $.createGooFlow($("#demo"), property);
 	demo.setNodeRemarks(remark);
 	
-	demo.onItemDel = function(id, type) {
-		return confirm("确定要删除该单元吗?");
+//	demo.onItemDel = function(id, type) {
+//		return confirm("确定要删除该单元吗?");
+//	};
+	demo.onBtnOpenClick = function() {
+		var path = contextPath + "/bpmui/loadFile.action?defKey=consultNew";
+		$.ajax({
+			type : "get",
+			url : path,
+			data : "name=John&location=Boston",
+			dataType:"json",
+			success : function(msg) {
+				alert("打开工作流: " + msg.title);
+				demo.clearData();
+				demo.loadData(msg);
+			}
+		});
 	};
-	demo.loadData(jsondata);
+	demo.onBtnSaveClick = function() {
+		var path = contextPath + "/bpmui/saveFile.action";
+		var defKey = demo.$defKey;
+		var exportData = demo.exportData();
+		var nodes = exportData.nodes;
+		var lines = exportData.lines;
+		
+		
+//		{title:this.$title,nodes:this.$nodeData,lines:this.$lineData,areas:this.$areaData,initNum:this.$max}
+		
+		var jsonData = JSON.stringify(exportData);
+		$.ajax({
+			type : "POST",
+			url : path,
+			data : "defKey=" + defKey + "&jsondata=" + jsonData,
+			success : function(msg) {
+				alert("Data Saved: " + msg);
+			}
+		});
+	};
+//	demo.loadData(jsondata);
 	demo.onItemDblClick = function(focusId,type){
 		var baseType = type;
 		if (type == 'line') {

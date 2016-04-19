@@ -824,6 +824,7 @@ GooFlow.prototype={
 		var t=this.$editable;
 		this.$editable=false;
 		if(data.title)	this.setTitle(data.title);
+		this.$defKey = data.defKey||'demo';
 		if(data.initNum)	this.$max=data.initNum;
 		for(var i in data.nodes)
 			this.addNode(i,data.nodes[i]);
