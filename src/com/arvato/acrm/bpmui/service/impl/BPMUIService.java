@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import com.arvato.acrm.bpmui.util.XElementSupport;
 import com.arvato.acrm.commons.util.Tools;
 
 import net.sf.json.JSONObject;
+import net.sf.json.util.JSONStringer;
 
 public class BPMUIService {
 	private XElementSupport support = new XElementSupport();
@@ -36,31 +38,30 @@ public class BPMUIService {
 		Map<String, String> keyMap = new HashMap<String, String>(); // 节点名称与id键值对
 		
 		// 读取工作流节点
-		Map<String, XElement> nodeMap = readNodeData(pdRootElement, keyMap, idBean);
+		List<XElement> nodeList = readNodeData(pdRootElement, keyMap, idBean);
 		
 		// 读取连线信息
-		Map<String, XElement>  connMap = readConnData(nodeMap, keyMap, idBean);
+		Map<String, XElement>  connMap = readConnData(nodeList, keyMap, idBean);
 		
 		// 更新节点信息
-		updateNodeData(nodeMap, keyMap);
+		updateNodeData(nodeList, keyMap);
 		
 		// 生成json字符串
-		String jsonData=getJsonData(processName, processDesc, nodeMap, connMap);
+		String jsonData=getJsonData(processName, processDesc, nodeList, connMap);
 		
 		System.out.println(jsonData);
 		return jsonData;
 	}
 	
-	private String getJsonData(String processName,String processDesc,Map<String, XElement> nodeMap,Map<String, XElement>  connMap){
-		
+	private String getJsonData(String processName, String processDesc, List<XElement> nodeList, Map<String, XElement> connMap) {
+
 		// 生成json数据
-		Map<String,Object> nodeJsonMap = new HashMap<String,Object>();
-		for(Map.Entry<String,XElement> entry: nodeMap.entrySet()){
-			Object valueJson = entry.getValue().toJson();
-			nodeJsonMap.put(entry.getKey(), valueJson);
+		Map<String,Object> nodeJsonMap = new LinkedHashMap<String,Object>();
+		for (XElement element : nodeList) {
+			nodeJsonMap.put(element.getName(), element.toJson());
 		}
 		
-		Map<String,Object> lineJsonMap = new HashMap<String,Object>();
+		Map<String,Object> lineJsonMap = new LinkedHashMap<String,Object>();
 		for(Map.Entry<String,XElement> entry: connMap.entrySet()){
 			Object valueJson = entry.getValue().toJson();
 			lineJsonMap.put(entry.getKey(), valueJson);
@@ -72,7 +73,7 @@ public class BPMUIService {
 		JsonMap.put("nodes", nodeJsonMap);
 		JsonMap.put("lines", lineJsonMap);
 		
-		JSONObject jsonObj = JSONObject.fromBean(JsonMap);
+		JSONObject jsonObj = JSONObject.fromObject(JsonMap);
 		return jsonObj.toString();
 	}
 	
@@ -104,9 +105,9 @@ public class BPMUIService {
 	 * @param idBean
 	 * @throws Exception
 	 */
-	public Map<String, XElement> readNodeData(Element rootElement,Map<String, String> keyMap,NodeIDBean idBean) throws Exception{
+	public List<XElement> readNodeData(Element rootElement,Map<String, String> keyMap,NodeIDBean idBean) throws Exception{
 		
-		Map<String, XElement> nodeMap = new HashMap<String, XElement>(); // nodes
+		List<XElement> nodeList =  new ArrayList<XElement>();
 		
 		// 读取工作流属性
 		String rootName = rootElement.getName();
@@ -143,27 +144,27 @@ public class BPMUIService {
 			wf.setName("wfDatas");
 			
 			xe.addChild(wf);
-			nodeMap.put(nodeId, xe);
+			nodeList.add(xe);
 			keyMap.put(name, nodeId);
 		}
 		
-		return nodeMap;
+		return nodeList;
 	}
 	
 	/**
 	 * 获取连线信息6
-	 * @param nodeMap
+	 * @param nodeList
 	 * @param keyMap
 	 * @param idBean
 	 * @return
 	 */
-	private Map<String, XElement> readConnData(Map<String, XElement> nodeMap,Map<String, String> keyMap,NodeIDBean idBean){
-		Map<String, XElement> connMap = new HashMap<String, XElement>(); // conn
+	private Map<String, XElement> readConnData(List<XElement> nodeList,Map<String, String> keyMap,NodeIDBean idBean){
+		Map<String, XElement> connMap = new LinkedHashMap<String, XElement>(); // conn
 		
 		// 连线除重,设置连线id,修改连线出口节点
 		
 		// 获取所有的transition节点---对应line
-		List<XElement> transitionNodeList = support.getChildListAll(nodeMap, "transition");
+		List<XElement> transitionNodeList = support.getChildListAll(nodeList, "transition");
 		
 		// 设置连线Id
 		for (XElement element : transitionNodeList) {
@@ -282,10 +283,10 @@ public class BPMUIService {
 	 * 更新节点信息:节点属性中引用了其它节点的名称,需要修改为节点id
 	 * @param flowFileName
 	 */
-	private void updateNodeData(Map<String, XElement> nodeMap,Map<String, String> keyMap){
+	private void updateNodeData(List<XElement> nodeList,Map<String, String> keyMap){
 		
 		// 将事件节点中的节点名称替换成节点id
-		List<XElement> onNodeList = support.getChildListAll(nodeMap, "on");
+		List<XElement> onNodeList = support.getChildListAll(nodeList, "on");
 		for (XElement element : onNodeList) {
 			
 			// 修改出口节点
@@ -302,7 +303,7 @@ public class BPMUIService {
 		// 将其它出口节点中的节点名称替换成节点Id
 		String[] destNodes = { "exceptNode", "priorNode" };
 		for (String destNode : destNodes) {
-			List<XElement> destNodeList = support.getChildListAll(nodeMap, destNode);
+			List<XElement> destNodeList = support.getChildListAll(nodeList, destNode);
 			for (XElement element : destNodeList) {
 				
 				// 修改引用的节点名称为节点id

@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
@@ -132,12 +130,10 @@ public class XElementSupport {
 	 * @param childName
 	 * @return
 	 */
-	public List<XElement> getChildListAll(Map<String, XElement> nodesMap, String childName) {
-		Set<Entry<String, XElement>> set = nodesMap.entrySet();
+	public List<XElement> getChildListAll(List<XElement> nodeList, String childName) {
 		List<XElement> resultList = new ArrayList<XElement>();
-		for (Entry<String, XElement> entry : set) {
-			XElement element = entry.getValue();
-			getChildAll(element, childName, resultList);
+		for (XElement node : nodeList) {
+			getChildAll(node, childName, resultList);
 		}
 		return resultList;
 	}
@@ -160,5 +156,4 @@ public class XElementSupport {
 			}
 		}
 	}
-	
 }

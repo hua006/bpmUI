@@ -2,6 +2,7 @@ package com.arvato.acrm.bpmui.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,27 +97,26 @@ public class XElement {
 	}
 	
 	/**
-	 * 将元素转换为json格式的字符串
+	 * 将元素转换为json格式的对象
 	 * @return
 	 */
-	public Object toJson(){
-		Map<String,Object>  map = new HashMap<String,Object>();
-		Object json="";
+	public Object toJson() {
+		Object json = "";
 		if (this.getChildren() == null || this.getChildren().size() == 0) {
-			json= getJsonValue();
+			json = getJsonValue();
 		} else {
 			if (this.getType() == 1) {
-				List<Object>  m = new ArrayList<Object>();
+				List<Object> m = new ArrayList<Object>();
 				for (XElement child : children) {
 					m.add(child.toJson());
 				}
-				json = JSONArray.fromCollection(m).toString();
-			}else{
-				Map<String,Object>  m = new HashMap<String,Object>();
+				json = m;
+			} else {
+				Map<String, Object> m = new LinkedHashMap<String, Object>();
 				for (XElement child : children) {
 					m.put(child.getName(), child.toJson());
 				}
-				json = JSONObject.fromBean(m).toString();
+				json = m;
 			}
 		}
 		return json;
@@ -125,13 +125,13 @@ public class XElement {
 	public static void main(String[] args) {
 		Map<String,String>  map = new HashMap<String,String>();
 		map.put("class", "1212");
-		System.out.println(JSONObject.fromBean(map).toString());
+		System.out.println(JSONObject.fromObject(map).toString());
 //		JSONObject jsonObj = JSONObject.fromBean(map);
 		
 		List<String>  m = new ArrayList<String>();
 		m.add("{'a':'b'}");
 		m.add("{c:1}");
 		m.add("{d:3}");
-		System.out.println(JSONArray.fromCollection(m).toString());
+		System.out.println(JSONArray.fromObject(m).toString());
 	}
 }

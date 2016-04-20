@@ -15,6 +15,7 @@ jQuery.extend({
 	}
 });
 
+// gooflow设计器的构造信息
 var property = {
 	width : 1200,
 	height : 600,
@@ -39,6 +40,7 @@ var property = {
 	},
 };
 
+// gooflow设计器节点的显示名称信息
 var remark = {
 	cursor : "选择指针",
 	mutiselect : "多选",
@@ -54,6 +56,7 @@ var remark = {
 	math : "计算结点",
 	define : "赋值结点"
 };
+
 var demo; // 设计器对象
 $(document).ready(function() {
 	demo = $.createGooFlow($("#demo"), property);
@@ -63,7 +66,7 @@ $(document).ready(function() {
 //		return confirm("确定要删除该单元吗?");
 //	};
 	demo.onBtnOpenClick = function() {
-		var path = contextPath + "/bpmui/loadFile.action?defKey=consultNew";
+		var path = contextPath + "/bpmui/loadFile.action?defKey=consultNew2";
 		$.ajax({
 			type : "get",
 			url : path,
@@ -124,6 +127,7 @@ $(document).ready(function() {
         alert("Thank you for your comment!");
     });
 });
+
 var out;
 function Export() {
 	document.getElementById("result").value = JSON.stringify(demo.exportData());

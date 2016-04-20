@@ -1,8 +1,5 @@
 package com.arvato.acrm.bpmui.web;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -12,9 +9,6 @@ import com.arvato.acrm.bpmui.service.impl.BPMUIService;
 import com.arvato.acrm.bpmui.util.JsonParseSupport;
 import com.arvato.acrm.commons.util.Tools;
 import com.opensymphony.xwork2.ActionSupport;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 public class BPMUIAction extends ActionSupport {
 

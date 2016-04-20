@@ -87,42 +87,6 @@ public class JsonParseSupport {
 			element.addAttribute("pos", pos);
 		}
 		
-		// 解析连线,获取连线的位置信息
-		for (Iterator iter = lines.keys(); iter.hasNext();) {
-			
-			// 取节点图形化信息
-			String lineId = (String) iter.next();
-			JSONObject connJson = getJSONObject(lines, lineId);
-			
-//			if(connJson.has("line")){
-//				JSONObject lineJson = getJSONObject(connJson, "line");
-//				String x1=getValue(lineJson, "X1");
-//				String y1=getValue(lineJson, "Y1");
-//				String x2=getValue(lineJson, "X2");
-//				String y2=getValue(lineJson, "Y2");
-//				if(lineJson.has("points")){
-//					JSONArray pointsJson = getJSONArray(lineJson, "points");
-//					for(int index=0;index<pointsJson.length();index++){
-//						JSONObject pointJson = pointsJson.getJSONObject(index);
-//						String x=getValue(pointJson, "X1");
-//						String y=getValue(pointJson, "Y1");
-//					}
-//				}
-//			}
-			
-//			line:{X1:130,Y1:20,X2:150,Y2:50,
-//		        points:[{X:150,Y:20}]
-//		      }
-
-			
-//			String point = getValue(jsonObj,"point");
-//			
-//			// 添加工作流节点
-//			Element element = _root.addElement(type);
-//			addElement(wfDatas, element);
-//			element.addAttribute("pos", pos);
-		}
-		
 		// 更新节点id
 		List<Element> list = _root.selectNodes("//transition");
 		for (Element element : list) {
@@ -185,8 +149,8 @@ public class JsonParseSupport {
 	 * @param jsonObj
 	 * @param element
 	 */
-	private void addElement(JSONObject jsonObj,Element element){
-		if(jsonObj.isEmpty()){
+	private void addElement(JSONObject jsonObj, Element element) {
+		if (jsonObj.isEmpty()) {
 			return;
 		}
 		for (Iterator iter = jsonObj.keys(); iter.hasNext();) {
@@ -194,12 +158,21 @@ public class JsonParseSupport {
 			Object obj = jsonObj.get(key);
 			if (obj instanceof JSONObject) {
 				JSONObject jsonTemp = jsonObj.getJSONObject(key);
+				if(jsonTemp.isEmpty()){
+					continue;
+				}
 				Element child = element.addElement(key);
 				addElement(jsonTemp, child);
 			} else if (obj instanceof JSONArray) {
 				JSONArray jsonTemp = jsonObj.getJSONArray(key);
+				if(jsonTemp.isEmpty()){
+					continue;
+				}
 				addElement(key, jsonTemp, element);
 			} else {
+				if (obj.toString().trim().length() == 0) {
+					continue;
+				}
 				String name = BPMUIConstants.getName(key);
 				element.addAttribute(name, obj.toString().trim());
 			}
@@ -214,14 +187,14 @@ public class JsonParseSupport {
 		if (jsonArray.isEmpty()) {
 			return;
 		}
-		for (int index = 0; index < jsonArray.length(); index++) {
+		for (int index = 0; index < jsonArray.size(); index++) {
 			Object obj = jsonArray.get(index);
 			if (obj instanceof JSONObject) {
 				Element child = element.addElement(name);
 				JSONObject jsonTemp = (JSONObject) obj;
 				addElement(jsonTemp, child);
 			} else if (obj instanceof JSONArray) {
-				JSONArray jsonTemp = (JSONArray)obj;
+				JSONArray jsonTemp = (JSONArray) obj;
 				Element child = element.addElement(name);
 				addElement(name, jsonTemp, child);
 			} else {
@@ -275,7 +248,7 @@ public class JsonParseSupport {
 				System.out.println(jsonTemp.toString());
 			}else if (obj instanceof JSONArray) {
 				JSONArray jsonTemp = jsonObj.getJSONArray(key);
-				for (int index = 0; index < jsonTemp.length(); index++) {
+				for (int index = 0; index < jsonTemp.size(); index++) {
 					Object obj2 = jsonTemp.get(index);
 					System.out.println((obj2 instanceof JSONObject)+obj2.toString());
 				}
