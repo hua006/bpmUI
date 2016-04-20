@@ -19,23 +19,25 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/jquery/jquery-2.2.1.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/jquery/jquery.form.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/jquery-ui/jquery-ui.js"></script>
-<%-- <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/gooflow/js/GooFlow.js"></script> --%>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/globalNS.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooFlow-base.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooFlow-prototype.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/node.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/line.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/area.js<%=s%>"></script>
+
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooflow/gooFlow-base.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooflow/gooFlow-prototype.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooflow/node.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooflow/line.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/gooflow/area.js<%=s%>"></script>
+
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myDesigner.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/myProperty.js"></script>
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/initData.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/func.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/propertyData.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/data.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/json2.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/util.js<%=s%>"></script>
+
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/data/initData.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/data/propertyData.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/data/data.js<%=s%>"></script>
+
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/main.js<%=s%>"></script>
 <script type="text/javascript">
 	var contextPath = '<%=request.getContextPath()%>';
