@@ -135,35 +135,44 @@ GlobalNS.fn = {
 	};*/
 	renderAdd : function(data) {
 		$('<a href="#">修改</a>').button().click(
-			{This:this,data:data},
-			function(event) {
-				var datas = event.data.data;
-				var This = event.data.This;
-				var childName = datas.itemName;
-				var childValue = datas.record;
-				var parentType = This.$baseType;
-				GlobalNS.fn.openPropWindow.call(This, childName, childValue, parentType, 'modify');
-			}
+				{This:this,data:data},
+				function(event) {
+					var datas = event.data.data;
+					var This = event.data.This;
+					var childName = datas.itemName;
+					var childValue = datas.record;
+					var parentType = This.$baseType;
+					GlobalNS.fn.openPropWindow.call(This, childName, childValue, parentType, 'modify');
+				}
 		).appendTo(data.td);
 		
 		$('<a href="#">删除</a>').button().click(
-			{This:this,data:data},
-			function(event){
-				var datas = event.data.data;
-				var This = event.data.This;
-				var id = datas.record[datas.idField];
-				alert('delete '+id);
-				var $td = This.$dialog.find('.tr-'+id).remove();
-				var array =[];
-				var itemData = This.$pData[data.itemName];
-				for(var i=0;i<itemData.length;i++){
-					if (itemData[i][datas.idField] != id) {
-						array.push(itemData[i]);
+				{This:this,data:data},
+				function(event){
+					var datas = event.data.data;
+					var This = event.data.This;
+					var id = datas.record[datas.idField];
+					alert('delete '+id);
+					var $td = This.$dialog.find('.tr-'+id).remove();
+					var array =[];
+					var itemData = This.$pData[data.itemName];
+					for(var i=0;i<itemData.length;i++){
+						if (itemData[i][datas.idField] != id) {
+							array.push(itemData[i]);
+						}
 					}
+					This.$pData[data.itemName] = array;
 				}
-				This.$pData[data.itemName] = array;
-			}
 		).appendTo(data.td);
+	},
+	renderNodeName : function(data) {
+		var nodeId = data.value;
+		var nodeData = this.$p.$nodeData[nodeId];
+		if(nodeData){
+			return nodeData.name;
+		}else{
+			return '';
+		}
 	},
 	getVariables:function(){
 		var nodeDatas = this.$p.$nodeData;

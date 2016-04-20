@@ -34,7 +34,7 @@ var initDataObject = {
 		},
 		nodeX : {// 节点
 			showFont:false,	// 是否在节点旁显示文字;
-			icoSize:64  // 显示的图标尺寸:16,32,64
+			icoSize:32  // 显示的图标尺寸:16,32,64
 //			width : 32,		// 默认节点图标宽度
 //			height : 32,	// 默认节点图标高度
 		}

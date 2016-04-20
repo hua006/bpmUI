@@ -176,6 +176,7 @@ $.extend(MyProperty.prototype, {
 			}
 		}
 		
+		// 对于非grid,form类型,可以在控件上添加事件
 		if(html){
 			html = formatStr(html, item);
 			
@@ -249,16 +250,30 @@ $.extend(MyProperty.prototype, {
 		formData['parentELName'] = parentELName;
 		formData['operFlag'] = operFlag||'modify';
 		
+		if (!nodeData.wfDatas) {
+			nodeData.wfDatas = {};
+		}
+		
+		this.$pData = nodeData.wfDatas;
+		
 		// 为表单字段赋值
 		for (var i = 0; i < items.length; i++) {
-			if (!nodeData.wfDatas) {
-				nodeData.wfDatas = {};
-			}
 			var item = items[i];
 			var itemName = item.name;
 			var xtype = item.xtype;
 			var itemValue = nodeData.wfDatas[itemName];
 			this.setItemValue(itemName, itemValue);
+		}
+		
+		// 表单加载事件:在表单加载之后调用
+		if(formData.listeners){
+			var load = formData.listeners.load;
+			if(load){
+				var data = {
+					nodeData : nodeData
+				};
+				load.call(this,data);
+			}
 		}
 	},
 	// 保存数据
@@ -277,6 +292,18 @@ $.extend(MyProperty.prototype, {
 		
 		// 获取表单数据并校验
 		var pData = this.getFormRecord();
+		
+		// 表单保存事件:在获取表单数据及表单校验之间调用
+		if(formData.listeners){
+			var save = formData.listeners.save;
+			if(save){
+				var data = {
+					pData : pData
+				};
+				save.call(this,data);
+			}
+		}
+		
 		var flag = this.checkForm(pData);
 		if(!flag){
 			return false;
@@ -520,6 +547,7 @@ $.extend(MyProperty.prototype, {
 						dataIndex : column.dataIndex,	// 列名称
 						colIndex : col, 				// 字段名称
 						td : $td, 						// 当前单元格
+						value : text					// 当前单元格的值
 					};
 					text = column.renderer.call(this, data);
 				}

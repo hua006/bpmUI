@@ -10,9 +10,10 @@ GlobalNS.formDatas['start']=(function(){
 		title:'开始',
 		width:500,
 		height:600,
-		labelWidth: 150,
-		defaults: {style:'width:200px'},
+		labelWidth: 150,					// 属性窗口中的左侧文本列宽度
+		defaults: {style:'width:200px'},	// 属性窗口中的默认控件宽度
 		cls:'',
+		listeners:{load:function(){/*alert('load');*/},save:function(){/*alert('save');*/}},
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述',props:{readonly:false,rows:3}},
@@ -20,7 +21,7 @@ GlobalNS.formDatas['start']=(function(){
 				tbar:[{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}],// 作用域:属性窗口;顶部工具栏
 				columns:[
 					{header: "名称",dataIndex: 'name'},
-					{header: "目的节点",dataIndex: 'to'},
+					{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
 					{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				]},
 			{xtype:'grid',name:'on',text:'事件',
@@ -256,14 +257,58 @@ GlobalNS.formDatas['transition']=(function(){
 		width:400,
 		height:400,
 		labelWidth: 150,
-		defaults: {style:'width:140px'},
+		defaults: {style:'width:200px'},
 		cls:'',
+		listeners:{load:function(data){
+			var nodeData = data.nodeData;
+			var itemName = 'event-listener';
+			var obj = nodeData.wfDatas[itemName];
+			var itemValue=obj;
+			if(obj){
+				if(obj instanceof Array){
+					itemValue = "";
+					for(var i=0;i<obj.length;i++){
+						for(var key in obj[i]){
+							if(obj[i][key]){
+								if(!itemValue){
+									itemValue = obj[i][key];
+								}else{
+									itemValue+=","+obj[i][key];
+								}
+							}
+						}
+					}
+				}
+			}
+			this.setItemValue(itemName, itemValue);
+			
+		},save:function(data){
+			var pData = data.pData;
+			var itemName = 'event-listener';
+			
+			var formData = GlobalNS.formDatas[itemName];
+			var attrName = formData.items[0].name;
+			
+			var itemValue = pData[itemName];
+			if (itemValue) {
+				var array = itemValue.split(",");
+				itemValue = [];
+				if (array instanceof Array) {
+					for (var i = 0; i < array.length; i++) {
+						var obj = {};
+						obj[attrName] = array[i];
+						itemValue.push(obj);
+					}
+				}
+			}
+			pData[itemName] = itemValue;
+		}},
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'textarea',name:'text',text:'描述'},
 			{xtype:'select',name:'to',text:'目的节点名称',listeners:{'click':GlobalNS.fn.loadBaseNodeNames}},
 			{xtype:'text',name:'condition',text:'条件'},
-			{xtype:'text',name:'event-listener',text:'自定义处理类'}
+			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{style:'width:200px;',rows : 3}}
 		]
 	}
 })();
@@ -373,13 +418,13 @@ $.each(GlobalNS.formDatas,function(index,obj){
 			if(item.name=='transition'){
 				o.columns = [
 				 	{header: "名称",dataIndex: 'name'},
-				 	{header: "目的节点",dataIndex: 'to'},
+				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
 				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				 ];
 			}else if(item.name=='on'){
 				o.columns = [
 				 	{header: "事件类型",dataIndex: 'event'},
-				 	{header: "目的节点名称",dataIndex: 'to'},
+				 	{header: "目的节点名称",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
 				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}
 				 ];
 			}else if(item.name=='variable'){
