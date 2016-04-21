@@ -48,8 +48,8 @@ $.extend(MyProperty.prototype, {
 			modal : false,
 			hide : true,// 点击关闭是隐藏
 			autoOpen : false,
-			width : formData.width + 50,
-			height : formData.height + 50,
+			width : formData.width + 30,
+			height : formData.height + 30,
 			show : false,
 			buttons : buttons
 		});
@@ -60,7 +60,7 @@ $.extend(MyProperty.prototype, {
 		formData.width = formData.width || 400;
 		formData.height = formData.height || 600;
 		var $dialog = $("<div/>").appendTo($parent).attr('id', this.$dialogId)
-			.attr('title', formData.title || '弹出窗口').attr('width', formData.width).attr('height', formData.height);
+			.attr('title', formData.title || '弹出窗口').css('width', formData.width).css('height', formData.height);
 		this.appendForm($dialog);
 		return $dialog;
 	},
@@ -70,7 +70,7 @@ $.extend(MyProperty.prototype, {
 		var $form = $("<form/>").appendTo($parent).attr('name','form-'+formData.name)
 			.attr('action',formData.action||'#').attr('method',formData.method||'get');
 		
-		var $table = $("<div width='100%' class='table-form'></div>").appendTo($form).attr('width',formData.width);
+		var $table = $("<div width='100%' class='table-form'></div>").appendTo($form).css('width',formData.width);
 		if(!formData.items){
 			alert(formData);
 		}
@@ -142,7 +142,7 @@ $.extend(MyProperty.prototype, {
 			// 添加表头
 			var $tr = $(formatStr('<tr class="th-{0}"></tr>',item.name)).appendTo($table);
 			for (var i = 0; i < columns.length; i++) {
-				var $td = $('<td/>').text(columns[i].header).appendTo($tr);
+				var $td = $('<td/>').text(columns[i].header).attr('align','center').appendTo($tr);
 				if(columns[i].width){
 					$td.css('width',columns[i].width);
 				}
@@ -261,8 +261,24 @@ $.extend(MyProperty.prototype, {
 			var item = items[i];
 			var itemName = item.name;
 			var xtype = item.xtype;
-			var itemValue = nodeData.wfDatas[itemName];
+			var itemValue = this.$pData[itemName];
 			this.setItemValue(itemName, itemValue);
+			
+			// 在修改时,可设置属性只读
+			var modify = true;
+			if(formData['operFlag']=='modify'){
+				if(item.modify===false){
+					modify = false;
+				}else if(formData.idField==itemName){
+					modify = false;
+				}
+			}
+			var $field = this.$dialog.find("[name='"+itemName+"']");
+			if(!modify){
+				$field.attr("disabled","disabled");
+			}else if($field){
+				$field.removeAttr("disabled");
+			}
 		}
 		
 		// 表单加载事件:在表单加载之后调用
@@ -270,7 +286,7 @@ $.extend(MyProperty.prototype, {
 			var load = formData.listeners.load;
 			if(load){
 				var data = {
-					nodeData : nodeData
+					pData : this.$pData
 				};
 				load.call(this,data);
 			}
@@ -365,7 +381,6 @@ $.extend(MyProperty.prototype, {
 		if (item.xtype == 'grid') {
 			// 更新属性值,
 			this.$pData[itemName] = this.$pData[itemName] || [];
-			var pData = this.$pData[itemName];
 			
 			// 保存数据:itemValue为其中一条记录
 			var gridWindow = this.getPropWindow(itemName);	// grid
@@ -394,6 +409,14 @@ $.extend(MyProperty.prototype, {
 			this._refreshForm(itemName);
 		} else if (item.xtype == 'radio' || item.xtype == 'checkbox') {
 			this._refreshBox(itemName,itemValue);
+		} else if (item.xtype == 'select') {
+			var $field = this.$dialog.find("[name='"+itemName+"']");
+			if(item.listeners){
+				for(var event in item.listeners){
+					$field.trigger(event);
+				}
+			}
+			$field.val(itemValue);
 		} else {
 			this.$dialog.find("[name='" + itemName + "']").val(itemValue);
 		}

@@ -78,21 +78,15 @@ GlobalNS.fn = {
 		fn : button.fn,
 		This : this
 	};*/
-	loadBaseNodeNames:function(datas){
-		var nodeDatas = this.$p.$nodeData;
-		var $field = this.$dialog.find("[name='"+datas.itemName+"']");
-		var value = $field.val();
-		$field.empty();
-		for(var key in nodeDatas){
-			$("<option>").val(key).text(nodeDatas[key].name).appendTo($field);
-		}
-		$field.val(value);
-	},
-	// 从属性窗口弹出子窗口
+	/** 
+	 * 从属性窗口弹出子窗口
+	 */
 	addRecordShow : function(datas) {
 		GlobalNS.fn.openPropWindow.call(this, datas, 'add');
 	},
-	// 打开属性窗口
+	/** 
+	 * 打开属性窗口
+	 */
 	openPropWindow:function(arg1,arg2,arg3,arg4) {
 		var childName;
 		var childValue;
@@ -119,6 +113,9 @@ GlobalNS.fn = {
 		var parentELName = childName;
 		childWindow.showWindow(null, childNodeData, parentType, parentELName,operFlag);
 	},
+	/** 
+	 * 删除表单
+	 */
 	deleteForm:function(datas){
 		alert('delete '+datas.itemName);
 		this.$dialog.find('.tr-'+datas.itemName).remove();
@@ -133,6 +130,9 @@ GlobalNS.fn = {
 	colIndex : col, 				// 字段名称
 	td : $td, 						// 当前单元格
 	};*/
+	/** 
+	 * 在grid数据行上添加修改与删除操作
+	 */
 	renderAdd : function(data) {
 		$('<a href="#">修改</a>').button().click(
 				{This:this,data:data},
@@ -165,15 +165,10 @@ GlobalNS.fn = {
 				}
 		).appendTo(data.td);
 	},
-	renderNodeName : function(data) {
-		var nodeId = data.value;
-		var nodeData = this.$p.$nodeData[nodeId];
-		if(nodeData){
-			return nodeData.name;
-		}else{
-			return '';
-		}
-	},
+	
+	/**
+	 * 获取工作流中的Variable变量信息
+	 */
 	getVariables:function(){
 		var nodeDatas = this.$p.$nodeData;
 		var items = [];

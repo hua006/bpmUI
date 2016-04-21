@@ -1,5 +1,89 @@
+
+
+$.extend(GlobalNS.fn, {
+	/** 
+	 * 节点下拉列表控件初始化
+	 */
+	loadBaseNodeNames:function(datas){
+		var nodeDatas = this.$p.$nodeData;
+		var $field = this.$dialog.find("[name='"+datas.itemName+"']");
+		var value = $field.val();
+		$field.empty();
+		for(var key in nodeDatas){
+			$("<option>").val(key).text(nodeDatas[key].name).appendTo($field);
+		}
+		$field.val(value);
+	},
+	/**
+	 * grid渲染:将节点id替换为节点名称
+	 */
+	renderNodeName : function(data) {
+		var nodeId = data.value;
+		var nodeData = this.$p.$nodeData[nodeId];
+		if(nodeData){
+			return nodeData.name;
+		}else{
+			return '';
+		}
+	},
+	/**
+	 * EventListener属性加载
+	 */
+	loadEventListener : function(data) {
+
+		// event-listener是以数组形式保存的,但为了使用方便,需要显示为逗号分隔的字符串
+		var pData = data.pData;
+		var itemName = 'event-listener';
+
+		var obj = pData[itemName];
+		var itemValue = obj;
+		if (obj) {
+			if (obj instanceof Array) {
+				itemValue = "";
+				for (var i = 0; i < obj.length; i++) {
+					for ( var key in obj[i]) {
+						if (obj[i][key]) {
+							if (!itemValue) {
+								itemValue = obj[i][key];
+							} else {
+								itemValue += "," + obj[i][key];
+							}
+						}
+					}
+				}
+			}
+		}
+		this.setItemValue(itemName, itemValue);
+	},
+	/**
+	 * EventListener属性保存
+	 */
+	saveEventListener : function(data) {
+		// event-listener是以数组形式保存的,因此在保存数据时需要将逗号分隔的字符串转换为数组形式保存
+		var pData = data.pData;
+		var itemName = 'event-listener';
+
+		var formData = GlobalNS.formDatas[itemName];
+		var attrName = formData.items[0].name;
+
+		var itemValue = pData[itemName];
+		if (itemValue) {
+			var array = itemValue.split(",");
+			itemValue = [];
+			if (array instanceof Array) {
+				for (var i = 0; i < array.length; i++) {
+					var obj = {};
+					obj[attrName] = array[i];
+					itemValue.push(obj);
+				}
+			}
+		}
+		pData[itemName] = itemValue;
+	}
+});
+
 /*
- * 开始节点属性弹出窗口信息;
+ * "开始节点"属性弹出窗口信息;
  * 这里借鉴了Ext定义表单等对象的方式,但简化了一些操作;
  * */
 GlobalNS.formDatas['start']=(function(){
@@ -8,27 +92,27 @@ GlobalNS.formDatas['start']=(function(){
 		name:'start',
 		id:'dialog-start',
 		title:'开始',
-		width:500,
-		height:600,
-		labelWidth: 150,					// 属性窗口中的左侧文本列宽度
-		defaults: {style:'width:200px'},	// 属性窗口中的默认控件宽度
+		width:450,
+		height:500,
+		labelWidth: 100,					// 属性窗口中的左侧文本列宽度
+		defaults: {style:'width:300px'},	// 属性窗口中的默认控件宽度
 		cls:'',
 		listeners:{load:function(){/*alert('load');*/},save:function(){/*alert('save');*/}},
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述',props:{readonly:false,rows:3}},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'grid',name:'transition',text:'出口',
 				tbar:[{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}],// 作用域:属性窗口;顶部工具栏
 				columns:[
 					{header: "名称",dataIndex: 'name'},
 					{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
-					{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
+					{header: "操作",width:'120px',props:{align:'center'},renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				]},
 			{xtype:'grid',name:'on',text:'事件',
 				columns:[
 				 	{header: "事件类型",dataIndex: 'event'},
-				 	{header: "目的节点名称",dataIndex: 'to'},
-				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}
+				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
+				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
 			    ]}
 		]
 	}
@@ -41,7 +125,7 @@ GlobalNS.formDatas['end']=(function(){
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
 	}
@@ -55,7 +139,7 @@ GlobalNS.formDatas['task']=(function(){
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
 			{xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
 			{xtype:'text',name:'userLevel',text:'受理人用户级别'},
@@ -79,12 +163,12 @@ GlobalNS.formDatas['decision']=(function(){
 	return {
 		name:'decision',
 		id:'dialog-decision',
-		idField:'name',
 		title:'判断',
+		height:350,
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
@@ -95,10 +179,11 @@ GlobalNS.formDatas['state']=(function(){
 		name:'state',
 		id:'dialog-state',
 		title:'状态',
+		height:350,
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
@@ -112,7 +197,7 @@ GlobalNS.formDatas['sub-process']=(function(){
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'text',name:'sub-process-key',text:'子流程名称'},
 			{xtype:'text',name:'startNode',text:'子流程开始节点名称'},
 			{xtype:'grid',name:'transition',text:'出口'},
@@ -127,10 +212,11 @@ GlobalNS.formDatas['fork']=(function(){
 		name:'fork',
 		id:'dialog-fork',
 		title:'分支',
+		height:350,
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
@@ -141,10 +227,11 @@ GlobalNS.formDatas['join']=(function(){
 		name:'join',
 		id:'dialog-join',
 		title:'聚合',
+		height:350,
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
@@ -159,7 +246,7 @@ GlobalNS.formDatas['math']=(function(){
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'text',name:'ATTR-variable',text:'变量名称'},
 			{xtype:'select',name:'operator',text:'运算符',items:[{name:'add',text:'add'},{name:'sub',text:'sub'},{name:'mul',text:'mul'},{name:'div',text:'div'},{name:'mod',text:'mod'}]},
 			{xtype:'text',name:'value',text:'操作值'},
@@ -175,10 +262,11 @@ GlobalNS.formDatas['define']=(function(){
 		name:'define',
 		id:'dialog-define',
 		title:'赋值',
+		height:400,
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
+			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'grid',name:'variable',text:'字段信息'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'grid',name:'on',text:'事件'}
@@ -226,9 +314,9 @@ GlobalNS.formDatas['item']=(function(){
 		cls:'',
 		items:[
 		       {xtype:'text',name:'id',text:'选项代码'},
-		       {xtype:'text',name:'text',text:'选项描述'},
+		       {xtype:'text',name:'text',text:'选项名称'},
 		       {xtype:'grid',name:'item-1',text:'子选项'}
-		       ]
+		 ]
 	}
 })();
 GlobalNS.formDatas['item-1']=(function(){
@@ -244,7 +332,7 @@ GlobalNS.formDatas['item-1']=(function(){
 		cls:'',
 		items:[
 			{xtype:'text',name:'id',text:'选项代码'},
-			{xtype:'text',name:'text',text:'选项描述'}
+			{xtype:'text',name:'text',text:'选项名称'}
 		]
 	}
 })();
@@ -252,63 +340,23 @@ GlobalNS.formDatas['transition']=(function(){
 	return {
 		name:'transition',
 		id:'dialog-transition',
-		idField:'to',
+		idField:'name',
 		title:'出口',
 		width:400,
-		height:400,
-		labelWidth: 150,
-		defaults: {style:'width:200px'},
+		height:300,
+		labelWidth: 100,
+		defaults: {style:'width:250px'},
 		cls:'',
-		listeners:{load:function(data){
-			var nodeData = data.nodeData;
-			var itemName = 'event-listener';
-			var obj = nodeData.wfDatas[itemName];
-			var itemValue=obj;
-			if(obj){
-				if(obj instanceof Array){
-					itemValue = "";
-					for(var i=0;i<obj.length;i++){
-						for(var key in obj[i]){
-							if(obj[i][key]){
-								if(!itemValue){
-									itemValue = obj[i][key];
-								}else{
-									itemValue+=","+obj[i][key];
-								}
-							}
-						}
-					}
-				}
-			}
-			this.setItemValue(itemName, itemValue);
-			
-		},save:function(data){
-			var pData = data.pData;
-			var itemName = 'event-listener';
-			
-			var formData = GlobalNS.formDatas[itemName];
-			var attrName = formData.items[0].name;
-			
-			var itemValue = pData[itemName];
-			if (itemValue) {
-				var array = itemValue.split(",");
-				itemValue = [];
-				if (array instanceof Array) {
-					for (var i = 0; i < array.length; i++) {
-						var obj = {};
-						obj[attrName] = array[i];
-						itemValue.push(obj);
-					}
-				}
-			}
-			pData[itemName] = itemValue;
-		}},
+		listeners : {
+			load : GlobalNS.fn.loadEventListener,
+			save : GlobalNS.fn.saveEventListener
+		},
 		items:[
-			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'textarea',name:'text',text:'描述'},
-			{xtype:'select',name:'to',text:'目的节点名称',listeners:{'click':GlobalNS.fn.loadBaseNodeNames}},
+			{xtype:'text',name:'name',text:'名称',modify:false},
+			{xtype:'text',name:'text',text:'描述'},
+			{xtype:'select',name:'to',text:'目的节点',listeners:{'click':GlobalNS.fn.loadBaseNodeNames}},
 			{xtype:'text',name:'condition',text:'条件'},
-			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{style:'width:200px;',rows : 3}}
+			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}}
 		]
 	}
 })();
@@ -333,9 +381,9 @@ GlobalNS.formDatas['event-listener']=(function(){
 		id:'dialog-event-listener',
 		title:'自定义处理',
 		width:400,
-		height:400,
-		labelWidth: 150,
-		defaults: {style:'width:140px'},
+		height:200,
+		labelWidth: 100,
+		defaults: {style:'width:250px'},
 		cls:'',
 		items:[
 			{xtype:'text',name:'ATTR-class',text:'自定义处理类'}
@@ -349,14 +397,18 @@ GlobalNS.formDatas['on']=(function(){
 		idField:'event',
 		title:'事件',
 		width:400,
-		height:400,
-		labelWidth: 150,
-		defaults: {style:'width:140px'},
+		height:230,
+		labelWidth: 100,
+		defaults: {style:'width:250px'},
 		cls:'',
+		listeners : {
+			load : GlobalNS.fn.loadEventListener,
+			save : GlobalNS.fn.saveEventListener
+		},
 		items:[
 			{xtype:'select',name:'event',text:'事件类型',items:[{name:'start',text:'start'},{name:'end',text:'end'},{name:'cancel',text:'cancel'},{name:'overTime',text:'overTime'}]},
-			{xtype:'select',name:'to',text:'目的节点名称'},
-			{xtype:'text',name:'event-listener',text:'自定义处理类'}
+			{xtype:'select',name:'to',text:'目的节点'},
+			{xtype:'textarea',name:'event-listener',text:'自定义处理类'}
 		]
 	}
 })();
@@ -370,7 +422,7 @@ $.each(GlobalNS.formDatas,function(index,obj){
 		height : 600,
 		labelWidth : 100,
 		defaults : {
-			style : 'width:200px'
+			style : 'width:300px'
 		},
 		buttons:{
 			'确定' : function() {
@@ -392,7 +444,7 @@ $.each(GlobalNS.formDatas,function(index,obj){
 			o = {
 				props : {
 					readonly : false,
-					rows : 3
+					rows : 5
 				}
 			};
 		} else if (item.xtype == 'form') {
@@ -419,30 +471,32 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				o.columns = [
 				 	{header: "名称",dataIndex: 'name'},
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
-				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
+				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				 ];
 			}else if(item.name=='on'){
 				o.columns = [
 				 	{header: "事件类型",dataIndex: 'event'},
-				 	{header: "目的节点名称",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
-				 	{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}
+				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
+				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
 				 ];
 			}else if(item.name=='variable'){
 				o.columns = [
 				             {dataIndex:'name',header:'变量名称'},
 				             {dataIndex:'text',header:'变量显示名称'},
-				             {header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd},
+				             {header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd},
 				             ]
 			}else if(item.name=='item'||item.name=='item-1'){
 				o.columns = [
 					{dataIndex:'id',header:'选项代码'},
-					{dataIndex:'text',header:'选项描述'},
-					{header: "操作",width:'150px',renderer: GlobalNS.fn.renderAdd}
+					{dataIndex:'text',header:'选项名称'},
+					{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
 				]
 			}
 		} else if (item.xtype == 'select') {
 			if (item.name == 'to') {
-				o.listeners={'click':GlobalNS.fn.loadBaseNodeNames};
+				o.listeners = {
+					'click' : GlobalNS.fn.loadBaseNodeNames
+				};
 			}
 		} else if (item.xtype == 'checkbox') {
 			if(item.name=='exceptNode'||item.name=='priorNode'){
