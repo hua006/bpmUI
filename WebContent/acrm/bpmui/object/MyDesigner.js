@@ -11,7 +11,7 @@ var MyDesigner = function(bgDiv,property) {
 	GooFlow.call(this, bgDiv, property);
 	// 节点双击事件,格式function(focusId,type),其中focustId为节点或连线id,type是单元类型（"node"结点,"line"转换线）
 	this.onItemDblClick = null;
-	this._$wp = null;						// 工作流属性窗口(workflow property)
+	this._$pros = {};						// 工作流属性窗口(workflow property)
 }
 
 /*继承GooFlow原型 */
@@ -22,8 +22,15 @@ $.extend(MyDesigner.prototype, {
 	/**
 	 * 初始化属性窗口
 	 */
-	initDialogs:function(formDatas){
-		this._$wp = new MyProperties(GlobalNS.formDatas, this);
+	initDialogs : function(formDatas) {
+
+		// 创建工作流属性窗口
+		var body = $('body');
+		var parent = this;
+		this._$pros = {};
+		for ( var baseNode in formDatas) {
+			this._$pros[baseNode] = new Arvato.MyDialog(body, parent, formDatas[baseNode]);
+		}
 	},
 	/**
 	 * 导出新数据:在导出数据前需要更新一下节点的工作流属性
@@ -38,7 +45,7 @@ $.extend(MyDesigner.prototype, {
 	 * 获取节点对应的属性窗口
 	 */
 	getPropWindow: function(baseType) {
-		return this._$wp.$pros[baseType];
+		return this._$pros[baseType];
 	},
 	/**
 	 * 适用场景:工作区,获取节点数据;

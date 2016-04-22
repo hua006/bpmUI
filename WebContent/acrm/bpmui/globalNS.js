@@ -1,5 +1,23 @@
-// 一个全局命名空间,避免参数命名时冲突
+/**
+ * 一个全局命名空间,避免参数命名时冲突
+ */
 var GlobalNS={};
+
+/**
+ * 自定义控件,包括:
+ * Arvato.MyDialog	弹出窗口,对话框
+ * Arvato.MyDesigner	设计面板
+ * Arvato.MyProperty	属性
+ * Arvato.grid.GridPanel	表格面板
+ * Arvato.form.FormPanel	表单面板
+ * Arvato.form.ComboBox	下拉列表
+ * Arvato.form.CheckBox	多选框
+ * Arvato.form.Radio		单选框
+ */
+var Arvato={};
+Arvato.form={};
+Arvato.grid={};
+
 GlobalNS.formDatas={
 //		rootNodes:['start','end','task','decision','state','sub-process','fork','join','math','transition']
 	};
@@ -106,7 +124,7 @@ GlobalNS.fn = {
 		}
 		
 		var childBaseType = childName;
-		var childWindow = this.getPropWindow(childBaseType);
+		var childWindow = this.$p.getPropWindow(childBaseType);
 		var parentELName = childName;
 		childWindow.showWindow(null, childValue, parentType, parentELName,operFlag);
 	},

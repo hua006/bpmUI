@@ -77,7 +77,7 @@ $(document).ready(function() {
 			data : "name=John&location=Boston",
 			dataType:"json",
 			success : function(msg) {
-				//alert("打开工作流: " + msg.title);
+				// alert("打开工作流: " + msg.title);
 				demo.clearData();
 				demo.loadData(msg);
 			}
