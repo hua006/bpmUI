@@ -6,10 +6,10 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
-	<display-name>aCRM2.1_release</display-name>
+	<display-name>aCRM2.1_bpmui</display-name>
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>webapp.aCRM2.1_release</param-value>
+		<param-value>webapp.aCRM2.1_bpmui</param-value>
 	</context-param>
 	<context-param>
 	    <param-name>project</param-name>

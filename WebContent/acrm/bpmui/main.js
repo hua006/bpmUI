@@ -10,7 +10,7 @@ GooFlow.prototype.color = {};
 
 // 将此类的构造函数加入至JQUERY对象中
 jQuery.extend({
-	createGooFlow : function(bgDiv, property) {
+	createDesigner : function(bgDiv, property) {
 		return new MyDesigner(bgDiv, property);
 	}
 });
@@ -59,8 +59,12 @@ var remark = {
 
 var demo; // 设计器对象
 $(document).ready(function() {
-	demo = $.createGooFlow($("#demo"), property);
+	
+	demo = $.createDesigner($("#demo"), property);
+	
 	demo.setNodeRemarks(remark);
+	
+	demo.initDialogs(GlobalNS.formDatas);
 	
 //	demo.onItemDel = function(id, type) {
 //		return confirm("确定要删除该单元吗?");
@@ -82,7 +86,7 @@ $(document).ready(function() {
 	demo.onBtnSaveClick = function() {
 		var path = contextPath + "/bpmui/saveFile.action";
 		var defKey = demo.$defKey;
-		var exportData = demo.exportData();
+		var exportData = demo.exportNewData();
 		var nodes = exportData.nodes;
 		var lines = exportData.lines;
 		
@@ -120,9 +124,8 @@ $(document).ready(function() {
 		if(!window){
 			alert('get window error:'+baseType);
 		}
-		window.showWindow(focusId, nodeData);
+		window.showWindow(focusId, nodeData.wfDatas);
 	};
-	demo.initDialogs(GlobalNS.formDatas);
 	
 	$('#myForm').ajaxForm(function() {
         alert("Thank you for your comment!");
@@ -131,7 +134,7 @@ $(document).ready(function() {
 
 var out;
 function Export() {
-	document.getElementById("result").value = JSON.stringify(demo.exportData());
+	document.getElementById("result").value = JSON.stringify(demo.exportNewData());
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------

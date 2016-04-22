@@ -107,11 +107,8 @@ GlobalNS.fn = {
 		
 		var childBaseType = childName;
 		var childWindow = this.getPropWindow(childBaseType);
-		var childNodeData = {
-				wfDatas : childValue
-			};
 		var parentELName = childName;
-		childWindow.showWindow(null, childNodeData, parentType, parentELName,operFlag);
+		childWindow.showWindow(null, childValue, parentType, parentELName,operFlag);
 	},
 	/** 
 	 * 删除表单
@@ -189,5 +186,54 @@ GlobalNS.fn = {
 			array.push({name:obj.name,text:obj.text});
 		});
 		return array;
+	},
+	// 更新数组中的记录值,若数据组中记录不存在,新增之
+	updateRecord : function(array, record, field) {
+		var find =false;
+		for (var i = 0; i < array.length; i++) {
+			if (array[i][field] == record[field]) {
+				$.extend(array[i], record);
+				find = true;
+				break;
+			}
+		}
+		if (!find) {
+			array.push(record);
+		}
+	},
+	// 删除数组中的指定记录
+	delRecord : function(array, record, field) {
+		var find = false;
+		var list = [];
+		for (var i = 0; i < array.length; i++) {
+			if (array[i][field] == record[field]) {
+				list.push(array[i]);
+			}
+		}
+		if (list.length > 0) {
+			array.splice(0, array.length);
+			array.concat(list);
+		}
+	},
+	// 查找数组中的指定记录,若有多个,至并返回第一个
+	findRecord : function(array, record, field) {
+		var find = false;
+		var list = [];
+		for (var i = 0; i < array.length; i++) {
+			if (array[i][field] == record[field]) {
+				return array[i];
+			}
+		}
+	},
+	/**
+	 * 删除对象中的空值
+	 */
+	clearNull : function(obj) {
+		// 将控件内容保存至json对象中
+		for ( var key in obj) {
+			if (!obj[key]) {
+				delete obj[key];
+			}
+		}
 	}
 };
