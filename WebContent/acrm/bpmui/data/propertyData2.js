@@ -4,23 +4,22 @@ $.extend(GlobalNS.fn, {
 	/** 
 	 * 节点下拉列表控件初始化
 	 */
-	loadBaseNodeNames : function(datas) {
-		var nodeDatas = demo.$nodeData;
-		var array = [];
-		for ( var key in nodeDatas) {
-			array.push({
-				'name' : key,
-				'text' : nodeDatas[key].name
-			});
+	loadBaseNodeNames:function(datas){
+		var nodeDatas = this.$p.$nodeData;
+		var $field = this.$dialog.find("[name='"+datas.itemName+"']");
+		var value = $field.val();
+		$field.empty();
+		for(var key in nodeDatas){
+			$("<option>").val(key).text(nodeDatas[key].name).appendTo($field);
 		}
-		return array;
+		$field.val(value);
 	},
 	/**
 	 * grid渲染:将节点id替换为节点名称
 	 */
 	renderNodeName : function(data) {
 		var nodeId = data.value;
-		var nodeData = demo.$nodeData[nodeId];
+		var nodeData = this.$p.$nodeData[nodeId];
 		if(nodeData){
 			return nodeData.name;
 		}else{
@@ -30,7 +29,7 @@ $.extend(GlobalNS.fn, {
 	/**
 	 * EventListener属性加载
 	 */
-	_loadEventListener : function(data) {
+	loadEventListener : function(data) {
 
 		// event-listener是以数组形式保存的,但为了使用方便,需要显示为逗号分隔的字符串
 		var pData = data.pData;
@@ -59,7 +58,7 @@ $.extend(GlobalNS.fn, {
 	/**
 	 * EventListener属性保存
 	 */
-	_saveEventListener : function(data) {
+	saveEventListener : function(data) {
 		// event-listener是以数组形式保存的,因此在保存数据时需要将逗号分隔的字符串转换为数组形式保存
 		var pData = data.pData;
 		var itemName = 'event-listener';
@@ -348,12 +347,16 @@ GlobalNS.formDatas['transition']=(function(){
 		labelWidth: 100,
 		defaults: {style:'width:250px'},
 		cls:'',
+		listeners : {
+			load : GlobalNS.fn.loadEventListener,
+			save : GlobalNS.fn.saveEventListener
+		},
 		items:[
 			{xtype:'text',name:'name',text:'名称',modify:false},
 			{xtype:'text',name:'text',text:'描述'},
-			{xtype:'select',name:'to',text:'目的节点',loadDataMethod:GlobalNS.fn.loadBaseNodeNames},
+			{xtype:'select',name:'to',text:'目的节点',listeners:{'click':GlobalNS.fn.loadBaseNodeNames}},
 			{xtype:'text',name:'condition',text:'条件'},
-			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}, valueType : 'String'}
+			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}}
 		]
 	}
 })();
@@ -398,10 +401,14 @@ GlobalNS.formDatas['on']=(function(){
 		labelWidth: 100,
 		defaults: {style:'width:250px'},
 		cls:'',
+		listeners : {
+			load : GlobalNS.fn.loadEventListener,
+			save : GlobalNS.fn.saveEventListener
+		},
 		items:[
 			{xtype:'select',name:'event',text:'事件类型',items:[{name:'start',text:'start'},{name:'end',text:'end'},{name:'cancel',text:'cancel'},{name:'overTime',text:'overTime'}]},
 			{xtype:'select',name:'to',text:'目的节点'},
-			{xtype:'textarea',name:'event-listener',text:'自定义处理类', valueType : 'String'}
+			{xtype:'textarea',name:'event-listener',text:'自定义处理类'}
 		]
 	}
 })();
@@ -440,7 +447,7 @@ $.each(GlobalNS.formDatas,function(index,obj){
 					rows : 5
 				}
 			};
-		} else if (item.xtype == 'property') {
+		} else if (item.xtype == 'form') {
 			o = {
 					tbar : [ {text:'修改',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}
 							,{text:'清除',fn:GlobalNS.fn.deleteForm,name:'delete',data:{foo:'foo'}}
@@ -487,19 +494,28 @@ $.each(GlobalNS.formDatas,function(index,obj){
 			}
 		} else if (item.xtype == 'select') {
 			if (item.name == 'to') {
-				o.loadDataMethod = GlobalNS.fn.loadBaseNodeNames
+				o.listeners = {
+					'click' : GlobalNS.fn.loadBaseNodeNames
+				};
 			}
 		} else if (item.xtype == 'checkbox') {
 			if(item.name=='exceptNode'||item.name=='priorNode'){
-				o.loadDataMethod = GlobalNS.fn.loadBaseNodeNames;
-				o.props = {
-					style : 'width:100px;float:left;'
+				o.loadDataMethod = function(itemName){
+					var nodeDatas = this.$p.$nodeData;
+					var items = [];
+					for(var key in nodeDatas){
+						items.push({name:key,text:nodeDatas[key].name});
+					}
+					return items;
 				};
+				o.props={style:'width:100px;float:left;'};
+				
 			}else if(item.name=='variable'){
-				o.loadDataMethod = GlobalNS.fn.getVariables;
-				o.props = {
-					style : 'width:100px;float:left;'
+				o.loadDataMethod = function(itemName){
+					return GlobalNS.fn.getVariables.call(this);
 				};
+				o.props={style:'width:100px;float:left;'};
+				
 			}
 		} else if (item.xtype == 'radio') {
 		}

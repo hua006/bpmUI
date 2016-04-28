@@ -5,7 +5,7 @@
  * 增加双击事件:弹出属性修改窗口;
  * 注意:以'_'开头的属性或方法属于私有,通常只在对象内部使用;
  */ 
-var MyDesigner = function(bgDiv,property) {
+Arvato.MyDesigner = function(bgDiv,property) {
 	
 	// 调用GooFlow构造函数
 	GooFlow.call(this, bgDiv, property);
@@ -15,10 +15,10 @@ var MyDesigner = function(bgDiv,property) {
 }
 
 /*继承GooFlow原型 */
-MyDesigner.prototype = GooFlow.prototype;
+Arvato.MyDesigner.prototype = GooFlow.prototype;
 
 /*扩展原型*/
-$.extend(MyDesigner.prototype, {
+$.extend(Arvato.MyDesigner.prototype, {
 	/**
 	 * 初始化属性窗口
 	 */
@@ -44,7 +44,7 @@ $.extend(MyDesigner.prototype, {
 	/**
 	 * 获取节点对应的属性窗口
 	 */
-	getPropWindow: function(baseType) {
+	getPropWindow : function(baseType) {
 		return this._$pros[baseType];
 	},
 	/**

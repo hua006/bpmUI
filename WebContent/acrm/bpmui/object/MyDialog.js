@@ -5,34 +5,45 @@
 Arvato.MyDialog = function(body, parent, formData) {
 	this.$formData = formData;
 	this.$dialogId = formData.id; // 窗口id
-	this.$baseType = formData.name; // 窗口类型
 	this.$dialog = null; // 窗口对象
 	this.$form = null; // 窗口内的表单
 
 	this.$p = parent; // 父对象:MyDesigner设计器实例
-
 	this._initDialog(body);
 }
 
 Arvato.MyDialog.prototype = {
+	val : function(datas) {
+		if(datas){
+			if (this.$form) {
+				this.$form.val(datas);
+			}
+			return this;
+		}else{
+			if (this.$form) {
+				return this.$form.val();
+			}
+		}
+	},
 		
 	/**
 	 * 初始化属性窗口
 	 */
 	_initDialog:function(body){
 		var formData = this.$formData;
-		var baseType = this.$baseType;
 	
 		// 添加窗口元素
 		this.$dialog = this._appendDialog(body);
 		// 创建表单
-		this.$form = new Arvato.form.FormPanel(formData, this.$dialog);
+		
+
+		this.$form = this.$dialog.FormPanel(formData, this).getComp();
+		var This = this;
 		
 		// 生成ui窗口
 		var buttons = {
 			Ok : function() {
-				var window = demo.getPropWindow(baseType);
-				window.hideWindow();
+				This.hideWindow();
 			}
 		};
 		if(formData.buttons){
@@ -62,20 +73,22 @@ Arvato.MyDialog.prototype = {
 	/**
 	 * 显示窗口,加载数据(参数:选中的节点/连线ID,数据值,父窗口id,父窗口的当前字段名称)
 	 */
-	showWindow : function(focusId, pData, parentType, parentELName, operFlag) {
-		this.$form.loadFormData(focusId, pData, parentType, parentELName,operFlag);
+	showWindow : function(pData, operFlag) {
+		this.operFlag = operFlag;
+		this.val(pData);
+		
+		this.$form.refresh();
 		this.$dialog.dialog("open");
 	},
 	/**
 	 * 隐藏窗口,保存数据
 	 */
 	hideWindow : function() {
-		
 		// 获取表单数据
 		var flag = this.$form.saveFormData();
 		
 		// 数据保存成功,关闭窗口
-		if(flag){
+		if (flag === true || !flag) {
 			this.$dialog.dialog("close");
 		}
 	}

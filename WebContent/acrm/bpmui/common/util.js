@@ -111,23 +111,22 @@ function formatStr(str) {
 	if (json instanceof Array) {
 		var reg = /{(\d+)}/gm;
 		retStr = str.replace(reg, function(match, name) {
-			return json[~~name];
+			return json[~~name]||'';
 		});
 	} else if(json instanceof Object) {
 		var reg = /{([^{}]+)}/gm;
 		retStr = str.replace(reg, function(match, name) {
-			return json[name];
+			return json[name]||'';
 		});
 	} else{
 		var reg = /{(\d+)}/gm;
 		json = arguments;
 		retStr = str.replace(reg, function(match, name) {
-			return json[~~name+1];
+			return json[~~name+1]||'';
 		});
 	}
 //	alert(retStr)
 	return retStr;
 }
-// alert(formatStr("{a},23{b}",{a:1,b:2}));
-// alert(formatStr("{0},23{1}",['aa','bb']));
+//alert(formatStr("'{a}',23{b}",{b:2}));
 // alert(formatStr("{0},23{1}",'aa','bb'));

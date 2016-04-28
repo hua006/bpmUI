@@ -88,7 +88,58 @@ GlobalNS.options={
 GlobalNS.fn = {
 	'demo':function(datas){
 	},
-	
+	/** 
+	 * 打开属性窗口
+	 */
+	openPropWindow:function(arg1,arg2,arg3,arg4) {
+		var childName;
+		var childValue;
+		var operFlag;
+		if (arg1 instanceof Object) {
+			datas = arg1;
+			childName =  this.settings.name;
+			childValue = this.val();
+			operFlag = arg2;
+		} else {
+			childName = arg1;
+			childValue = arg2;
+			operFlag = arg4;
+		}
+		
+		var childWindow = demo.getPropWindow(childName);
+		
+		// 为弹出窗口的表单控件,设置保存回调函数,此函数将在点击弹出窗口确定按钮时执行
+		childWindow.$form.saveDataMethod = GlobalNS.fn.saveDataMethodFn;
+		childWindow.$form.params = {
+			This : this
+		};
+		
+		childWindow.showWindow(childValue, operFlag);
+	},
+	/**
+	 * 保存操作回调函数
+	 */
+	saveDataMethodFn : function() {
+		var itemValue = this.datas; // 当前窗口的表单数据
+		var idField = this.settings.idField;
+		var params = this.settings.params;
+		var This = params.This;
+		if (This.xtype == 'grid') {
+			var obj = GlobalNS.fn.findRecord(This.datas, itemValue, idField);
+			if (operFlag == 'modify' && obj == null) {
+				alert('未找到需要更新的数据' + itemValue[idField]);
+				return false;
+			} else if (operFlag == 'add' && obj != null) {
+				alert('数据重复' + itemValue[idField]);
+				return false;
+			}
+			GlobalNS.fn.updateRecord(This.datas, itemValue, idField);
+		} else if (This.xtype == 'form') {
+			This.val(itemValue);
+		}
+		This.refresh();
+		return true;
+	},
 	/* datas结构如下:
 	var datas = {
 		itemName : item.name,
@@ -99,42 +150,16 @@ GlobalNS.fn = {
 	/** 
 	 * 从属性窗口弹出子窗口
 	 */
-	addRecordShow : function(datas) {
-		GlobalNS.fn.openPropWindow.call(this, datas, 'add');
-	},
-	/** 
-	 * 打开属性窗口
-	 */
-	openPropWindow:function(arg1,arg2,arg3,arg4) {
-		var childName;
-		var childValue;
-		var parentType;
-		var operFlag;
-		if (arg1 instanceof Object) {
-			datas = arg1;
-			childName = datas.itemName;
-			childValue = this.getItemValue(childName);
-			parentType = this.$baseType;
-			operFlag = arg2;
-		} else {
-			childName = arg1;
-			childValue = arg2;
-			parentType = arg3;
-			operFlag = arg4;
-		}
-		
-		var childBaseType = childName;
-		var childWindow = this.$p.getPropWindow(childBaseType);
-		var parentELName = childName;
-		childWindow.showWindow(null, childValue, parentType, parentELName,operFlag);
+	addRecordShow : function() {
+		GlobalNS.fn.openPropWindow.call(this, this.datas, 'add');
 	},
 	/** 
 	 * 删除表单
 	 */
-	deleteForm:function(datas){
-		alert('delete '+datas.itemName);
-		this.$dialog.find('.tr-'+datas.itemName).remove();
-		this.$pData[datas.itemName]={};
+	deleteForm:function(){
+		alert('delete '+this.settings.name);
+		this.$me.empty();
+		this.val({});
 	},
 	/*
 	var data = {
@@ -149,14 +174,15 @@ GlobalNS.fn = {
 	 * 在grid数据行上添加修改与删除操作
 	 */
 	renderAdd : function(data) {
+		
 		$('<a href="#">修改</a>').button().click(
 				{This:this,data:data},
 				function(event) {
 					var datas = event.data.data;
 					var This = event.data.This;
-					var childName = datas.itemName;
+					var childName = This.settings.name;
 					var childValue = datas.record;
-					var parentType = This.$baseType;
+					var parentType = This.name;
 					GlobalNS.fn.openPropWindow.call(This, childName, childValue, parentType, 'modify');
 				}
 		).appendTo(data.td);
@@ -168,15 +194,15 @@ GlobalNS.fn = {
 					var This = event.data.This;
 					var id = datas.record[datas.idField];
 					alert('delete '+id);
-					var $td = This.$dialog.find('.tr-'+id).remove();
 					var array =[];
-					var itemData = This.$pData[data.itemName];
+					var itemData = This.val();
 					for(var i=0;i<itemData.length;i++){
 						if (itemData[i][datas.idField] != id) {
 							array.push(itemData[i]);
 						}
 					}
-					This.$pData[data.itemName] = array;
+					This.val(array);
+					var $td = This.$me.find('.tr-'+id).remove();
 				}
 		).appendTo(data.td);
 	},
@@ -185,7 +211,7 @@ GlobalNS.fn = {
 	 * 获取工作流中的Variable变量信息
 	 */
 	getVariables:function(){
-		var nodeDatas = this.$p.$nodeData;
+		var nodeDatas = demo.$nodeData;
 		var items = [];
 		var vars = {};
 		for(var key in nodeDatas){
@@ -242,6 +268,7 @@ GlobalNS.fn = {
 				return array[i];
 			}
 		}
+		return null;
 	},
 	/**
 	 * 删除对象中的空值

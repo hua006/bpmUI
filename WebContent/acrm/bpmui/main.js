@@ -11,7 +11,7 @@ GooFlow.prototype.color = {};
 // 将此类的构造函数加入至JQUERY对象中
 jQuery.extend({
 	createDesigner : function(bgDiv, property) {
-		return new MyDesigner(bgDiv, property);
+		return new Arvato.MyDesigner(bgDiv, property);
 	}
 });
 
@@ -124,7 +124,22 @@ $(document).ready(function() {
 		if(!window){
 			alert('get window error:'+baseType);
 		}
-		window.showWindow(focusId, nodeData.wfDatas);
+		window.showWindow(nodeData.wfDatas);
+		// 设置回调函数
+		window.$form.saveDataMethod = function() {
+			var itemValue = this.datas; // 当前窗口的表单数据
+			var idField = this.settings.idField;
+			var params = this.settings.params;
+			var This = params.This;
+			var nodeData = This.getBaseNodeData(params.focusId, params.baseType);
+			nodeData.wfDatas = itemValue;
+			demo.refreshWorkArea(params.focusId, nodeData);
+		};
+		window.$form.settings.params = {
+				This : this,
+				focusId : focusId,
+				baseType : baseType
+		};
 	};
 	
 	$('#myForm').ajaxForm(function() {

@@ -32,11 +32,15 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/MyDesigner.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/object/MyDialog.js<%=s%>"></script>
 
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/baseComponent.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/basePanel.js<%=s%>"></script>
+
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/FormPanel.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/ComboBox.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/CheckBox.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/Radio.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/grid/GridPanel.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/grid/PropertyGrid.js<%=s%>"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/json2.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/common/util.js<%=s%>"></script>
