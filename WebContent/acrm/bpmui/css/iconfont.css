@@ -129,7 +129,7 @@ v\:group,v\:rect,v\:imagedata,v\:oval,v\:line,v\:polyline,v\:stroke,v\:textbox {
 	width:9px;height:9px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
 	position:absolute;z-index:9999;background:#333;cursor:crosshair
 }
-.GooFlow .GooFlow_line_move{filter:Alpha(Opacity=50);-moz-opacity:0.5;opacity:0.5;overflow:hidden;position:absolute;z-index:9999;background:url(0) no-repeat}
+.GooFlow .GooFlow_line_move{filter:Alpha(Opacity=50);-moz-opacity:0.5;opacity:0.5;overflow:hidden;position:absolute;z-index:9999;}
 .GooFlow .GooFlow_line_oper i{display:inline-block;width:15px;height:15px;margin-left:2px;cursor:pointer}
 
 /*自定义样式*/
