@@ -28,19 +28,21 @@
 	CheckBox.prototype = $.extend({}, Arvato.BaseComponent, {
 		// 设置或获取控件值
 		val : function(value) {
-			
 			var itemName = this.settings.name;
 			var valueType = this.settings.valueType;
 			
 			// 设置选中
 			if (arguments.length != 0) {
 				this.$parent.find('[name="' + itemName + '"]:checked').removeAttr('checked');
+				
+				// 设置数据前重新刷新一下数据
+				this._refreshOnly();
 				if (!value) {
 					return this;
 				}
+				
 				if (!(value instanceof Array)) {
 					if (valueType == 'String'){
-					}else{
 						value = ("" + value).split(",");
 					}
 				}
@@ -62,7 +64,7 @@
 					value.push($(this).val());
 				});
 				if (valueType == 'String') {
-					return value.join(",");
+					value = value.join(",");
 				}
 				return value;
 			}

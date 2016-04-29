@@ -163,19 +163,19 @@
 			var $field;
 			var flag = false;
 			if (item.xtype == 'text') {
-				$field = $fieldDiv.TextField(item, this).getComp();
+				$field = $fieldDiv.TextField(item, this).getComp()
 			}else if (item.xtype == 'textarea') {
-				$field = $fieldDiv.TextArea(item, this).getComp();
+				$field = $fieldDiv.TextArea(item, this).getComp()
 			}else if(item.xtype == 'select'){
-				$field = $fieldDiv.ComboBox(item, this).getComp();
+				$field = $fieldDiv.ComboBox(item, this).getComp()
 			}else if(item.xtype == 'checkbox'){
-				$field = $fieldDiv.CheckBox(item, this).getComp();
+				$field = $fieldDiv.CheckBox(item, this).getComp()
 			}else if(item.xtype == 'radio'){
-				$field = $fieldDiv.Radio(item, this).getComp();
+				$field = $fieldDiv.Radio(item, this).getComp()
 			}else if(item.xtype == 'grid'){
-				$field = $fieldDiv.GridPanel(item, this).getComp();
+				$field = $fieldDiv.GridPanel(item, this).getComp()
 			}else if(item.xtype == 'property'){
-				$field = $fieldDiv.PropertyGrid(item, this).getComp();
+				$field = $fieldDiv.PropertyGrid(item, this).getComp()
 			}else{
 				$field = $fieldDiv.html(item.name);
 				flag = true;

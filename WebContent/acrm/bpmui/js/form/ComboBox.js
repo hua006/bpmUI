@@ -29,6 +29,8 @@
 		// 设置或获取控件值
 		val : function(value) {
 			if (arguments.length != 0) {
+				// 设置数据前重新刷新一下数据
+				this._refreshOnly();
 				this.$parent.find('[name="' + this.settings.name + '"]').val(value);
 				return this;
 			} else {

@@ -35,6 +35,9 @@
 			// 设置选中
 			if (arguments.length != 0) {
 				this.$parent.find('[name="' + itemName + '"]:checked').removeAttr('checked');
+				
+				// 设置数据前重新刷新一下数据
+				this._refreshOnly();
 				this.$parent.find("[name='" + itemName + "'][value='" + value + "']").attr('checked','true');
 				return this;
 			}else{

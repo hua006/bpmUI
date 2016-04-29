@@ -8,6 +8,7 @@ Arvato.BaseComponent={
 	init : function(obj) {
 		this.$parent = $(obj);
 		var datas = this.loadData();
+		console.log('init:'+this.settings.name);
 		if (this.datas) {
 			this.datas = datas;
 		}
@@ -18,11 +19,13 @@ Arvato.BaseComponent={
 	},
 	// 加载数据,获取控件对应的最新数据
 	loadData : function(datas) {
-		if (datas) {
+		if (arguments.length != 0) {
 			this.datas = datas;
 			return this;
 		} else {
 			var options = this.settings;
+			console.log(options.text+",loadDataMethod:"+options.loadDataMethod+",url:"+options.url);
+			console.log('----------------------------');
 			if (options.loadDataMethod) {
 				this.datas = options.loadDataMethod.call(this);
 			} else if (options.url) {
@@ -36,14 +39,22 @@ Arvato.BaseComponent={
 	 * 对于panel控件,刷新操作是为了获取最新值,因此不需要将旧值重新赋给控件
 	 */
 	refresh : function() {
-		var value = this.val();
-		var datas = this.loadData();
-		if (this.datas) {
-			this.datas = datas;
+		var options = this.settings;
+		if (options.loadDataMethod || options.url) {
+			var value = this.val();
+			this.val(value);
+			this.inValidMsg();
 		}
-		this._appendFields();
-		this.val(value);
-		this.inValidMsg();
+	},
+	/**
+	 * 若控件包含loadDataMethod或url,则可以刷新
+	 */
+	_refreshOnly : function() {
+		var options = this.settings;
+		if (options.loadDataMethod || options.url) {
+			this.loadData();
+			this._appendFields();
+		}
 	},
 	/**
 	 * 校验方法
@@ -94,14 +105,6 @@ Arvato.BaseComponent={
 		
 		// 添加默认单击加载事件
 		var listeners = $.extend({},this.settings.listeners);
-//		if (this.settings.loadDataMethod || this.settings.url) {
-//			listeners = $.extend({
-//				'click' : function(event) {
-//					var This = event.data.This;
-//					This.refresh();
-//				}
-//			}, this.settings.listeners);
-//		}
 		
 		var $me = this.$me;
 		
@@ -114,6 +117,7 @@ Arvato.BaseComponent={
 			$me.on(i, datas, fn);
 		});
 		
+		// 数据修改时,清除错误描述
 		$me.on('change', {This:this}, function(event){
 			event.data.This.inValidMsg();
 		});
