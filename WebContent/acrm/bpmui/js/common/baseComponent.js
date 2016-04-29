@@ -17,11 +17,11 @@ Arvato.BaseComponent={
 		this.val(this.settings.value);
 	},
 	// 加载数据,获取控件对应的最新数据
-	loadData:function(datas){
-		if(datas){
+	loadData : function(datas) {
+		if (datas) {
 			this.datas = datas;
 			return this;
-		}else{
+		} else {
 			var options = this.settings;
 			if (options.loadDataMethod) {
 				this.datas = options.loadDataMethod.call(this);
@@ -43,18 +43,25 @@ Arvato.BaseComponent={
 		}
 		this._appendFields();
 		this.val(value);
-		this.inValid();
+		this.inValidMsg();
 	},
+	/**
+	 * 校验方法
+	 */
 	validate:function(){
 		if(this.settings.required){
 			var value = this.val();
 			if (!value) {
-				this.inValid('不能为空');
+				this.inValidMsg('不能为空');
 				return "不能为空";
 			}
 		}
 	},
-	inValid:function(msg){
+	/**
+	 * 设置或删除校验失败时的显示消息
+	 * @param msg
+	 */
+	inValidMsg:function(msg){
 		if (arguments.length != 0){
 			this.$me.attr('title',msg);
 			this.$me.addClass('x-form-invalid');
@@ -86,15 +93,15 @@ Arvato.BaseComponent={
 	_bindEvent:function(){
 		
 		// 添加默认单击加载事件
-		var listeners = {};
-		if (this.settings.loadDataMethod || this.settings.url) {
-			listeners = $.extend({
-				'click' : function(event) {
-					var This = event.data.This;
-					This.refresh();
-				}
-			}, this.settings.listeners);
-		}
+		var listeners = $.extend({},this.settings.listeners);
+//		if (this.settings.loadDataMethod || this.settings.url) {
+//			listeners = $.extend({
+//				'click' : function(event) {
+//					var This = event.data.This;
+//					This.refresh();
+//				}
+//			}, this.settings.listeners);
+//		}
 		
 		var $me = this.$me;
 		
@@ -105,6 +112,10 @@ Arvato.BaseComponent={
 				'This' : This
 			};
 			$me.on(i, datas, fn);
+		});
+		
+		$me.on('change', {This:this}, function(event){
+			event.data.This.inValidMsg();
 		});
 	}
 };

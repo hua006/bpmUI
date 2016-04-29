@@ -1,0 +1,166 @@
+/*重新定义gooflow的图片*/
+.GooFlow .ico_group{background:url(../images/gooflow_icon.png) no-repeat -96px -20px}
+.GooFlow .ico_complex{background:url(../images/gooflow_icon.png) no-repeat -116px -20px}
+.GooFlow .ico_node{background:url(../images/gooflow_icon.png) no-repeat -19px -45px}
+.GooFlow .ico_chat{background:url(../images/gooflow_icon.png) no-repeat -38px -45px}
+.GooFlow .ico_plug{background:url(../images/gooflow_icon.png) no-repeat -135px -45px}
+.GooFlow .ico_menu{background:url(../images/gooflow_icon.png) no-repeat 1px -65px}
+.GooFlow .ico_sound{background:url(../images/gooflow_icon.png) no-repeat -18px -65px}
+.GooFlow .ico_topo{background:url(../images/gooflow_icon.png) no-repeat -117px -45px}
+
+.GooFlow_work .GooFlow_work_inner{background-image:url(../images/gooflow_blank2.gif);position:relative;overflow:hidden;}
+.GooFlow .b_l1{background:url(../images/GooFlow_line_oper.png) no-repeat 1px 1px}
+.GooFlow .b_l2{background:url(../images/GooFlow_line_oper.png) no-repeat 1px -14px}
+.GooFlow .b_l3{background:url(../images/GooFlow_line_oper.png) no-repeat 1px -29px}
+.GooFlow .b_x{background:url(../images/GooFlow_line_oper.png) no-repeat 1px -44px;margin-left:10px}
+
+.GooFlow .ico_start_32{width:32px;height:32px;background:url(../images/jiediankaishi-32.png) no-repeat}
+.GooFlow .ico_end_32{width:32px;height:32px;background:url(../images/jiedianjieshu-32.png) no-repeat}
+.GooFlow .ico_task_32{width:32px;height:32px;background:url(../images/yonghurenwu-32.png) no-repeat}
+.GooFlow .ico_decision_32{width:32px;height:32px;background:url(../images/tiaojian-32.png) no-repeat}
+.GooFlow .ico_state_32{width:32px;height:32px;background:url(../images/tongzhizhuangtai-32.png) no-repeat}
+.GooFlow .ico_sub-process_32{width:32px;height:32px;background:url(../images/ziliucheng-32.png) no-repeat}
+.GooFlow .ico_fork_32{width:32px;height:32px;background:url(../images/fork-32.png) no-repeat}
+.GooFlow .ico_join_32{width:32px;height:32px;background:url(../images/join-32.png) no-repeat}
+.GooFlow .ico_math_32{width:32px;height:32px;background:url(../images/jisuanqi-32.png) no-repeat}
+.GooFlow .ico_define_32{width:32px;height:32px;background:url(../images/zidingyineirong-32.png) no-repeat}
+
+.GooFlow .ico_cursor_32{width:32px;height:32px;background:url(../images/cursor-32.png) no-repeat}
+.GooFlow .ico_mutiselect_32{width:32px;height:32px;background:url(../images/mutiselect-32.png) no-repeat}
+.GooFlow .ico_direct_32{width:32px;height:32px;background:url(../images/direct-32.png) no-repeat}
+
+.GooFlow .ico_open_32{width:32px;height:32px;background:url(../images/open-32.png) no-repeat}
+.GooFlow .ico_new_32{width:32px;height:32px;background:url(../images/new-32.png) no-repeat}
+.GooFlow .ico_delete_32{width:32px;height:32px;background:url(../images/delete-32.png) no-repeat}
+.GooFlow .ico_reload_32{width:32px;height:32px;background:url(../images/reload-32.png) no-repeat}
+.GooFlow .ico_save_32{width:32px;height:32px;background:url(../images/save-32.png) no-repeat}
+.GooFlow .ico_undo_32{width:32px;height:32px;background:url(../images/undo-32.png) no-repeat}
+.GooFlow .ico_redo_32{width:32px;height:32px;background:url(../images/redo-32.png) no-repeat}
+
+/*16*16*/
+.GooFlow .ico_start_16{width:16px;height:16px;background:url(../images/jiediankaishi-16.png) no-repeat}
+.GooFlow .ico_end_16{width:16px;height:16px;background:url(../images/jiedianjieshu-16.png) no-repeat}
+.GooFlow .ico_task_16{width:16px;height:16px;background:url(../images/yonghurenwu-16.png) no-repeat}
+.GooFlow .ico_decision_16{width:16px;height:16px;background:url(../images/tiaojian-16.png) no-repeat}
+.GooFlow .ico_state_16{width:16px;height:16px;background:url(../images/tongzhizhuangtai-16.png) no-repeat}
+.GooFlow .ico_sub-process_16{width:16px;height:16px;background:url(../images/ziliucheng-16.png) no-repeat}
+.GooFlow .ico_fork_16{width:16px;height:16px;background:url(../images/fork-16.png) no-repeat}
+.GooFlow .ico_join_16{width:16px;height:16px;background:url(../images/join-16.png) no-repeat}
+.GooFlow .ico_math_16{width:16px;height:16px;background:url(../images/jisuanqi-16.png) no-repeat}
+.GooFlow .ico_define_16{width:16px;height:16px;background:url(../images/zidingyineirong-16.png) no-repeat}
+
+.GooFlow .ico_cursor_16{width:16px;height:16px;background:url(../images/cursor-16.png) no-repeat}
+.GooFlow .ico_mutiselect_16{width:16px;height:16px;background:url(../images/mutiselect-16.png) no-repeat}
+.GooFlow .ico_direct_16{width:16px;height:16px;background:url(../images/direct-16.png) no-repeat}
+
+.GooFlow .ico_open_16{width:16px;height:16px;background:url(../images/open-16.png) no-repeat}
+.GooFlow .ico_new_16{width:16px;height:16px;background:url(../images/new-16.png) no-repeat}
+.GooFlow .ico_delete_16{width:16px;height:16px;background:url(../images/delete-16.png) no-repeat}
+.GooFlow .ico_reload_16{width:16px;height:16px;background:url(../images/reload-16.png) no-repeat}
+.GooFlow .ico_save_16{width:16px;height:16px;background:url(../images/save-16.png) no-repeat}
+.GooFlow .ico_undo_16{width:16px;height:16px;background:url(../images/undo-16.png) no-repeat}
+.GooFlow .ico_redo_16{width:16px;height:16px;background:url(../images/redo-16.png) no-repeat}
+
+/*64*64*/
+.GooFlow .ico_start_64{width:64px;height:64px;background:url(../images/jiediankaishi-64.png) no-repeat}
+.GooFlow .ico_end_64{width:64px;height:64px;background:url(../images/jiedianjieshu-64.png) no-repeat}
+.GooFlow .ico_task_64{width:64px;height:64px;background:url(../images/yonghurenwu-64.png) no-repeat}
+.GooFlow .ico_decision_64{width:64px;height:64px;background:url(../images/tiaojian-64.png) no-repeat}
+.GooFlow .ico_state_64{width:64px;height:64px;background:url(../images/tongzhizhuangtai-64.png) no-repeat}
+.GooFlow .ico_sub-process_64{width:64px;height:64px;background:url(../images/ziliucheng-64.png) no-repeat}
+.GooFlow .ico_fork_64{width:64px;height:64px;background:url(../images/fork-64.png) no-repeat}
+.GooFlow .ico_join_64{width:64px;height:64px;background:url(../images/join-64.png) no-repeat}
+.GooFlow .ico_math_64{width:64px;height:64px;background:url(../images/jisuanqi-64.png) no-repeat}
+.GooFlow .ico_define_64{width:64px;height:64px;background:url(../images/zidingyineirong-64.png) no-repeat}
+
+.GooFlow .ico_cursor_64{width:64px;height:64px;background:url(../images/cursor-64.png) no-repeat}
+.GooFlow .ico_mutiselect_64{width:64px;height:64px;background:url(../images/mutiselect-64.png) no-repeat}
+.GooFlow .ico_direct_64{width:64px;height:64px;background:url(../images/direct-64.png) no-repeat}
+
+.GooFlow .ico_open_64{width:64px;height:64px;background:url(../images/open-64.png) no-repeat}
+.GooFlow .ico_new_64{width:64px;height:64px;background:url(../images/new-64.png) no-repeat}
+.GooFlow .ico_delete_64{width:64px;height:64px;background:url(../images/delete-64.png) no-repeat}
+.GooFlow .ico_reload_64{width:64px;height:64px;background:url(../images/reload-64.png) no-repeat}
+.GooFlow .ico_save_64{width:64px;height:64px;background:url(../images/save-64.png) no-repeat}
+.GooFlow .ico_undo_64{width:64px;height:64px;background:url(../images/undo-64.png) no-repeat}
+.GooFlow .ico_redo_64{width:64px;height:64px;background:url(../images/redo-64.png) no-repeat}
+
+.table-form{float:left}
+.table-tr{float:left;clear:both}
+.table-td-label{float:left}
+.table-td{float:left}
+
+/* Form Items CSS */
+.x-form-item {
+    display:block;
+    margin-bottom:4px;
+    zoom:1;
+}
+
+.x-form-item label.x-form-item-label {
+    display:block;
+    float:left;
+    width:100px;
+    padding:3px;
+    padding-left:0;
+    clear:left;
+    z-index:2;
+}
+
+.x-form-element {
+    padding-left:105px;
+}
+
+.x-form-invalid-msg {
+    padding:2px;
+    padding-left:18px;
+    background: transparent no-repeat 0 2px;
+    line-height:16px;
+    width:200px;
+}
+
+.x-form-label-left label.x-form-item-label {
+   text-align:left;
+}
+
+.x-form-label-right label.x-form-item-label {
+   text-align:right;
+}
+
+.x-form-label-top .x-form-item label.x-form-item-label {
+    width:auto;
+    float:none;
+    clear:none;
+    display:inline;
+    margin-bottom:4px;
+}
+
+.x-form-label-top .x-form-element {
+    padding-left:0;
+    padding-top:4px;
+}
+
+.x-form-label-top .x-form-item {
+    padding-bottom:4px;
+}
+.x-form-clear-left {
+    clear:left;
+    height:0;
+    overflow:hidden;
+    line-height:0;
+    font-size:0;
+}
+.x-form-check-wrap {
+    line-height:18px;
+    height: 22px;
+}
+.x-form-check-wrap input{
+    vertical-align: bottom;
+}
+.x-form-invalid{
+	background:repeat-x bottom;
+	border: 1px solid;
+    background-color:#fff;
+	background-image:url(../images/default/invalid_line.gif);
+	border-color:#c30;
+}

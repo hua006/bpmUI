@@ -163,9 +163,7 @@
 			var $field;
 			var flag = false;
 			if (item.xtype == 'text') {
-				$field = $(formatStr('<input type="text" name="{name}"/>', item)).appendTo($fieldDiv);
-				$field.attr(item.props);
-				flag = true;
+				$field = $fieldDiv.TextField(item, this).getComp();
 			}else if (item.xtype == 'textarea') {
 				$field = $fieldDiv.TextArea(item, this).getComp();
 			}else if(item.xtype == 'select'){
@@ -281,7 +279,7 @@
 				var _idField = this._fields[this.settings.idField];
 				if(!_idField.val()){
 					obj[this.settings.idField] = "主键不能为空";
-					_idField.inValid("主键不能为空");
+					_idField.inValidMsg("主键不能为空");
 				}
 			}
 			
