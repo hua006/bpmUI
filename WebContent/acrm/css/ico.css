@@ -141,3 +141,10 @@
 .x-form-check-wrap input{
     vertical-align: bottom;
 }
+.x-form-invalid{
+	background:repeat-x bottom;
+	border: 1px solid;
+    background-color:#fff;
+	background-image:url(../img/default/invalid_line.gif);
+	border-color:#c30;
+}

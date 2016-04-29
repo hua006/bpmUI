@@ -53,7 +53,7 @@ Arvato.MyDialog.prototype = {
 			modal : true,
 			hide : true,	// 点击关闭按钮时隐藏
 			autoOpen : false,
-			width : formData.width + 30,
+			width : formData.width + 35,
 			height : formData.height + 30,
 			show : false,
 			buttons : buttons

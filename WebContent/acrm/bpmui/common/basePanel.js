@@ -28,19 +28,26 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 	 * 2.对于Panel控件,这里只是赋值操作,如果需要更新界面元素,需要调用refresh方法;
 	 * */
 	val : function(value) {
-		if (value) {
+		if (arguments.length != 0) {
+			if (!value) {
+				if(this.xtype == 'grid'){
+					value = [];
+				}else{
+					value = {};
+				}
+			}
 			this.datas = value;
 			if (this._fields) {
-				$.each(this._fields,function(i,n){
+				$.each(this._fields, function(i, n) {
 					n.val(value[i]);
 				});
 			}
 			return this;
 		} else {
 			if (this._fields) {
-				var array={};
-				$.each(this._fields,function(i,n){
-					array[i]=n.val();
+				var array = {};
+				$.each(this._fields, function(i, n) {
+					array[i] = n.val();
 				});
 				$.extend(this.datas, array);
 			}

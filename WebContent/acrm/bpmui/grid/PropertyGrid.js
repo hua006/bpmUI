@@ -12,13 +12,13 @@
 			url : '',				// 数据来源url
 			columns : null,			// 表头格式
 			tbar:[],
-			datas : [],
+			datas : {},
 			enable : true,
 			params : {},
 			props : {}
 		};
 		this.settings = $.extend({}, defaults, opt);
-		this.datas = this.settings.datas || [];
+		this.datas = this.settings.datas || {};
 		this._parentCom = _parentCom;
 	}
 
@@ -49,7 +49,7 @@
 			$tbody.empty();
 			
 			// 重新生成form
-			var obj = this.data;
+			var obj = this.datas;
 			var column = null;
 			for (var col = 0; col < columns.length; col++) {
 				column = columns[col];

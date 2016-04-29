@@ -59,6 +59,7 @@ var remark = {
 
 var demo; // 设计器对象
 $(document).ready(function() {
+	$(document).tooltip();
 	
 	demo = $.createDesigner($("#demo"), property);
 	
@@ -126,7 +127,7 @@ $(document).ready(function() {
 		}
 		window.showWindow(nodeData.wfDatas);
 		// 设置回调函数
-		window.$form.saveDataMethod = function() {
+		window.$form.settings.saveDataMethod = function() {
 			var itemValue = this.datas; // 当前窗口的表单数据
 			var idField = this.settings.idField;
 			var params = this.settings.params;

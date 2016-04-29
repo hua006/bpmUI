@@ -25,12 +25,12 @@
 				}
 			},
 			items : [],
-			datas : [],
+			datas : {},
 			props : {},
 			saveDataMethod : null
 		};
 		this.settings = $.extend({}, defaults, opt);
-		this.datas = this.settings.datas || [];
+		this.datas = this.settings.datas || {};
 		this._parentCom = _parentCom;
 	}
 
@@ -44,6 +44,9 @@
 			$.each(this._fields,function(i,n){
 				if(n.refresh instanceof Function){
 					n.refresh();
+					if(!n.val()){
+						n.val(datas[n.settings.name]);
+					}
 				}
 			});
 		},
@@ -69,8 +72,10 @@
 			// 表单数据校验
 			var results = this._checkFormRecord(this.datas);
 			if (!$.isEmptyObject(results)) {
+				var This = this;
 				$.each(results, function(i, o) {
-					alert(i + ":" + o);
+					var item = This._getItem(i);
+					alert((item.text||item.name) + ":" + o);
 				});
 				return results;
 			}
@@ -139,8 +144,9 @@
 				var fieldName = options.items[i].name;
 				if (!this._fields[fieldName]) {
 					var $tr = $("<div class='x-form-item'></div>").appendTo($formTable);
-					this._fields[fieldName] = this._appendField($tr, options.items[i]);
-					// $field.attr(options.props);
+					var item = options.items[i];
+					item.props = $.extend({}, options.defaults, item.props);
+					this._fields[fieldName] = this._appendField($tr, item);
 				}
 			}
 		},
@@ -158,10 +164,10 @@
 			var flag = false;
 			if (item.xtype == 'text') {
 				$field = $(formatStr('<input type="text" name="{name}"/>', item)).appendTo($fieldDiv);
+				$field.attr(item.props);
 				flag = true;
 			}else if (item.xtype == 'textarea') {
-				$field = $(formatStr('<textarea name="{name}"></textarea>', item)).appendTo($fieldDiv);
-				flag = true;
+				$field = $fieldDiv.TextArea(item, this).getComp();
 			}else if(item.xtype == 'select'){
 				$field = $fieldDiv.ComboBox(item, this).getComp();
 			}else if(item.xtype == 'checkbox'){
@@ -243,6 +249,14 @@
 			}
 			return true;
 		},
+		_getItem:function(fieldName){
+			for (var i = 0; i < this.settings.items.length; i++) {
+				var item = this.settings.items[i];
+				if(item.name==fieldName){
+					return item;
+				}
+			}
+		},
 		/**
 		 * 表单校验:检查当前窗口内的表单数据是否合法
 		 */
@@ -262,6 +276,15 @@
 					obj.validateResult = result;
 				}
 			}
+			
+			if(this.settings.idField){
+				var _idField = this._fields[this.settings.idField];
+				if(!_idField.val()){
+					obj[this.settings.idField] = "主键不能为空";
+					_idField.inValid("主键不能为空");
+				}
+			}
+			
 			return obj;
 		}
 	});

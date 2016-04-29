@@ -39,6 +39,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/ComboBox.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/CheckBox.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/Radio.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/form/TextArea.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/grid/GridPanel.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/grid/PropertyGrid.js<%=s%>"></script>
 

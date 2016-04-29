@@ -33,7 +33,7 @@
 			var valueType = this.settings.valueType;
 			
 			// 设置选中
-			if (value) {
+			if (arguments.length != 0) {
 				this.$parent.find('[name="' + itemName + '"]:checked').removeAttr('checked');
 				this.$parent.find("[name='" + itemName + "'][value='" + value + "']").attr('checked','true');
 				return this;

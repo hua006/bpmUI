@@ -33,8 +33,11 @@
 			var valueType = this.settings.valueType;
 			
 			// 设置选中
-			if (value) {
+			if (arguments.length != 0) {
 				this.$parent.find('[name="' + itemName + '"]:checked').removeAttr('checked');
+				if (!value) {
+					return this;
+				}
 				if (!(value instanceof Array)) {
 					if (valueType == 'String'){
 					}else{
@@ -53,9 +56,9 @@
 					});
 				}
 				return this;
-			}else{
-				var value=[];
-				this.$parent.find('[name="' + itemName + '"]:checked').each(function(){
+			} else {
+				var value = [];
+				this.$parent.find('[name="' + itemName + '"]:checked').each(function() {
 					value.push($(this).val());
 				});
 				if (valueType == 'String') {

@@ -28,7 +28,7 @@
 	ComboBox.prototype = $.extend({}, Arvato.BaseComponent, {
 		// 设置或获取控件值
 		val : function(value) {
-			if (value) {
+			if (arguments.length != 0) {
 				this.$parent.find('[name="' + this.settings.name + '"]').val(value);
 				return this;
 			} else {
@@ -39,7 +39,7 @@
 		// 初始化元素
 		_initializeElement:function (){
 			var $fieldDiv = this.$parent.empty();
-			this.$me = $(formatStr("<select name='{name}'></select>",this.settings.name)).appendTo($fieldDiv);
+			this.$me = $(formatStr("<select name='{0}'></select>",this.settings.name)).appendTo($fieldDiv);
 		},
 		
 		// 添加子元素

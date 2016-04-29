@@ -109,10 +109,14 @@ GlobalNS.fn = {
 		var childWindow = demo.getPropWindow(childName);
 		
 		// 为弹出窗口的表单控件,设置保存回调函数,此函数将在点击弹出窗口确定按钮时执行
-		childWindow.$form.saveDataMethod = GlobalNS.fn.saveDataMethodFn;
-		childWindow.$form.params = {
-			This : this
+		childWindow.$form.settings.saveDataMethod = GlobalNS.fn.saveDataMethodFn;
+		childWindow.$form.settings.params = {
+			This : this,
+			operFlag : operFlag
 		};
+		if (operFlag == 'add') {
+			childValue = {};
+		}
 		
 		childWindow.showWindow(childValue, operFlag);
 	},
@@ -124,7 +128,8 @@ GlobalNS.fn = {
 		var idField = this.settings.idField;
 		var params = this.settings.params;
 		var This = params.This;
-		if (This.xtype == 'grid') {
+		var operFlag = params.operFlag
+		if (This.settings.xtype == 'grid') {
 			var obj = GlobalNS.fn.findRecord(This.datas, itemValue, idField);
 			if (operFlag == 'modify' && obj == null) {
 				alert('未找到需要更新的数据' + itemValue[idField]);
@@ -133,8 +138,16 @@ GlobalNS.fn = {
 				alert('数据重复' + itemValue[idField]);
 				return false;
 			}
+			if($.isEmptyObject(This.datas)){
+				This.datas = [];
+			}else if(!This.datas){
+				This.datas = [];
+			}
 			GlobalNS.fn.updateRecord(This.datas, itemValue, idField);
-		} else if (This.xtype == 'form') {
+		} else if (This.settings.settings.xtype == 'form' || This.settings.xtype == 'property') {
+			if(!This.datas){
+				This.datas = {};
+			}
 			This.val(itemValue);
 		}
 		This.refresh();
@@ -156,19 +169,19 @@ GlobalNS.fn = {
 	/** 
 	 * 删除表单
 	 */
-	deleteForm:function(){
-		alert('delete '+this.settings.name);
+	deleteForm : function() {
+		alert('delete ' + this.settings.name);
 		this.$me.empty();
 		this.val({});
 	},
-	/*
-	var data = {
-	itemName : itemName, 			// grid面板名称
-	record : obj,					// 记录
-	idField : idField, 				// 主键名称
-	dataIndex : column.dataIndex,	// 列名称
-	colIndex : col, 				// 字段名称
-	td : $td, 						// 当前单元格
+	
+	/*{
+		record : obj,					// 记录
+		idField : idField, 				// 主键名称
+		dataIndex : column.dataIndex,	// 列名称
+		colIndex : col, 				// 字段名称
+		td : $td, 						// 当前单元格
+		value : text					// 当前单元格的值
 	};*/
 	/** 
 	 * 在grid数据行上添加修改与删除操作

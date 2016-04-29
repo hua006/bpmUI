@@ -26,60 +26,6 @@ $.extend(GlobalNS.fn, {
 		}else{
 			return '';
 		}
-	},
-	/**
-	 * EventListener属性加载
-	 */
-	_loadEventListener : function(data) {
-
-		// event-listener是以数组形式保存的,但为了使用方便,需要显示为逗号分隔的字符串
-		var pData = data.pData;
-		var itemName = 'event-listener';
-
-		var obj = pData[itemName];
-		var itemValue = obj;
-		if (obj) {
-			if (obj instanceof Array) {
-				itemValue = "";
-				for (var i = 0; i < obj.length; i++) {
-					for ( var key in obj[i]) {
-						if (obj[i][key]) {
-							if (!itemValue) {
-								itemValue = obj[i][key];
-							} else {
-								itemValue += "," + obj[i][key];
-							}
-						}
-					}
-				}
-			}
-		}
-		this.setItemValue(itemName, itemValue);
-	},
-	/**
-	 * EventListener属性保存
-	 */
-	_saveEventListener : function(data) {
-		// event-listener是以数组形式保存的,因此在保存数据时需要将逗号分隔的字符串转换为数组形式保存
-		var pData = data.pData;
-		var itemName = 'event-listener';
-
-		var formData = GlobalNS.formDatas[itemName];
-		var attrName = formData.items[0].name;
-
-		var itemValue = pData[itemName];
-		if (itemValue) {
-			var array = itemValue.split(",");
-			itemValue = [];
-			if (array instanceof Array) {
-				for (var i = 0; i < array.length; i++) {
-					var obj = {};
-					obj[attrName] = array[i];
-					itemValue.push(obj);
-				}
-			}
-		}
-		pData[itemName] = itemValue;
 	}
 });
 
@@ -100,16 +46,17 @@ GlobalNS.formDatas['start']=(function(){
 		cls:'',
 		listeners:{load:function(){/*alert('load');*/},save:function(){/*alert('save');*/}},
 		items:[
+		    {xtype:'select',name:'to',text:'目的节点'},
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'text',name:'text',text:'描述'},
-			{xtype:'grid',name:'transition',text:'出口',
+			{xtype:'grid',name:'transition',text:'出口',idField:'name',
 				tbar:[{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}],// 作用域:属性窗口;顶部工具栏
 				columns:[
 					{header: "名称",dataIndex: 'name'},
 					{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
 					{header: "操作",width:'120px',props:{align:'center'},renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				]},
-			{xtype:'grid',name:'on',text:'事件',
+			{xtype:'grid',name:'on',text:'事件',idField:'event',
 				columns:[
 				 	{header: "事件类型",dataIndex: 'event'},
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
@@ -287,7 +234,7 @@ GlobalNS.formDatas['variable']=(function(){
 		cls:'',
 		items:[
 			{xtype:'text',name:'name',text:'变量名称'},
-			{xtype:'text',name:'text',text:'变量显示名称'},
+			{xtype:'text',name:'text',text:'变量显示名称',required:true},
 			{xtype:'select',name:'showType',text:'变量显示方式'},
 			{xtype:'select',name:'validateType',text:'数据校验方式'},
 			{xtype:'int',name:'maxLen',text:'最大长度'},
@@ -351,9 +298,9 @@ GlobalNS.formDatas['transition']=(function(){
 		items:[
 			{xtype:'text',name:'name',text:'名称',modify:false},
 			{xtype:'text',name:'text',text:'描述'},
-			{xtype:'select',name:'to',text:'目的节点',loadDataMethod:GlobalNS.fn.loadBaseNodeNames},
+			{xtype:'select',name:'to',text:'目的节点',loadDataMethod:GlobalNS.fn.loadBaseNodeNames,required:true},
 			{xtype:'text',name:'condition',text:'条件'},
-			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}, valueType : 'String'}
+			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}, valueType : 'Array', items:['ATTR-class']}
 		]
 	}
 })();
@@ -400,7 +347,7 @@ GlobalNS.formDatas['on']=(function(){
 		cls:'',
 		items:[
 			{xtype:'select',name:'event',text:'事件类型',items:[{name:'start',text:'start'},{name:'end',text:'end'},{name:'cancel',text:'cancel'},{name:'overTime',text:'overTime'}]},
-			{xtype:'select',name:'to',text:'目的节点'},
+			{xtype:'select',name:'to',text:'目的节点',required:true},
 			{xtype:'textarea',name:'event-listener',text:'自定义处理类', valueType : 'String'}
 		]
 	}
@@ -466,24 +413,28 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
 				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
 				 ];
+				o.idField = 'name';
 			}else if(item.name=='on'){
 				o.columns = [
 				 	{header: "事件类型",dataIndex: 'event'},
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
 				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
 				 ];
+				o.idField = 'event';
 			}else if(item.name=='variable'){
 				o.columns = [
-				             {dataIndex:'name',header:'变量名称'},
-				             {dataIndex:'text',header:'变量显示名称'},
-				             {header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd},
-				             ]
+					{dataIndex:'name',header:'变量名称'},
+				 	{dataIndex:'text',header:'变量显示名称'},
+				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd},
+				 ];
+				o.idField = 'name';
 			}else if(item.name=='item'||item.name=='item-1'){
 				o.columns = [
 					{dataIndex:'id',header:'选项代码'},
 					{dataIndex:'text',header:'选项名称'},
 					{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
-				]
+				];
+				o.idField = 'id';
 			}
 		} else if (item.xtype == 'select') {
 			if (item.name == 'to') {
@@ -504,14 +455,7 @@ $.each(GlobalNS.formDatas,function(index,obj){
 		} else if (item.xtype == 'radio') {
 		}
 		
-		
 		$.extend(o, item);
 		$.extend(item, o);
-		
-		if(obj.defaults){
-			$.extend(obj.defaults, item);
-			$.extend(item, obj.defaults);
-		}
-		
 	});
 });

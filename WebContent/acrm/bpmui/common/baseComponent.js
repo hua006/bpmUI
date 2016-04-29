@@ -43,9 +43,25 @@ Arvato.BaseComponent={
 		}
 		this._appendFields();
 		this.val(value);
+		this.inValid();
 	},
 	validate:function(){
-		
+		if(this.settings.required){
+			var value = this.val();
+			if (!value) {
+				this.inValid('不能为空');
+				return "不能为空";
+			}
+		}
+	},
+	inValid:function(msg){
+		if (arguments.length != 0){
+			this.$me.attr('title',msg);
+			this.$me.addClass('x-form-invalid');
+		}else{
+			this.$me.removeAttr('title');
+			this.$me.removeClass('x-form-invalid');
+		}
 	},
 	_create : function() {
 		this._initializeElement();
