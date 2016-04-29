@@ -1,5 +1,10 @@
 package com.arvato.acrm.bpmui.web;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -8,6 +13,7 @@ import org.apache.struts2.ServletActionContext;
 import com.arvato.acrm.bpmui.service.impl.BPMUIService;
 import com.arvato.acrm.bpmui.util.JsonParseSupport;
 import com.arvato.acrm.commons.util.Tools;
+import com.arvato.acrm.config.ConfigConstants;
 import com.opensymphony.xwork2.ActionSupport;
 
 public class BPMUIAction extends ActionSupport {
@@ -21,7 +27,8 @@ public class BPMUIAction extends ActionSupport {
 		if(Tools.isBlank(defKey)){
 			defKey = "consultNew";
 		}
-		String fileName = "C:\\Users\\hua006\\Desktop\\workflow\\"+defKey+".xml";
+		String downloadPath = request.getSession().getServletContext().getRealPath("/")+ConfigConstants.PATH_DOWNLOAD+System.getProperty("file.separator");
+		String fileName = downloadPath+defKey+".xml";
 		BPMUIService s =new BPMUIService();
 		String output = "";
 		try {
@@ -43,9 +50,39 @@ public class BPMUIAction extends ActionSupport {
 		String xml = s.getXml(jsondata,defKey);
 		System.out.println(xml);
 		
+		String downloadPath = request.getSession().getServletContext().getRealPath("/") + ConfigConstants.PATH_DOWNLOAD + System.getProperty("file.separator");
+		writeFile(downloadPath + defKey + ".xml", xml);
+		
 //		System.out.println("defKey="+defKey+",jsondata:");
 //		System.out.println(jsondata);
 		request.setAttribute("output", "success");
 		return SUCCESS;
+	}
+	private void writeFile(String fileName, String xml) {
+		File file = new File(fileName);
+		System.out.println(file.getAbsolutePath());
+		FileOutputStream out = null;
+		BufferedOutputStream bo = null;
+		try {
+			out = new FileOutputStream(file, false);
+			bo = new BufferedOutputStream(out);
+			bo.write(xml.getBytes());
+			bo.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (bo != null) {
+				try {
+					bo.close();
+				} catch (IOException e1) {
+				}
+			}
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
 	}
 }

@@ -71,7 +71,7 @@ $(document).ready(function() {
 //		return confirm("确定要删除该单元吗?");
 //	};
 	demo.onBtnOpenClick = function() {
-		var path = contextPath + "/bpmui/loadFile.action?defKey=consultNew2";
+		var path = contextPath + "/bpmui/loadFile.action?defKey=" + wfDefkey;
 		$.ajax({
 			type : "get",
 			url : path,

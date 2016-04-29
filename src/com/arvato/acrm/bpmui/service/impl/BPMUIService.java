@@ -20,7 +20,6 @@ import com.arvato.acrm.bpmui.util.XElementSupport;
 import com.arvato.acrm.commons.util.Tools;
 
 import net.sf.json.JSONObject;
-import net.sf.json.util.JSONStringer;
 
 public class BPMUIService {
 	private XElementSupport support = new XElementSupport();

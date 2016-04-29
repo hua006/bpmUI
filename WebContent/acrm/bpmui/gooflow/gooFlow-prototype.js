@@ -825,7 +825,7 @@ GooFlow.prototype={
 		this.$editable=false;
 		if(data.title)	this.setTitle(data.title);
 		this.$defKey = data.defKey||'demo';
-		if(data.initNum)	this.$max=data.initNum;
+		this.setMaxSeq(data);
 		for(var i in data.nodes)
 			this.addNode(i,data.nodes[i]);
 		for(var j in data.lines)
@@ -834,6 +834,37 @@ GooFlow.prototype={
 			this.addArea(k,data.areas[k]);
 		this.$editable=t;
 		this.$deletedItem={};
+	},
+	// 获取最大的序列号,并赋值给$max
+	setMaxSeq : function(data) {
+		if(data.initNum){
+			this.$max = data.initNum;
+		}else {
+			var idArray = [];
+			var prefix = "demo_node_";
+			for(var i in data.nodes){
+				var str = data.nodes[i].wfDatas.name + "";
+				if (str.indexOf(prefix) >= 0) {
+					idArray.push(str.replace(prefix,''));
+				}
+			}
+			prefix = "demo_transition_";
+			for(var i in data.lines){
+				var str = data.lines[i].name + "";
+				if (str.indexOf(prefix) >= 0) {
+					idArray.push(str.replace(prefix,''));
+				}
+			}
+			var max = 0;
+			for (var i = 0; i < idArray.length; i++) {
+				var num = parseInt(idArray[i]);
+				if (num > max) {
+					max = num;
+				}
+			}
+			max++;
+			this.$max = max;
+		}
 	},
 	//用AJAX方式，远程读取一组数据
 	//参数para为JSON结构，与JQUERY中$.ajax()方法的传参一样

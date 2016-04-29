@@ -2,23 +2,26 @@
 <%
 	long l = System.currentTimeMillis();
 	String s = "?num=" + l;
-	String flag =request.getParameter("flag");
-	if("false".equals(flag)){
-		s="";
+	String flag = request.getParameter("flag");
+	String defKey = request.getParameter("defKey");
+	if (defKey == null) {
+		defKey = "consultNew";
+	}
+	if ("false".equals(flag)) {
+		s = "";
 	}
 %>
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/jquery-ui/jquery-ui.css"/>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/jquery-ui/jquery-ui.theme.css"/>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/iconfont.css<%=s%>"/>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/gooflow/css/ico.css<%=s%>"/>
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/iconfont.css<%=s%>"/>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/ico.css<%=s%>"/>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/default.css<%=s%>"/>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/acrm.css"/>
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/jquery/jquery-2.2.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/jquery/jquery.form.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/js/jquery-2.2.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/js/jquery.form.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/jquery-ui/jquery-ui.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/globalNS.js<%=s%>"></script>
@@ -53,11 +56,12 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/main.js<%=s%>"></script>
 <script type="text/javascript">
 	var contextPath = '<%=request.getContextPath()%>';
+	var wfDefkey = '<%=defKey%>';
 </script>
 </head>
 <body>                         
-	<a href='/bpmUI/?num=<%=System.currentTimeMillis()%>'>强制刷新<a>
-	<a href='/bpmUI/?flag=false'>刷新<a>
+	<a href='/bpmUI/?defKey=<%=defKey%>&num=<%=System.currentTimeMillis()%>'>强制刷新<a>
+	<a href='/bpmUI/?defKey=<%=defKey%>&flag=false'>刷新<a>
 	<div id="demo" style="margin: 10px"></div>
 	<input id="submit" type="button" value='导出结果' onclick="Export()" />
 	<textarea id="result" row="6"></textarea>
