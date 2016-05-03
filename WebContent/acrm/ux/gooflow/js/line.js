@@ -521,7 +521,7 @@ GlobalNS.lineObject = {
 	delLine : function(id) {
 		if (!this.$lineData[id])
 			return;
-		if (this.onItemDel != null && !this.onItemDel(id, "node"))
+		if (this.onItemDel != null && !this.onItemDel(id, "line"))
 			return;
 		if (this.$undoStack) {
 			var paras = [ id, this.$lineData[id] ];
