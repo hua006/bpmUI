@@ -25,7 +25,7 @@
 		this._parentCom = _parentCom;
 	}
 
-	ComboBox.prototype = $.extend({}, Arvato.BaseComponent, {
+	ComboBox.prototype = $.extend({}, Arvato.BaseField, {
 		// 设置或获取控件值
 		val : function(value) {
 			if (arguments.length != 0) {

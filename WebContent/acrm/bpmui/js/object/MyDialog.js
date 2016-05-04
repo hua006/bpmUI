@@ -77,7 +77,6 @@ Arvato.MyDialog.prototype = {
 		this.operFlag = operFlag;
 		this.val(pData);
 		
-		this.$form.refresh();
 		this.$dialog.dialog("open");
 	},
 	/**

@@ -21,7 +21,7 @@
 		this._parentCom = _parentCom;
 	}
 
-	TextArea.prototype = $.extend({}, Arvato.BaseComponent, {
+	TextArea.prototype = $.extend({}, Arvato.BaseField, {
 		// 设置或获取控件值
 		val : function(value) {
 			var options = this.settings;
@@ -98,9 +98,6 @@
 			var $field = $(formatStr('<textarea name="{0}"></textarea>', this.settings.name)).appendTo($fieldDiv);
 			this.$me = $field;
 			this.$me.attr(this.settings.props);
-		},
-		// 添加子元素
-		_appendFields : function() {
 		}
 	});
 	

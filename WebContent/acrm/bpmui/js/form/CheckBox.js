@@ -25,7 +25,7 @@
 		this._parentCom = _parentCom;
 	}
 
-	CheckBox.prototype = $.extend({}, Arvato.BaseComponent, {
+	CheckBox.prototype = $.extend({}, Arvato.BaseField, {
 		// 设置或获取控件值
 		val : function(value) {
 			var itemName = this.settings.name;

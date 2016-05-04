@@ -153,13 +153,13 @@ GlobalNS.fn = {
 				This.datas = [];
 			}
 			GlobalNS.fn.updateRecord(This.datas, itemValue, idField);
+			This.val(This.datas);
 		} else if (This.settings.settings.xtype == 'form' || This.settings.xtype == 'property') {
 			if(!This.datas){
 				This.datas = {};
 			}
 			This.val(itemValue);
 		}
-		This.refresh();
 		return true;
 	},
 	/* datas结构如下:

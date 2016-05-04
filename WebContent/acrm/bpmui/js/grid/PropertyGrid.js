@@ -23,23 +23,9 @@
 	}
 
 	PropertyGrid.prototype = $.extend({}, Arvato.BasePanel, {
-		_create : function(){
-			// 初始化元素
-			this._initializeElement();
-			// 初始化顶部工具栏
-			if (this.settings.tbar) {
-				this._createTbar();
-			}
+		_appendFields:function(){
 			// 初始化动态行
 			this._createTableBody();
-		},
-		_initializeElement:function (){
-			var $fieldDiv = this.$parent.empty();
-			var options = this.settings;
-			var $table = $(formatStr('<table width="100%" class="table-{0}" style="word-break:break-all; word-wrap:break-word;"></table>',options.name)).appendTo($fieldDiv);
-			$table.append('<thead></thead><tbody></tbody><tfoot></tfoot>');
-			$table.attr(options.props);
-			this.$me = $table;
 		},
 		_createTableBody:function(){
 			var $tbody = $('tbody', this.$me).first();

@@ -4,24 +4,12 @@
  * 子类包括:FormPanel,GridPanel,PropertyGrid等
  */
 Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
-	_id : null,
-	_parentCom : null, 	// 父控件(自定义控件类型);
 	$parent : null, 	// 父元素(jQuery类型)
-	_fields : null, 	// 子控件
 	$me : null,			// 自身元素(jQuery类型)
 	datas : null,		// 数据信息
-	/**
-	 * Panel控件初始化,先加载数据,然后创建元素,绑定事件
-	 */
-	init : function(){
-		this._id = this.settings.id;
-		if (this.settings.autoload === true) {
-			var datas = this.loadData();
-			this.val(datas);
-		}
-		this._create();
-		this._bindEvent();
-	},
+	_parentCom : null, 	// 父控件(自定义控件类型);
+	_fields : null, 	// 子控件
+	
 	/**
 	 * 设置或获取控件值,若有子元素,需要调用子元素val方法;
 	 * 1.对于Panel控件,由于值通常为对象或数组类型,因此应该保存在内存中;
@@ -30,27 +18,16 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 	val : function(value) {
 		if (arguments.length != 0) {
 			if (!value) {
-				if(this.xtype == 'grid'){
+				if (this.xtype == 'grid') {
 					value = [];
-				}else{
+				} else {
 					value = {};
 				}
 			}
 			this.datas = value;
-			if (this._fields) {
-				$.each(this._fields, function(i, n) {
-					n.val(value[i]);
-				});
-			}
+			this._createTableBody();
 			return this;
 		} else {
-			if (this._fields) {
-				var array = {};
-				$.each(this._fields, function(i, n) {
-					array[i] = n.val();
-				});
-				$.extend(this.datas, array);
-			}
 			return this.datas;
 		}
 	},
@@ -62,7 +39,42 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 		this.val(datas);
 		this._createTableBody();
 	},
-	// 添加tbar
+	/**
+	 * Panel控件初始化,先加载数据,然后创建元素,绑定事件
+	 */
+	init : function() {
+		if (this.settings.autoload === true) {
+			var datas = this.loadData();
+			this.val(datas);
+		}
+		this._create();
+		this._bindEvent();
+	},
+	/**
+	 *  创建Panel元素
+	 */
+	_create : function(){
+		// 初始化元素
+		this._initializeElement();
+		// 初始化顶部工具栏
+		if (this.settings.tbar) {
+			this._createTbar();
+		}
+		// 添加子元素
+		this._appendFields();
+	},
+	// 初始化元素
+	_initializeElement:function (){
+		var $fieldDiv = this.$parent.empty();
+		var options = this.settings;
+		var $table = $(formatStr('<table width="100%" class="table-{0}" style="word-break:break-all; word-wrap:break-word;"></table>',options.name)).appendTo($fieldDiv);
+		$table.append('<thead></thead><tbody></tbody><tfoot></tfoot>');
+		$table.attr(options.props);
+		this.$me = $table;
+	},
+	/**
+	 * 添加tbar
+	 */
 	_createTbar:function(){
 		var cols = 2;
 		if(this.settings.columns){
@@ -93,5 +105,17 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 				}
 			).appendTo($tbar);
 		}
-	}
+	},
+	/**
+	 * 添加子元素(由子类实现)
+	 */
+	_appendFields:function(){},
+	/**
+	 * 校验方法(由子类实现)
+	 */
+	validate: function(msg) {},
+	/**
+	 * 设置或删除校验失败时的显示消息(由子类实现)
+	 */
+	inValidMsg : function(msg) {}
 });

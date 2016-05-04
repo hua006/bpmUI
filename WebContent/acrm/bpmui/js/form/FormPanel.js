@@ -50,6 +50,26 @@
 				}
 			});
 		},
+		val : function(value) {
+			if (arguments.length != 0) {
+				this.datas = value || {};
+				if (this._fields) {
+					$.each(this._fields, function(i, n) {
+						n.val(value[i]);
+					});
+				}
+				return this;
+			} else {
+				if (this._fields) {
+					var array = {};
+					$.each(this._fields, function(i, n) {
+						array[i] = n.val();
+					});
+					$.extend(this.datas, array);
+				}
+				return this.datas;
+			}
+		},
 		/**
 		 * 设置或获取表单子控件的值
 		 */
@@ -90,23 +110,8 @@
 			// 保存数据
 			return this._saveData();
 		},
-		_create : function(){
-			// 初始化元素
-			this._initializeElement();
-			// 初始化顶部工具栏
-			if (this.settings.tbar) {
-				this._createTbar();
-			}
-			// 添加表单
+		_appendFields:function(){
 			this._initializeForm();
-		},
-		// 初始化元素
-		_initializeElement:function (){
-			var $fieldDiv = this.$parent.empty();
-			var options = this.settings;
-			var $table = $(formatStr('<table width="100%" class="table-{0}" style="word-break:break-all; word-wrap:break-word;"></table>',options.name)).appendTo($fieldDiv);
-			$table.append('<thead></thead><tbody></tbody><tfoot></tfoot>');
-			$table.attr(options.props);
 		},
 		// 初始化表单元素
 		_initializeForm:function(){
@@ -122,14 +127,14 @@
 			this._fields={};
 			
 			// 添加字段
-			this._appendFields();
+			this._appendChildFields();
 			// 添加按钮
 			if (this.settings.buttons) {
 				this._createButtons($formTable);
 			}
 		},
 		// 初始化表单字段元素,若表单字段已建立,则不做处理
-		_appendFields : function() {
+		_appendChildFields : function() {
 			var $formTable = this.$me.children().first();
 			var options = this.settings;
 			var name = this.settings.name;
@@ -141,12 +146,12 @@
 					var $tr = $("<div class='x-form-item'></div>").appendTo($formTable);
 					var item = options.items[i];
 					item.props = $.extend({}, options.defaults, item.props);
-					this._fields[fieldName] = this._appendField($tr, item);
+					this._fields[fieldName] = this._appendChildField($tr, item);
 				}
 			}
 		},
 		// 初始化表单字段子元素
-		_appendField : function($tr, item) {
+		_appendChildField : function($tr, item) {
 			var options = this.settings;
 			var name = this.settings.name;
 
@@ -206,7 +211,7 @@
 			}
 		},
 		// 添加按钮
-		_createButtons:function($formTable){
+		_createButtons : function($formTable) {
 			var name = this.settings.name;
 			var buttons = this.settings.buttons;
 			

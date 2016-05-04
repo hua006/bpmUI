@@ -1,31 +1,21 @@
 /**
- * 自定义控件操作,子类包括:CheckBox,Raido,ComboBox,Arvato.BasePanel等
+ * 自定义控件操作,子类包括:Arvato.BaseField,Arvato.BasePanel等
  */
 Arvato.BaseComponent={
 	$parent : null,
 	$me : null,
-	datas : [],
-	init : function(obj) {
-		this.$parent = $(obj);
-		var datas = this.loadData();
-		//console.log('init:'+this.settings.name);
-		if (this.datas) {
-			this.datas = datas;
-		}
-		this._create();
-		this._bindEvent();
-		this._appendFields();
-		this.val(this.settings.value);
-	},
-	// 加载数据,获取控件对应的最新数据
+	datas : null,
+	/**
+	 * 加载数据,获取控件对应的最新数据
+	 */
 	loadData : function(datas) {
 		if (arguments.length != 0) {
 			this.datas = datas;
 			return this;
 		} else {
 			var options = this.settings;
-			//console.log(options.text+",loadDataMethod:"+options.loadDataMethod+",url:"+options.url);
-			//console.log('----------------------------');
+			console.log("xtype:"+options.xtype+",text:"+options.text+",loadDataMethod:"+",url:"+options.url);
+			console.log('----------------------------');
 			if (options.loadDataMethod) {
 				this.datas = options.loadDataMethod.call(this);
 			} else if (options.url) {
@@ -45,51 +35,6 @@ Arvato.BaseComponent={
 			this.val(value);
 		}
 		this.inValidMsg();
-	},
-	/**
-	 * 若控件包含loadDataMethod或url,则可以刷新
-	 */
-	_refreshOnly : function() {
-		var options = this.settings;
-		if (options.loadDataMethod || options.url) {
-			this.loadData();
-			this._appendFields();
-		}
-	},
-	/**
-	 * 校验方法
-	 */
-	validate:function(){
-		if(this.settings.required){
-			var value = this.val();
-			if (!value) {
-				this.inValidMsg('不能为空');
-				return "不能为空";
-			}
-		}
-		if(this.settings.regex){
-			var value = this.val();
-			var reg = new RegExp(this.settings.regex.regex);
-			if(!reg.test(value)){
-				return this.settings.regex.errorMsg||'不符合校验规则';
-			}
-		}
-	},
-	/**
-	 * 设置或删除校验失败时的显示消息
-	 * @param msg
-	 */
-	inValidMsg:function(msg){
-		if (arguments.length != 0){
-			this.$me.attr('title',msg);
-			this.$me.addClass('x-form-invalid');
-		}else{
-			this.$me.removeAttr('title');
-			this.$me.removeClass('x-form-invalid');
-		}
-	},
-	_create : function() {
-		this._initializeElement();
 	},
 	// ajax方式获取数据
 	_getAjaxData : function(url, params) {
@@ -128,5 +73,21 @@ Arvato.BaseComponent={
 		$me.on('change', {This:this}, function(event){
 			event.data.This.inValidMsg();
 		});
-	}
+	},
+	/**
+	 * 初始化方法(由子类实现)
+	 */
+	init : function(msg) {},
+	/**
+	 * 校验方法(由子类实现)
+	 */
+	validate: function(msg) {},
+	/**
+	 * 设置或删除校验失败时的显示消息(由子类实现)
+	 */
+	inValidMsg : function(msg) {},
+	/**
+	 * 创建方法(由子类实现)
+	 */
+	_create : function(msg) {}
 };
