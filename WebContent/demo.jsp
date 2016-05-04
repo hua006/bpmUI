@@ -20,7 +20,6 @@
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/acrm/css/acrm.css"/>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/jquery-2.2.1.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/jquery.form.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/jquery-ui/jquery-ui.js"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/globalNS.js<%=s%>"></script>

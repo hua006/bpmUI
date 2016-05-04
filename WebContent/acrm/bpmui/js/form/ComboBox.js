@@ -11,7 +11,7 @@
 			value : '',
 			displayField : 'text',
 			valueField : 'name',
-			emptyText : '请选择...',
+			// emptyText : '请选择...',
 			allowBlank : true,
 			datas : [],
 			enable : true,

@@ -8,7 +8,7 @@ Arvato.BaseComponent={
 	init : function(obj) {
 		this.$parent = $(obj);
 		var datas = this.loadData();
-		console.log('init:'+this.settings.name);
+		//console.log('init:'+this.settings.name);
 		if (this.datas) {
 			this.datas = datas;
 		}
@@ -24,8 +24,8 @@ Arvato.BaseComponent={
 			return this;
 		} else {
 			var options = this.settings;
-			console.log(options.text+",loadDataMethod:"+options.loadDataMethod+",url:"+options.url);
-			console.log('----------------------------');
+			//console.log(options.text+",loadDataMethod:"+options.loadDataMethod+",url:"+options.url);
+			//console.log('----------------------------');
 			if (options.loadDataMethod) {
 				this.datas = options.loadDataMethod.call(this);
 			} else if (options.url) {
@@ -43,8 +43,8 @@ Arvato.BaseComponent={
 		if (options.loadDataMethod || options.url) {
 			var value = this.val();
 			this.val(value);
-			this.inValidMsg();
 		}
+		this.inValidMsg();
 	},
 	/**
 	 * 若控件包含loadDataMethod或url,则可以刷新
@@ -65,6 +65,13 @@ Arvato.BaseComponent={
 			if (!value) {
 				this.inValidMsg('不能为空');
 				return "不能为空";
+			}
+		}
+		if(this.settings.regex){
+			var value = this.val();
+			var reg = new RegExp(this.settings.regex.regex);
+			if(!reg.test(value)){
+				return this.settings.regex.errorMsg||'不符合校验规则';
 			}
 		}
 	},

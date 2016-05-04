@@ -59,17 +59,62 @@ var remark = {
 
 var demo; // 设计器对象
 $(document).ready(function() {
+	// 使用jQuery Ui 的tip插件
 	$(document).tooltip();
 	
+	// 创建设计器
 	demo = $.createDesigner($("#demo"), property);
 	
+	// 设置设计器节点显示名称
 	demo.setNodeRemarks(remark);
 	
+	// 设计器初始化:加载属性窗口
 	demo.initDialogs(GlobalNS.formDatas);
 	
-//	demo.onItemDel = function(id, type) {
+	// 设置节点添加事件
+	demo.onItemAdd = function(id, type, json) {
+		if (type == 'node') {
+			if (json.type == 'start') {
+				for ( var nodeId in this.$nodeData) {
+					if (this.$nodeData[nodeId].type == json.type) {
+						alert('开始结点已存在');
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	};
+	
+	// 设置节点删除事件
+	demo.onItemDel = function(id, type, force) {
+		if (type == 'node') {
+			if (force === true) {
+				return true;
+			}
+			var nodeType = this.$nodeData[id].type;
+			if (nodeType == 'start') {
+				alert('开始结点不能删除');
+				return false;
+			} else if (nodeType == 'end') {
+				var count = 0;
+				for ( var nodeId in this.$nodeData) {
+					if (this.$nodeData[nodeId].type == nodeType) {
+						count++;
+						if (count > 1) {
+							return true;
+						}
+					}
+				}
+				alert('至少有一个结束结点');
+				return false;
+			}
+		}
+		return true;
 //		return confirm("确定要删除该单元吗?");
-//	};
+	};
+	
+	// 设置顶部工具栏打开按钮事件
 	demo.onBtnOpenClick = function() {
 		var path = contextPath + "/bpmui/loadFile.action?defKey=" + wfDefkey;
 		$.ajax({
@@ -84,6 +129,8 @@ $(document).ready(function() {
 			}
 		});
 	};
+	
+	// 设置顶部工具栏保存按钮事件
 	demo.onBtnSaveClick = function() {
 		var path = contextPath + "/bpmui/saveFile.action";
 		var defKey = demo.$defKey;
@@ -104,8 +151,8 @@ $(document).ready(function() {
 			}
 		});
 	};
-	demo.onBtnOpenClick();
-//	demo.loadData(jsondata);
+	
+	// 设置工作区双击事件
 	demo.onItemDblClick = function(focusId,type){
 		var baseType = type;
 		if (type == 'line') {
@@ -143,9 +190,9 @@ $(document).ready(function() {
 		};
 	};
 	
-	$('#myForm').ajaxForm(function() {
-        alert("Thank you for your comment!");
-    });
+	// 执行顶部工具栏打开按钮事件
+	demo.onBtnOpenClick();
+//	demo.loadData(jsondata);
 });
 
 var out;

@@ -785,33 +785,36 @@ GooFlow.prototype={
 		this.resetLines(id,this.$nodeData[id]);
 	},
 	//删除结点
-	delNode:function(id){
-		if(!this.$nodeData[id])	return;
-		if(this.onItemDel!=null&&!this.onItemDel(id,"node"))	return;
-		//先删除可能的连线
-		for(var k in this.$lineData){
-			if(this.$lineData[k].from==id||this.$lineData[k].to==id){
-				//this.$draw.removeChild(this.$lineDom[k]);
-				//delete this.$lineData[k];
-				//delete this.$lineDom[k];
+	delNode : function(id, force) {
+		if (!this.$nodeData[id])
+			return;
+		if (this.onItemDel != null && !this.onItemDel(id, "node", force))
+			return;
+		// 先删除可能的连线
+		for ( var k in this.$lineData) {
+			if (this.$lineData[k].from == id || this.$lineData[k].to == id) {
+				// this.$draw.removeChild(this.$lineDom[k]);
+				// delete this.$lineData[k];
+				// delete this.$lineDom[k];
 				this.delLine(k);
 			}
 		}
-		//再删除结点本身
-		if(this.$undoStack){
-			var paras=[id,this.$nodeData[id]];
-			this.pushOper("addNode",paras);
+		// 再删除结点本身
+		if (this.$undoStack) {
+			var paras = [ id, this.$nodeData[id] ];
+			this.pushOper("addNode", paras);
 		}
 		delete this.$nodeData[id];
 		this.$nodeDom[id].remove();
 		delete this.$nodeDom[id];
 		--this.$nodeCount;
-		if(this.$focus==id)	this.$focus="";
+		if (this.$focus == id)
+			this.$focus = "";
 
-		if(this.$editable){
-			//在回退新增操作时,如果节点ID以this.$id+"_node_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
-			if(id.indexOf(this.$id+"_node_")<0)
-				this.$deletedItem[id]="node";
+		if (this.$editable) {
+			// 在回退新增操作时,如果节点ID以this.$id+"_node_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
+			if (id.indexOf(this.$id + "_node_") < 0)
+				this.$deletedItem[id] = "node";
 		}
 	},
 	//设置流程图的名称
@@ -960,7 +963,7 @@ GooFlow.prototype={
 	//清空工作区及已载入的数据
 	clearData:function(){
 		for(var key in this.$nodeData){
-			this.delNode(key);
+			this.delNode(key,true);
 		}
 		for(var key in this.$lineData){
 			this.delLine(key);

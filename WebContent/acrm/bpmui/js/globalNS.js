@@ -23,39 +23,48 @@ GlobalNS.formDatas={
 	};
 GlobalNS.options={
 	showType:[
-		{name:'select',text:'下拉列表'},
-		{name:'text',text:'单行文本'},
+        {name:'text',text:'单行文本'},
+        {name:'textarea',text:'多行文本'},
 		{name:'date',text:'日期选择框,格式:yyyy-mm-dd'},
 		{name:'datetime',text:'日期时间(默认格式:yyyy-mm-dd hh:mi:ss)'},
-		{name:'textarea',text:'多行文本'},
-		{name:'tree',text:'联动树显示'},
+		{name:'select',text:'下拉列表'},
+		{name:'tree',text:'分级树'},
 		{name:'radio',text:'单选钮'},
 		{name:'checkbox',text:'复选框'},
-		{name:'file',text:'文件'}
+		{name:'file',text:'文件'},
+		{name:'url',text:'URL'}
 	],
 	validateType:[
-		{name:'phone',text:'固定电话'},
-		{name:'mobile',text:'手机'},
-		{name:'tele',text:'固话和手机'},
-		{name:'postcode',text:'邮政编码'},
-		{name:'email',text:'电子邮箱'},
-		{name:'idcard',text:'身份证'},
-		{name:'date',text:'日期'},
-		{name:'datetime',text:'日期时间'},
-		{name:'number',text:'数字'},
-		{name:'money',text:'金额'},
+	    {name:'0',text:'无校验方式'},
+	    {name:'postcode',text:'邮政编码'},
+	    {name:'tele',text:'电话号码'},
+	    {name:'phone',text:'固定电话'},
+	    {name:'mobile',text:'手机'},
+	    {name:'email',text:'EMAIL'},
+	    {name:'date',text:'日期'},
+	    {name:'datetime',text:'日期时间'},
+	    {name:'idcard',text:'身份证'},
+	    {name:'number',text:'数字'},
+	    {name:'money',text:'金额'},
+	    {name:'ip',text:'IP地址'},
+	    {name:'creditcard',text:'信用卡号'},
 		{name:'countryCode',text:'国家代码(必须是在TBL_CONFIG_COUNTRY_CODE存在的代码)'},
-		{name:'ip',text:'IP地址'},
 		{name:'provinceCN',text:'中国省份'},
 		{name:'cityCN',text:'中国城市'},
 		{name:'countyCN',text:'中国县'},
-		{name:'creditcard',text:'信用卡号'}
+		{name:'regularExpr',text:'自定义正则表达式'}
 	],
 	validateMethodPos:[
 		{name:'top',text:'显示在表单对象上方'},
 		{name:'bottom',text:'显示在表单对象下方'},
 		{name:'right',text:'显示在表单对象右面，默认'},
 		{name:'left',text:'显示在表单对象左面，此时显示在表单对象label的下方。'}
+	]
+	,
+	trueOrFalse:[
+//		{name:'',text:''},
+		{name:'true',text:'是'},
+		{name:'false',text:'否'}
 	]
 }
 //GlobalNS.formDatas['demo']=(function(){

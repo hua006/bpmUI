@@ -72,11 +72,6 @@
 			// 表单数据校验
 			var results = this._checkFormRecord(this.datas);
 			if (!$.isEmptyObject(results)) {
-				var This = this;
-				$.each(results, function(i, o) {
-					var item = This._getItem(i);
-					alert((item.text||item.name) + ":" + o);
-				});
 				return results;
 			}
 			
@@ -265,6 +260,7 @@
 					var result = n.validate();
 					if (result) {
 						obj[i] = result;
+						n.inValidMsg(result);
 					}
 				}
 			});

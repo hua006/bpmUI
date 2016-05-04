@@ -29,6 +29,17 @@ $.extend(GlobalNS.fn, {
 	}
 });
 
+GlobalNS.Regex={
+	a:1,
+	word100:{regex:'^[A-Za-z0-9_]{0,100}$', errorMsg:'不超过100位由字母、数字、下划线组成的字符串'},	// 字母数字下划线,0-100位
+	word30:{regex:'^[A-Za-z0-9_]{0,30}$', errorMsg:'不超过30位由字母、数字、下划线组成的字符串'},		// 字母数字下划线,0-30位
+	str200:{regex:'^.{0,200}$', errorMsg:'不超过200位的字符串'},	// 字符0-200位,不包括换行符
+	str100:{regex:'^.{0,100}$', errorMsg:'不超过100位的字符串'},	// 字符0-100位,不包括换行符
+	str50:{regex:'^.{0,50}$', errorMsg:'不超过50位的字符串'},		// 字符0-50位,不包括换行符
+	number:{regex:'^(0?|[1-9][0-9]*)$', errorMsg:'只能输入零和非零开头的数字'},	// 字母数字下划线,0-100位
+	//showFormat:{regex:'^(\d*\d)|(\\d\\*)|(\\*\\d)|(\\*)|all$', errorMsg:'数据在界面的显示格式'},
+	a:2
+}
 /*
  * "开始节点"属性弹出窗口信息;
  * 这里借鉴了Ext定义表单等对象的方式,但简化了一些操作;
@@ -46,9 +57,8 @@ GlobalNS.formDatas['start']=(function(){
 		cls:'',
 		listeners:{load:function(){/*alert('load');*/},save:function(){/*alert('save');*/}},
 		items:[
-		    {xtype:'select',name:'to',text:'目的节点'},
-			{xtype:'text',name:'name',text:'名称'},
-			{xtype:'text',name:'text',text:'描述'},
+			{xtype:'text',name:'name',text:'名称',regex:GlobalNS.Regex.word100},
+			{xtype:'text',name:'text',text:'描述',regex:GlobalNS.Regex.str200},
 			{xtype:'grid',name:'transition',text:'出口',idField:'name',
 				tbar:[{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}],// 作用域:属性窗口;顶部工具栏
 				columns:[
@@ -91,17 +101,17 @@ GlobalNS.formDatas['task']=(function(){
 			{xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
 			{xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
 			{xtype:'text',name:'userLevel',text:'受理人用户级别'},
-			{xtype:'select',name:'useAssignExcept',text:'是否使用分配避免',items:[{name:'true',text:'true'},{name:'false',text:'false'}]},
+			{xtype:'select',name:'useAssignExcept',text:'是否使用分配避免',items:GlobalNS.options.trueOrFalse},
 			{xtype:'checkbox',name:'exceptNode',text:'分配避免针对节点',valueType : 'String'},
-			{xtype:'select',name:'useAssignPrior',text:'是否使用分配优先',items:[{name:'true',text:'true'},{name:'false',text:'false'}]},
+			{xtype:'select',name:'useAssignPrior',text:'是否使用分配优先',items:GlobalNS.options.trueOrFalse},
 			{xtype:'checkbox',name:'priorNode',text:'分配优先针对的节点',valueType : 'String'},
 			{xtype:'text',name:'autoMemoMethod',text:'自动备注方法'},
 			{xtype:'text',name:'onloadMethod',text:'页面加载方法'},
 			{xtype:'select',name:'type',text:'任务类型',items:[{name:'form',text:'form'},{name:'survey',text:'survey'},{name:'layout',text:'layout'}]},
 			{xtype:'text',name:'formID',text:'DFL表单ID'},
 			{xtype:'text',name:'layoutID',text:'DFL布局ID'},
-			{xtype:'text',name:'maxCallCount',text:'最大外呼次数'},
-			{xtype:'checkbox',name:'variable',text:'字段信息'},
+			{xtype:'text',name:'maxCallCount',text:'最大外呼次数',regex:GlobalNS.Regex.number},
+			{xtype:'grid',name:'variable',text:'字段信息'},
 			{xtype:'grid',name:'transition',text:'出口'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
@@ -196,7 +206,7 @@ GlobalNS.formDatas['math']=(function(){
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'text',name:'ATTR-variable',text:'变量名称'},
-			{xtype:'select',name:'operator',text:'运算符',items:[{name:'add',text:'add'},{name:'sub',text:'sub'},{name:'mul',text:'mul'},{name:'div',text:'div'},{name:'mod',text:'mod'}]},
+			{xtype:'select',name:'operator',text:'运算符',items:[{name:'add',text:'加'},{name:'sub',text:'减'},{name:'mul',text:'乘'},{name:'div',text:'除'},{name:'mod',text:'求余'}]},
 			{xtype:'text',name:'value',text:'操作值'},
 			{xtype:'select',name:'unit',text:'操作单位',items:[{name:'month',text:'月'},{name:'day',text:'天'},{name:'hour',text:'小时'},{name:'minute',text:'分钟'},{name:'second',text:'秒'},{name:'workday',text:'工作日(结合配置表TBL_CONFIG_HOLIDAY计算工作日)'},{name:'workhour',text:'工作小时'}]},
 			{xtype:'text',name:'initExpr',text:'变量初值'},
@@ -233,18 +243,25 @@ GlobalNS.formDatas['variable']=(function(){
 		defaults: {style:'width:140px'},
 		cls:'',
 		items:[
-			{xtype:'text',name:'name',text:'变量名称'},
-			{xtype:'text',name:'text',text:'变量显示名称',required:true},
-			{xtype:'select',name:'showType',text:'变量显示方式'},
-			{xtype:'select',name:'validateType',text:'数据校验方式'},
-			{xtype:'int',name:'maxLen',text:'最大长度'},
-			{xtype:'text',name:'initExpr',text:'默认值'},
-			{xtype:'textarea',name:'remark',text:'帮助信息'},
-			{xtype:'select',name:'required',text:'是否必须',items:[{name:'1',text:'是'},{name:'0',text:'否'}]},
-			{xtype:'select',name:'access',text:'数据访问方式',items:[{name:'read',text:'只读'},{name:'write',text:'读写'},{name:'hidden',text:'隐藏'}]},
+			{xtype:'text',name:'name',text:'字段代码',regex:GlobalNS.Regex.word30},
+			{xtype:'text',name:'text',text:'字段名称',required:true,regex:GlobalNS.Regex.str50},
+			{xtype:'select',name:'dataType',text:'数据类型',items:[{name:'text',text:'文本'},{name:'number',text:'数字'},{name:'datetime',text:'日期'}]},
+			{xtype:'select',name:'required',text:'是否必须',items:GlobalNS.options.trueOrFalse},
+			{xtype:'int',name:'maxLen',text:'字段长度',regex:GlobalNS.Regex.number},
+			{xtype:'select',name:'access',text:'访问方式',items:[{name:'read',text:'只读'},{name:'write',text:'读写'},{name:'hidden',text:'隐藏'}]},
+			{xtype:'select',name:'showType',text:'显示方式'},
+			{xtype:'select',name:'validateType',text:'校验方式'},
+			{xtype:'text',name:'regularExpr',text:'正则表达式',regex:GlobalNS.Regex.str100},//当校验方式选择regularExpr
+			{xtype:'text',name:'validateMethod',text:'校验方法名',regex:GlobalNS.Regex.str100},
+			{xtype:'text',name:'validateMethodName',text:'校验方法界面显示名',regex:GlobalNS.Regex.str50},
+			{xtype:'select',name:'validateMethodPos',text:'校验方法界面显示位置'},
+			{xtype:'text',name:'value',text:'字段值',regex:GlobalNS.Regex.str100},
+			{xtype:'text',name:'initExpr',text:'默认值',regex:GlobalNS.Regex.str100},
 			{xtype:'text',name:'showFormat',text:'显示格式'},
-			{xtype:'text',name:'validateMethod',text:'校验方法名'},
-			{xtype:'text',name:'validateMethodName',text:'校验方法界面显示名'},
+			{xtype:'select',name:'forcesize',text:'是否强制长度',items:GlobalNS.options.trueOrFalse},
+			{xtype:'text',name:'autoCompleteChar',text:'自动填充字符'},
+			{xtype:'text',name:'forceTreeLevel',text:'是否强制到最后1级',regex:GlobalNS.Regex.number},
+			{xtype:'textarea',name:'remark',text:'帮助信息',regex:GlobalNS.Regex.str200},
 			{xtype:'grid',name:'item',text:'选项'}
 		]
 	}
@@ -375,24 +392,21 @@ $.each(GlobalNS.formDatas,function(index,obj){
 	
 	// 初始化表单字段属性
 	$.each(obj.items, function(index, item) {
-		if(!item.xtype){
+		if (!item.xtype) {
 			item.xtype = 'text';
 		}
 		var o = {};
 		if (item.xtype == 'text') {
+			
 		} else if (item.xtype == 'textarea') {
-			o = {
-				props : {
-					readonly : false,
-					rows : 5
-				}
-			};
+			o.props = {
+				readonly : false,
+				rows : 5
+			}
 		} else if (item.xtype == 'property') {
-			o = {
-					tbar : [ {text:'修改',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}
-							,{text:'清除',fn:GlobalNS.fn.deleteForm,name:'delete',data:{foo:'foo'}}
-						]// 作用域:属性窗口;顶部工具栏
-				};
+			o.tbar = [ {text:'修改',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}
+					  ,{text:'清除',fn:GlobalNS.fn.deleteForm,name:'delete',data:{foo:'foo'}}
+					 ];
 			
 			if(item.name=='variable'){
 				o.columns = [
@@ -403,15 +417,13 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				]
 			}
 		} else if (item.xtype == 'grid') {
-			o = {
-					tbar:[{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}],// 作用域:属性窗口;顶部工具栏
-				};
+			o.tbar = [{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}];
 			
 			if(item.name=='transition'){
 				o.columns = [
 				 	{header: "名称",dataIndex: 'name'},
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
-				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}	// renderer:作用域:属性窗口;顶部工具栏
+				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
 				 ];
 				o.idField = 'name';
 			}else if(item.name=='on'){
@@ -453,6 +465,24 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				};
 			}
 		} else if (item.xtype == 'radio') {
+		}
+		
+		// 添加默认校验规则
+		if (item.xtype == 'text' || item.xtype == 'textarea') {
+			if (item.name == 'name') {
+				o.regex = GlobalNS.Regex.word100;
+			} else if (item.name == 'text') {
+				o.regex = GlobalNS.Regex.str200
+			}
+		}
+		
+		if (item.name == 'name') {
+			o.required = true;
+		}
+
+		// 添加默认子选项
+		if (item.xtype == 'select' || item.xtype == 'checkbox' || item.xtype == 'radio') {
+			o.items = GlobalNS.options[item.name];
 		}
 		
 		$.extend(o, item);
