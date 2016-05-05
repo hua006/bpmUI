@@ -90,11 +90,20 @@
 .table-td-label{float:left}
 .table-td{float:left}
 
+.x-panel-body {
+    border:1px solid;
+    overflow:hidden;
+	border-color:#bdcbd8;
+	background-color:#fff;
+}
+.x-panel-tbar {
+}
 /* Form Items CSS */
 .x-form-item {
     display:block;
     margin-bottom:4px;
     zoom:1;
+    font-size:12px;
 }
 
 .x-form-item label.x-form-item-label {
@@ -163,4 +172,21 @@
     background-color:#fff;
 	background-image:url(../images/default/invalid_line.gif);
 	border-color:#c30;
+}
+.test{
+	background:#d7e4f4;
+	background:#dddddd;
+	background:#f6f6f6;
+	background:#ededed;
+	background-color: #a4c1e1; color: #2A3959; 
+}
+.x-grid{width:99.5%; white-space:nowarp; border:0px; border-collapse: collapse; border-spacing: 0px; margin-top:3px; margin-bottom:1px; margin-left:0px;}
+.x-grid tbody tr:hover{background:#e5e5e5;}
+.x-grid th {background:#d7e4f4; border-right:1px solid #bbc9d6; border-bottom:1px solid #93a8bd;  padding-left:3px; padding-right:3px; white-space:nowarp; height:24px; line-height:24px; font-size: 12px; color:#2A3959;}
+.x-grid td {height:24px; padding-left:5px; white-space:nowrap; line-height:22px; font-size: 12px;}
+.x-grid-row{border:1px solid #bdcbd8;}
+.x-grid-col{border:1px solid #eee;}
+
+.ui-button-custom{
+	padding: 2px 2px;
 }

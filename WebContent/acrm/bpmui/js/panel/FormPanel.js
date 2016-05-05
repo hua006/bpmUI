@@ -15,9 +15,9 @@
 			width : 500,
 			height : 600,
 			labelWidth : 100,
-			validateMethod : null,
+			validateMethod : null,	// 表单校验方法,在字段校验通过后执行表单校验方法,若校验不通过,返回失败原因
 			defaults : {
-				style : 'width:300px'
+				style : 'width:320px'
 			},
 			buttons:{
 				'确定' : function() {
@@ -35,6 +35,15 @@
 	}
 
 	FormPanel.prototype = $.extend({}, Arvato.BasePanel, {
+		// 初始化元素
+		_initializeElement:function (){
+			var $fieldDiv = this.$parent.empty();
+			var options = this.settings;
+			var $table = $(formatStr('<table width="100%" class="x-form table-{0}" style="word-break:break-all; word-wrap:break-word;"></table>',options.name)).appendTo($fieldDiv);
+			$table.append('<thead></thead><tbody></tbody><tfoot></tfoot>');
+			$table.attr(options.props);
+			this.$me = $table;
+		},
 		/**
 		 * 刷新控件
 		 */
@@ -155,8 +164,15 @@
 			var options = this.settings;
 			var name = this.settings.name;
 
-			var $td1 = $("<label class='x-form-item-label'>" + item.text + "</label>").appendTo($tr).css('width', options.labelWidth || 120 + 'px');
-			var $td2 = $("<div class='x-form-element'></div>").appendTo($tr).css('padding-left', (options.labelWidth || 120) + 5 + 'px');
+			var $td1,$td2;
+			if(item.xtype == 'grid'){
+//				$td2 = $("<div class='x-form-element'></div>").appendTo($tr);
+				$td1 = $("<label class='x-form-item-label'>" + item.text + "</label>").appendTo($tr).css('width', options.labelWidth || 120 + 'px');
+				$td2 = $("<div class='x-form-element'></div>").appendTo($tr).css('padding-left', (options.labelWidth || 120) + 5 + 'px');
+			}else{
+				$td1 = $("<label class='x-form-item-label'>" + item.text + "</label>").appendTo($tr).css('width', options.labelWidth || 120 + 'px');
+				$td2 = $("<div class='x-form-element'></div>").appendTo($tr).css('padding-left', (options.labelWidth || 120) + 5 + 'px');
+			}
 			$tr.append('<div class="x-form-clear-left"></div>');
 			var $fieldDiv = $('<div class="div_' + item.name + '"></div>').appendTo($td2);
 

@@ -53,7 +53,7 @@ Arvato.MyDialog.prototype = {
 			modal : true,
 			hide : true,	// 点击关闭按钮时隐藏
 			autoOpen : false,
-			width : formData.width + 35,
+			width : formData.width + 40,
 			height : formData.height + 30,
 			show : false,
 			buttons : buttons
@@ -75,7 +75,8 @@ Arvato.MyDialog.prototype = {
 	 */
 	showWindow : function(pData, operFlag) {
 		this.operFlag = operFlag;
-		this.val(pData);
+		var pData2 = $.extend({},pData);
+		this.val(pData2);
 		
 		this.$dialog.dialog("open");
 	},
@@ -87,7 +88,7 @@ Arvato.MyDialog.prototype = {
 		var flag = this.$form.saveFormData();
 		
 		// 数据保存成功,关闭窗口
-		if (flag === true || !flag) {
+		if (flag === true || (flag !== false && !flag)) {
 			this.$dialog.dialog("close");
 		}
 	}

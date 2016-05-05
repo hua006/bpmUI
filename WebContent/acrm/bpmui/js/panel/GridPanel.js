@@ -40,10 +40,10 @@
 		// 添加表头
 		_createTableHead:function(){
 			var $thead = $('thead', this.$me).first();
-			var $tr = $("<tr></tr>").appendTo($thead);
+			var $tr = $('<tr class ="x-grid-hd-row"></tr>').appendTo($thead);
 			var headcols = this.settings.columns;
 			for (var i = 0; i < headcols.length; i++) {
-				var $td = $('<td/>').text(headcols[i].header).attr('align','center').appendTo($tr);
+				var $td = $('<th/>').text(headcols[i].header).attr('align','center').appendTo($tr);
 				if(headcols[i].width){
 					$td.css('width',headcols[i].width);
 				}
@@ -63,11 +63,11 @@
 			// 重新生成表格数据项
 			for (var row = 0; row < gridRecords.length; row++) {
 				var obj = gridRecords[row];	// 取一条记录
-				var $tr = $('<tr class="tr-' + (obj[idField]) + '"/>').appendTo($tbody);
+				var $tr = $('<tr class="x-grid-row tr-' + (obj[idField]) + '"/>').appendTo($tbody);
 				var column = null;
 				for (var col = 0; col < headcols.length; col++) {
 					column = headcols[col];
-					var $td = $('<td/>').appendTo($tr);
+					var $td = $('<td class="x-grid-col"></td>').appendTo($tr);
 					var text = null;
 					if (column.dataIndex) {
 						text = obj[column.dataIndex];

@@ -247,7 +247,7 @@ GlobalNS.formDatas['variable']=(function(){
 			{xtype:'text',name:'text',text:'字段名称',required:true,regex:GlobalNS.Regex.str50},
 			{xtype:'select',name:'dataType',text:'数据类型',items:[{name:'text',text:'文本'},{name:'number',text:'数字'},{name:'datetime',text:'日期'}]},
 			{xtype:'select',name:'required',text:'是否必须',items:GlobalNS.options.trueOrFalse},
-			{xtype:'int',name:'maxLen',text:'字段长度',regex:GlobalNS.Regex.number},
+			{xtype:'text',name:'maxLen',text:'字段长度',regex:GlobalNS.Regex.number},
 			{xtype:'select',name:'access',text:'访问方式',items:[{name:'read',text:'只读'},{name:'write',text:'读写'},{name:'hidden',text:'隐藏'}]},
 			{xtype:'select',name:'showType',text:'显示方式'},
 			{xtype:'select',name:'validateType',text:'校验方式'},
@@ -379,7 +379,7 @@ $.each(GlobalNS.formDatas,function(index,obj){
 		height : 600,
 		labelWidth : 100,
 		defaults : {
-			style : 'width:300px'
+			style : 'width:320px'
 		},
 		buttons:{
 			'确定' : function() {
@@ -389,6 +389,11 @@ $.each(GlobalNS.formDatas,function(index,obj){
 	};
 	$.extend(o, obj);
 	$.extend(obj, o);
+	
+	if(GlobalNS.fn.isBPMNode(index)){
+		obj.validateMethod = GlobalNS.fn.validateMethodFn;
+		console.log("isBPMNode="+index);
+	}
 	
 	// 初始化表单字段属性
 	$.each(obj.items, function(index, item) {
@@ -423,28 +428,28 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				o.columns = [
 				 	{header: "名称",dataIndex: 'name'},
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
-				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
+				 	{header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd}
 				 ];
 				o.idField = 'name';
 			}else if(item.name=='on'){
 				o.columns = [
 				 	{header: "事件类型",dataIndex: 'event'},
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
-				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
+				 	{header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd}
 				 ];
 				o.idField = 'event';
 			}else if(item.name=='variable'){
 				o.columns = [
 					{dataIndex:'name',header:'变量名称'},
 				 	{dataIndex:'text',header:'变量显示名称'},
-				 	{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd},
+				 	{header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd},
 				 ];
 				o.idField = 'name';
 			}else if(item.name=='item'||item.name=='item-1'){
 				o.columns = [
 					{dataIndex:'id',header:'选项代码'},
 					{dataIndex:'text',header:'选项名称'},
-					{header: "操作",width:'120px',renderer: GlobalNS.fn.renderAdd}
+					{header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd}
 				];
 				o.idField = 'id';
 			}

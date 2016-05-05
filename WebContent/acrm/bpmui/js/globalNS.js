@@ -95,7 +95,26 @@ GlobalNS.options={
  * datas:{dialogId,name,focusId,nodeData}
  * */
 GlobalNS.fn = {
+	rootNodes:['start','end','task','decision','state','sub-process','fork','join','math'],
 	'demo':function(datas){
+	},
+	isBPMNode : function(nodeName) {
+		return this.rootNodes.indexOf(nodeName) >= 0 ? true : false;
+	},
+	validateMethodFn:function(){
+		var params = this.settings.params;
+		var This = params.This;
+		var nodeData = This.getBaseNodeData(params.focusId, params.baseType);
+		var name = this.itemValue("name");
+		for(var key in This.$nodeData){
+			var wfDatas = This.$nodeData[key].wfDatas;
+			if (wfDatas.name == name && key != params.focusId) {
+				var result = "名称不能重复";
+				this._fields["name"].inValidMsg(result);
+				return result;
+			}
+		}
+		return null;
 	},
 	/** 
 	 * 打开属性窗口
@@ -119,9 +138,15 @@ GlobalNS.fn = {
 		
 		// 为弹出窗口的表单控件,设置保存回调函数,此函数将在点击弹出窗口确定按钮时执行
 		childWindow.$form.settings.saveDataMethod = GlobalNS.fn.saveDataMethodFn;
+		var idField = childWindow.$form.settings.idField;
+		var id = null;
+		if(idField){
+			id = childValue[idField];
+		}
 		childWindow.$form.settings.params = {
 			This : this,
-			operFlag : operFlag
+			operFlag : operFlag,
+			id : id
 		};
 		if (operFlag == 'add') {
 			childValue = {};
@@ -137,14 +162,30 @@ GlobalNS.fn = {
 		var idField = this.settings.idField;
 		var params = this.settings.params;
 		var This = params.This;
-		var operFlag = params.operFlag
+		var operFlag = params.operFlag;
+		var id = params.id;
 		if (This.settings.xtype == 'grid') {
-			var obj = GlobalNS.fn.findRecord(This.datas, itemValue, idField);
+			if (!id) {
+				id = itemValue[idField];
+			}
+			
+			// 修改了数据主键,需判断数据主键是否重复
+			var idNew;
+			if (id != itemValue[idField]) {
+				idNew = itemValue[idField];
+				var objNew = GlobalNS.fn.findRecordById(This.datas, idNew, idField);
+				if(objNew){
+					this._fields[idField].inValidMsg('数据重复');
+					return false;
+				}
+			}
+			var obj = GlobalNS.fn.findRecordById(This.datas, id, idField);
+			
 			if (operFlag == 'modify' && obj == null) {
-				alert('未找到需要更新的数据' + itemValue[idField]);
+				alert('未找到需要更新的数据' + id);
 				return false;
 			} else if (operFlag == 'add' && obj != null) {
-				alert('数据重复' + itemValue[idField]);
+				alert('数据重复' + id);
 				return false;
 			}
 			if($.isEmptyObject(This.datas)){
@@ -197,7 +238,7 @@ GlobalNS.fn = {
 	 */
 	renderAdd : function(data) {
 		
-		$('<a href="#">修改</a>').button().click(
+		$('<a href="#" class="link">修改</a>').click(
 				{This:this,data:data},
 				function(event) {
 					var datas = event.data.data;
@@ -207,9 +248,9 @@ GlobalNS.fn = {
 					var parentType = This.name;
 					GlobalNS.fn.openPropWindow.call(This, childName, childValue, parentType, 'modify');
 				}
-		).appendTo(data.td);
+		).appendTo(data.td).css("margin-right", "5px");
 		
-		$('<a href="#">删除</a>').button().click(
+		$('<a href="#" class="link">删除</a>').click(
 				{This:this,data:data},
 				function(event){
 					var datas = event.data.data;
@@ -226,7 +267,7 @@ GlobalNS.fn = {
 					This.val(array);
 					var $td = This.$me.find('.tr-'+id).remove();
 				}
-		).appendTo(data.td);
+		).appendTo(data.td).css("margin-right", "5px");
 	},
 	
 	/**
@@ -283,10 +324,13 @@ GlobalNS.fn = {
 	},
 	// 查找数组中的指定记录,若有多个,至并返回第一个
 	findRecord : function(array, record, field) {
+		return this.findRecordById(array, record[field], field);
+	},
+	findRecordById : function(array, id, field) {
 		var find = false;
 		var list = [];
 		for (var i = 0; i < array.length; i++) {
-			if (array[i][field] == record[field]) {
+			if (array[i][field] == id) {
 				return array[i];
 			}
 		}

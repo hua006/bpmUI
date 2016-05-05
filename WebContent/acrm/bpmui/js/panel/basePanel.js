@@ -64,12 +64,13 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 		this._appendFields();
 	},
 	// 初始化元素
-	_initializeElement:function (){
+	_initializeElement : function() {
 		var $fieldDiv = this.$parent.empty();
 		var options = this.settings;
-		var $table = $(formatStr('<table width="100%" class="table-{0}" style="word-break:break-all; word-wrap:break-word;"></table>',options.name)).appendTo($fieldDiv);
+		var $panel = $('<div class="x-panel-body"></div>').appendTo($fieldDiv);
+		var $table = $(formatStr('<table width="100%" class="x-grid table-{0}"></table>', options.name)).appendTo($panel);
 		$table.append('<thead></thead><tbody></tbody><tfoot></tfoot>');
-		$table.attr(options.props);
+		$panel.attr(options.props);
 		this.$me = $table;
 	},
 	/**
@@ -83,7 +84,7 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 		var name = this.settings.name;
 		var tbar = this.settings.tbar;
 		var $thead = $('thead', this.$parent).first();
-		var $tr = $("<tr></tr>").appendTo($thead);
+		var $tr = $('<tr class="x-panel-tbar"></tr>').appendTo($thead);
 		var $tbar = $(formatStr('<td colspan={0}></td>', cols)).appendTo($tr);
 		
 		for (var i = 0; i < tbar.length; i++) {

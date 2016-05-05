@@ -14,8 +14,8 @@ Arvato.BaseComponent={
 			return this;
 		} else {
 			var options = this.settings;
-			console.log("xtype:"+options.xtype+",text:"+options.text+",loadDataMethod:"+",url:"+options.url);
-			console.log('----------------------------');
+			//console.log("xtype:"+options.xtype+",text:"+options.text+",loadDataMethod:"+",url:"+options.url);
+			//console.log('----------------------------');
 			if (options.loadDataMethod) {
 				this.datas = options.loadDataMethod.call(this);
 			} else if (options.url) {
