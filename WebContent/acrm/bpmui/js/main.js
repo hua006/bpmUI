@@ -126,6 +126,7 @@ $(document).ready(function() {
 				// alert("打开工作流: " + msg.title);
 				demo.clearData();
 				demo.loadData(msg);
+				demo.refreshLineName();
 			}
 		});
 	};

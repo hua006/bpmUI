@@ -13,7 +13,7 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 	/**
 	 * 设置或获取控件值,若有子元素,需要调用子元素val方法;
 	 * 1.对于Panel控件,由于值通常为对象或数组类型,因此应该保存在内存中;
-	 * 2.对于Panel控件,这里只是赋值操作,如果需要更新界面元素,需要调用refresh方法;
+	 * 2.对于Panel控件,需要创新创建body
 	 * */
 	val : function(value) {
 		if (arguments.length != 0) {
@@ -49,6 +49,7 @@ Arvato.BasePanel = $.extend({},Arvato.BaseComponent, {
 		}
 		this._create();
 		this._bindEvent();
+		this.created = true;
 	},
 	/**
 	 *  创建Panel元素

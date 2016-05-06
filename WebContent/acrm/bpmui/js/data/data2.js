@@ -1,103 +1,168 @@
 jsondata = {
-	'title' : 'demo流程',
-	'nodes' : {
-		'demo_node_1' : {
-			'name' : '开始', // 节点显示名称(同wfDatas.text)
-			'left' : 66,
-			'top' : 150,
-			'type' : 'start', // 节点类型(同wfDatas.nodeType):start/task/..
-			'width' : 32,
-			'height' : 32,
-			// 工作流属性信息
-			wfDatas : {
-				name : 'startNode1', // 工作流节点名称(name)
-				text : '开始', // 工作流节点显示名称(text)
-				nodeType : 'start', // 工作流节点类型
-				pos : '10,10', // 节点坐标
-				transition : [ {
-					name : 'toAccept',
-					condition : {
-						expr : '#{task.accept.CONSULT_TYPE} equal "01"'
-					},
-					to : 'demo_node_2'
-				}, {
-					name : 'default',
-					to : 'demo_node_2'
-				} ],
-				// 工作流跳转
-				on : [ {
-					event : 'start',
-					'event-listener' : [ 'com.arvato.ext.ca.custom.CancelUnlineProc' ]
-				} ],
-				// event-事件:start/end/cancel/overTime
-				variable : {
-					name : 'userID',
-					'text' : '客户名称',
-					showType : 'number',
-					access : 'write',
-					maxLen : 19,
-					validateType : 'show'
-				}
-			// 字段信息
-			},
-			'alt' : true
-		},
-		'demo_node_2' : {
-			'name' : '外呼',
-			'left' : 222,
-			'top' : 149,
-			'type' : 'task',
-			'width' : 32,
-			'height' : 32,
-			'alt' : true,
-			wfDatas : {
-				name : 'accept',
-				text : '咨询受理',
-				pos : '90,10',
-				assignType : 'assignee',
-				assignExpr : '#{sysCurrentUser}',
-				transition : [ {
-					name : 'toEnd',
-					to : 'end'
+	"title" : "业务咨询",
+	"defKey" : "consultNewTest",
+	"nodes" : {
+		"consultNewTest-NODE-0" : {
+			"name" : "start",
+			"left" : 10,
+			"top" : 10,
+			"type" : "start",
+			"width" : 32,
+			"height" : 32,
+			"wfDatas" : {
+				"name" : "start",
+				"text" : "start",
+				"nodeType" : "start",
+				"pos" : "10,10",
+				"transition" : [ {
+					"name" : "toAccept",
+					"to" : "consultNewTest-NODE-1",
+					"text" : "提交",
+					"validateMethod" : "checkFormFieldRequired1()",
+					"event-listener" : [ {
+						"ATTR-class" : "com.arvato.ext.truck.workflow.listener.AddSendSMS"
+					} ]
 				} ]
 			}
 		},
-		'demo_node_3' : {
-			'name' : '结束',
-			'left' : 403,
-			'top' : 150,
-			'type' : 'end',
-			'width' : 32,
-			'height' : 32,
-			'alt' : true,
-			wfDatas : {
-				name : 'end',
-				text : '结单',
-				pos : '130,50'
+		"consultNewTest-NODE-1" : {
+			"name" : "任务1",
+			"left" : 111,
+			"top" : 86,
+			"type" : "task",
+			"width" : 32,
+			"height" : 32,
+			"wfDatas" : {
+				"name" : "accept",
+				"text" : "任务1",
+				"nodeType" : "task",
+				"pos" : "111,86",
+				"assignType" : "assignee",
+				"useAssignExcept" : "true",
+				"useAssignPrior" : "true",
+				"type" : "form",
+				"transition" : [ {
+					"to" : "consultNewTest-NODE-2",
+					"text" : "提交",
+					"validateMethod" : "checkFormFieldRequired1()",
+					"name" : "toEnd",
+					"event-listener" : [ {
+						"ATTR-class" : "com.arvato.ext.truck.workflow.listener.AddSendSMS"
+					} ]
+				}, {
+					"name" : "demo_transition_10",
+					"to" : "consultNewTest-NODE-3"
+				} ],
+				"on" : [ {
+					"event" : "start",
+					"to" : "consultNewTest-NODE-1"
+				}, {
+					"event" : "overTime",
+					"to" : "consultNewTest-NODE-3"
+				} ],
+				"variable" : [ {
+					"name" : "name",
+					"text" : "名称",
+					"dataType" : "text",
+					"required" : "true",
+					"maxLen" : "36",
+					"access" : "write",
+					"showType" : "text",
+					"validateType" : "0",
+					"validateMethodPos" : null,
+					"forcesize" : null
+				} ]
+			}
+		},
+		"consultNewTest-NODE-2" : {
+			"name" : "结单",
+			"left" : 353,
+			"top" : 16,
+			"type" : "end",
+			"width" : 32,
+			"height" : 32,
+			"wfDatas" : {
+				"name" : "end",
+				"text" : "结单",
+				"nodeType" : "end",
+				"pos" : "353,16"
+			}
+		},
+		"consultNewTest-NODE-3" : {
+			"name" : "任务3",
+			"left" : 96,
+			"top" : 193,
+			"type" : "task",
+			"width" : 32,
+			"height" : 32,
+			"wfDatas" : {
+				"name" : "demo_node_2",
+				"text" : "任务3",
+				"nodeType" : "task",
+				"pos" : "96,193",
+				"transition" : [ {
+					"name" : "demo_transition_8",
+					"to" : "consultNewTest-NODE-2"
+				}, {
+					"name" : "demo_transition_7",
+					"to" : "consultNewTest-NODE-4"
+				} ]
+			}
+		},
+		"consultNewTest-NODE-4" : {
+			"name" : "node_1",
+			"left" : 245,
+			"top" : 195,
+			"type" : "decision",
+			"width" : 32,
+			"height" : 32,
+			"wfDatas" : {
+				"name" : "demo_node_1",
+				"text" : "node_1",
+				"pos" : "245,195",
+				"transition" : [ {
+					"name" : "toEnd",
+					"to" : "consultNewTest-NODE-2"
+				} ]
 			}
 		}
 	},
-	'lines' : {
-		'demo_line_4' : {
-			'type' : 'sl',
-			'from' : 'demo_node_1',
-			'to' : 'demo_node_2',
-			'name' : ''
+	"lines" : {
+		"consultNewTest-LINE-5" : {
+			"type" : "sl",
+			"from" : "consultNewTest-NODE-0",
+			"to" : "consultNewTest-NODE-1",
+			"name" : "toAccept"
 		},
-		'demo_line_5' : {
-			'type' : 'sl',
-			'from' : 'demo_node_2',
-			'to' : 'demo_node_3',
-			point : [ {
-				x : 100,
-				y : 0
-			}, {
-				x : 100,
-				y : 200
-			} ],
-			'name' : ''
+		"consultNewTest-LINE-6" : {
+			"type" : "sl",
+			"from" : "consultNewTest-NODE-1",
+			"to" : "consultNewTest-NODE-2",
+			"name" : "toEnd"
+		},
+		"consultNewTest-LINE-7" : {
+			"type" : "sl",
+			"from" : "consultNewTest-NODE-1",
+			"to" : "consultNewTest-NODE-3",
+			"name" : "demo_transition_10"
+		},
+		"consultNewTest-LINE-8" : {
+			"type" : "sl",
+			"from" : "consultNewTest-NODE-3",
+			"to" : "consultNewTest-NODE-2",
+			"name" : "demo_transition_8"
+		},
+		"consultNewTest-LINE-9" : {
+			"type" : "sl",
+			"from" : "consultNewTest-NODE-3",
+			"to" : "consultNewTest-NODE-4",
+			"name" : "demo_transition_7"
+		},
+		"consultNewTest-LINE-10" : {
+			"type" : "sl",
+			"from" : "consultNewTest-NODE-4",
+			"to" : "consultNewTest-NODE-2",
+			"name" : "toEnd"
 		}
-	},
-	'areas' : {},
-	'initNum' : 6
+	}
 }

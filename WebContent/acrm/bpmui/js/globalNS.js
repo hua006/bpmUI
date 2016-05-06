@@ -143,6 +143,7 @@ GlobalNS.fn = {
 		if(idField){
 			id = childValue[idField];
 		}
+		console.log('id='+id);
 		childWindow.$form.settings.params = {
 			This : this,
 			operFlag : operFlag,
@@ -155,45 +156,53 @@ GlobalNS.fn = {
 		childWindow.showWindow(childValue, operFlag);
 	},
 	/**
-	 * 保存操作回调函数
+	 * 保存操作回调函数(非工作流节点属性保存时调用)
 	 */
 	saveDataMethodFn : function() {
 		var itemValue = this.datas; // 当前窗口的表单数据
 		var idField = this.settings.idField;
 		var params = this.settings.params;
 		var This = params.This;
-		var operFlag = params.operFlag;
-		var id = params.id;
+		var idOld = params.id;
 		if (This.settings.xtype == 'grid') {
-			if (!id) {
-				id = itemValue[idField];
+			if (idOld != null && idOld != undefined) {
+				operFlag = 'modify';
+			}else{
+				operFlag = 'add';
 			}
+			console.log('idOld='+idOld);
 			
 			// 修改了数据主键,需判断数据主键是否重复
-			var idNew;
-			if (id != itemValue[idField]) {
-				idNew = itemValue[idField];
+			var idNew = itemValue[idField];
+			console.log('idNew='+idNew);
+			if (!idOld || idOld != idNew) {
 				var objNew = GlobalNS.fn.findRecordById(This.datas, idNew, idField);
-				if(objNew){
+				if (objNew) {
 					this._fields[idField].inValidMsg('数据重复');
 					return false;
 				}
 			}
-			var obj = GlobalNS.fn.findRecordById(This.datas, id, idField);
+			var index = GlobalNS.fn.findRecordIndexById(This.datas, idOld, idField);
 			
-			if (operFlag == 'modify' && obj == null) {
-				alert('未找到需要更新的数据' + id);
+			// 数据校验;
+			if (operFlag == 'modify' && index == null) {
+				alert('未找到需要更新的数据' + idOld);
 				return false;
-			} else if (operFlag == 'add' && obj != null) {
-				alert('数据重复' + id);
+			} else if (operFlag == 'add' && index != null) {
+				alert('数据重复' + idOld);
 				return false;
 			}
-			if($.isEmptyObject(This.datas)){
+			if ($.isEmptyObject(This.datas)) {
 				This.datas = [];
-			}else if(!This.datas){
+			} else if (!This.datas) {
 				This.datas = [];
 			}
-			GlobalNS.fn.updateRecord(This.datas, itemValue, idField);
+			
+			if(index==null){
+				This.datas.push(itemValue);
+			}else{
+				This.datas[index] = itemValue;
+			}
 			This.val(This.datas);
 		} else if (This.settings.settings.xtype == 'form' || This.settings.xtype == 'property') {
 			if(!This.datas){
@@ -327,11 +336,18 @@ GlobalNS.fn = {
 		return this.findRecordById(array, record[field], field);
 	},
 	findRecordById : function(array, id, field) {
+		var index = this.findRecordIndexById(array, id, field);
+		if (index >= 0) {
+			return array[index];
+		}
+		return null;
+	},
+	findRecordIndexById : function(array, id, field) {
 		var find = false;
 		var list = [];
 		for (var i = 0; i < array.length; i++) {
 			if (array[i][field] == id) {
-				return array[i];
+				return i;
 			}
 		}
 		return null;

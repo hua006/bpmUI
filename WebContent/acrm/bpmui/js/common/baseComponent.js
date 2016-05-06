@@ -5,6 +5,7 @@ Arvato.BaseComponent={
 	$parent : null,
 	$me : null,
 	datas : null,
+	created : false,
 	/**
 	 * 加载数据,获取控件对应的最新数据
 	 */
@@ -73,6 +74,11 @@ Arvato.BaseComponent={
 		$me.on('change', {This:this}, function(event){
 			event.data.This.inValidMsg();
 		});
+		
+		// 组件渲染结束,执行初始化方法
+		if(this.settings.initFn){
+			this.settings.initFn.call(this);
+		}
 	},
 	/**
 	 * 初始化方法(由子类实现)

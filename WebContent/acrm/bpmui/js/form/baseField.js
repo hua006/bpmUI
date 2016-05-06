@@ -19,6 +19,7 @@ Arvato.BaseField = $.extend({},Arvato.BaseComponent, {
 		this._bindEvent();
 		this._appendFields();
 		this.val(this.settings.value);
+		this.created=true;
 	},
 	_create : function() {
 		this._initializeElement();

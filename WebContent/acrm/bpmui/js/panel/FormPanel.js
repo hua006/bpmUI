@@ -59,12 +59,36 @@
 				}
 			});
 		},
+		/**
+		 * 赋值,对于form,其值来自于子控件
+		 */
 		val : function(value) {
 			if (arguments.length != 0) {
 				this.datas = value || {};
+				var operFlag ='add';
+				var id = null;
+				if (this.settings.params) {
+					id = this.settings.params.id;
+					if (id != null && id != undefined) {
+						operFlag = 'modify';
+					}
+				}
 				if (this._fields) {
 					$.each(this._fields, function(i, n) {
+						// 表单字段赋值
 						n.val(value[i]);
+						// 表单字段change事件触发
+						n.$me.trigger('change');
+						// 清空校验消息
+						n.inValidMsg();
+						// 设置字段是否不允许修改
+						if (n.settings.modify === false) {
+							if (operFlag == 'modify') {
+								n.$me.attr("disabled", "disabled");
+							} else{
+								n.$me.removeAttr("disabled");
+							}
+						}
 					});
 				}
 				return this;

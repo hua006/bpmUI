@@ -113,6 +113,26 @@ $.extend(Arvato.MyDesigner.prototype, {
 			}
 		}
 	},
+	refreshLineName:function(){
+		for (var i in this.$lineData) {
+			var lineData = this.$lineData[i];
+			var from = lineData.from;
+			var to = lineData.to;
+			var lineName = lineData.name;
+			var lineId = i;
+			if (!this.$nodeData[from].wfDatas) {
+				continue;
+			}
+			var transitions = this.$nodeData[from].wfDatas.transition;
+			for (var j = 0; j < transitions.length; j++) {
+				if (transitions[j].name == lineName) {
+					lineName = transitions[j].text||lineName;
+					this.setName(lineId, lineName, 'line');
+					break;
+				}
+			}
+		}
+	},
 	/**
 	 * 场景:工作区;
 	 * 当在属性窗口修改了属性信息后,需要更新一下工作区界面(修改节点名称,修改连线等)
