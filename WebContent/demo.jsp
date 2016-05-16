@@ -29,6 +29,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/node.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/line.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/area.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/initData.js<%=s%>"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/object/MyDesigner.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/object/MyDialog.js<%=s%>"></script>
@@ -51,7 +52,6 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/common/json2.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/common/util.js<%=s%>"></script>
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/data/initData.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/data/propertyData.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/data/data.js<%=s%>"></script>
 
@@ -62,10 +62,9 @@
 </script>
 </head>
 <body>                         
-	<a href='/bpmUI/?defKey=<%=defKey%>&num=<%=System.currentTimeMillis()%>'>强制刷新<a>
-	<a href='/bpmUI/?defKey=<%=defKey%>&flag=false'>刷新<a>
 	<div id="demo" style="margin: 10px"></div>
-	<input id="submit" type="button" value='导出结果' onclick="Export()" />
-	<textarea id="result" row="6"></textarea>
+	<div id="dialog-export" title="Export">
+		<textarea id="result" rows="36" style="width:470px;"></textarea>
+	</div>
 </body>
 </html>

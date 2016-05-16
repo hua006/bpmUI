@@ -41,6 +41,19 @@ $.extend(Arvato.MyDesigner.prototype, {
 		}
 		return this.exportData();
 	},
+	refreshForceFn:function(){
+		console.log('refreshForceFn');
+		document.location.href='/bpmUI/?defKey='+wfDefkey+'&num='+Math.random();
+	},
+	refreshFn:function(){
+		console.log('refreshFn');
+		document.location.href='/bpmUI/?defKey='+wfDefkey+'&flag=false';
+	},
+	exportFn:function(){
+		console.log('exportFn');
+		dialogExport.dialog("open");
+		$('#result').val(JSON.stringify(demo.exportNewData()));
+	},
 	/**
 	 * 获取节点对应的属性窗口
 	 */

@@ -160,6 +160,55 @@ GlobalNS.formDatas['task']=(function(){
 		]
 	}
 })();
+
+// 新增节点
+GlobalNS.formDatas['createNode']=(function(){
+	return {
+		name:'createNode',
+		id:'dialog-createNode',
+		title:'新增节点',
+		width : 400,
+		height : 300,
+		labelWidth: 80,					// 属性窗口中的左侧文本列宽度
+		cls:'',
+		idField:'name',
+		saveDataMethod : function() {
+			var itemValue = this.datas; // 当前窗口的表单数据
+			var idField = this.settings.idField;
+			var params = this.settings.params;
+			
+			var This = params.This;	// 设计器对象
+			
+			var number = parseInt(itemValue.number) || 1;
+			var X = params.X + 120;
+			var Y = params.Y;
+			for (var i = 0; i < number; i++) {
+				var id = This.$id + "_node_" + This.$max;
+				This.$max++;
+				This.addNode(id, {
+					name : itemValue.name,
+					left : X,
+					top : Y,
+					type : itemValue.type,
+				});
+				Y += 120;
+				This.reloadWfData(id);
+			}
+			
+			// TODO 添加连线
+		},
+		items:[
+			{xtype:'text',name:'name',text:'节点名称'},
+			{xtype:'select',name:'type',text:'节点类型',items:GlobalNS.options.rootNodes},
+			{xtype:'text',name:'number',text:'节点数量'},
+			
+			{xtype:'text',name:'name',text:'出口名称',modify:true},//modify:true,是否在编辑模式下可以修改,若为false则不可修改
+			{xtype:'text',name:'text',text:'出口描述'},
+			{xtype:'text',name:'condition',text:'条件', valueType : 'Object', item:'expr'},
+			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}, valueType : 'Array', items:['ATTR-class']}
+		]
+	}
+})();
 GlobalNS.formDatas['decision']=(function(){
 	return {
 		name:'decision',
@@ -205,9 +254,35 @@ GlobalNS.formDatas['sub-process']=(function(){
 			{xtype:'text',name:'sub-process-key',text:'子流程名称'},
 			{xtype:'text',name:'startNode',text:'子流程开始节点名称'},
 			{xtype:'grid',name:'transition',text:'出口'},
-			{xtype:'text',name:'parameter-in',text:'入口字段'},
-			{xtype:'text',name:'parameter-out',text:'出口字段'},
+			{xtype:'grid',name:'parameter-in',text:'入口字段'},
+			{xtype:'grid',name:'parameter-out',text:'出口字段'},
 			{xtype:'grid',name:'on',text:'事件'}
+		]
+	}
+})();
+GlobalNS.formDatas['parameter-in']=(function(){
+	return {
+		name:'parameter-in',
+		id:'dialog-parameter-in',
+		idField:'subvar',
+		title:'入口参数',
+		cls:'',
+		items:[
+		    {xtype:'text',name:'subvar',text:'参数'},
+			{xtype:'text',name:'expr',text:'取值'}
+		  ]
+	}
+})();
+GlobalNS.formDatas['parameter-out']=(function(){
+	return {
+		name:'parameter-out',
+		id:'dialog-parameter-out',
+		idField:'subvar',
+		title:'出口参数',
+		cls:'',
+		items:[
+			{xtype:'text',name:'subvar',text:'参数'},
+			{xtype:'text',name:'expr',text:'取值'}
 		]
 	}
 })();
@@ -392,7 +467,7 @@ GlobalNS.formDatas['transition']=(function(){
 			{xtype:'text',name:'name',text:'名称',modify:true},//modify:true,是否在编辑模式下可以修改,若为false则不可修改
 			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'select',name:'to',text:'目的节点',loadDataMethod:GlobalNS.fn.loadBaseNodeNames,required:true},
-			{xtype:'text',name:'condition',text:'条件'},
+			{xtype:'text',name:'condition',text:'条件', valueType : 'Object', item:'expr'},
 			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}, valueType : 'Array', items:['ATTR-class']}
 		]
 	}
@@ -500,7 +575,8 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				]
 			}
 		} else if (item.xtype == 'grid') {
-			o.tbar = [{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}];
+			o.tbar = [{text:'新增',fn:GlobalNS.fn.addRecordShow,name:'add',data:{foo:'foo'}}
+			];
 			
 			if(item.name=='transition'){
 				o.columns = [
@@ -508,6 +584,7 @@ $.each(GlobalNS.formDatas,function(index,obj){
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
 				 	{header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd}
 				 ];
+				o.tbar.push({text:'新增节点',fn:GlobalNS.fn.openCreateNodeWindow});
 				o.idField = 'name';
 			}else if(item.name=='on'){
 				o.columns = [
@@ -530,6 +607,13 @@ $.each(GlobalNS.formDatas,function(index,obj){
 					{header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd}
 				];
 				o.idField = 'id';
+			}else if(item.name=='parameter-in'||item.name=='parameter-out'){
+				o.columns = [
+					{dataIndex:'subvar',header:'选项代码'},
+					{dataIndex:'expr',header:'选项名称'},
+					{header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd},
+				];
+				o.idField = 'subvar';
 			}
 		} else if (item.xtype == 'select') {
 			if (item.name == 'to') {
@@ -539,7 +623,7 @@ $.each(GlobalNS.formDatas,function(index,obj){
 			if(item.name=='exceptNode'||item.name=='priorNode'){
 				o.loadDataMethod = GlobalNS.fn.loadBaseNodeNames;
 				o.props = {
-					style : 'width:100px;float:left;'
+					style : 'width:160px;float:left;'
 				};
 			}else if(item.name=='variable'){
 				o.loadDataMethod = GlobalNS.fn.getVariables;
@@ -570,5 +654,13 @@ $.each(GlobalNS.formDatas,function(index,obj){
 		
 		$.extend(o, item);
 		$.extend(item, o);
+		
+		// 校验item
+		if(item.xtype == 'grid'){
+			if(!item.idField){
+				var msg ='JS配置错误:nodeName='+baseName+',itemName='+item.name+'----idField不能为空';
+				console.error('JS配置错误:nodeName='+baseName+',itemName='+item.name+'----idField不能为空');
+			}
+		}
 	});
 });

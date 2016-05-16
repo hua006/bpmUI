@@ -76,7 +76,14 @@ function GooFlow(bgDiv,property){
 					+ (property.initLabelText || headX.title) + "</label>";
 		}
 		for (var x = 0; x < property.headBtns.length; ++x) {
-			tmp += "<a href='javascript:void(0)' class='GooFlow_head_btn'><i class='ico_" + property.headBtns[x] + "_"+icoSize+"'></i></a>"
+			var headBtn = property.headBtns[x];
+			if(headBtn instanceof Object){
+				var cls = headBtn.cls;
+				var text = headBtn.text;
+				tmp += "<a href='javascript:void(0)' class='GooFlow_head_btn'><i class='" + cls + "'>"+text+"</i></a>"
+			}else{
+				tmp += "<a href='javascript:void(0)' class='GooFlow_head_btn'><i class='ico_" + property.headBtns[x] + "_"+icoSize+"'></i></a>"
+			}
 		}
 		tmp += "</div>";
 		this.$head = $(tmp);
@@ -96,7 +103,8 @@ function GooFlow(bgDiv,property){
 				var This=e.data.inthis;
 				var cls = $(tar).attr("class").split(" ")[0];
 				//定义顶部操作栏按钮的事件
-				var cls = This.subRight($(tar).attr("class"),3);
+				var className = $(tar).attr("class");
+				var cls = This.subRight(className, 3);
 				switch(cls){
 					case "ico_new":		if(This.onBtnNewClick!=null)	This.onBtnNewClick();break;
 					case "ico_open":	if(This.onBtnOpenClick!=null)	This.onBtnOpenClick();break;
@@ -104,6 +112,7 @@ function GooFlow(bgDiv,property){
 					case "ico_undo":	This.undo();break;
 					case "ico_redo":	This.redo();break;
 					case "ico_reload"	:if(This.onFreshClick!=null)	This.onFreshClick();break;
+					default : if(This[className+'Fn']) This[className+'Fn']();break;
 				}
 			});
 		}
@@ -148,7 +157,7 @@ function GooFlow(bgDiv,property){
 	
 	// 初始化工作区
 	this.$bgDiv.append("<div class='GooFlow_work' style='width:"+(workAreaX.width)+"px;height:"+(workAreaX.height)+"px;"+(property.haveHead? "":"margin-top:3px")+"'></div>");
-	this.$workArea=$("<div class='GooFlow_work_inner' style='width:"+workAreaX.width*3+"px;height:"+workAreaX.height*3+"px'></div>")
+	this.$workArea=$("<div class='GooFlow_work_inner' style='width:"+workAreaX.widthDraw+"px;height:"+workAreaX.heightDraw+"px'></div>")
 		.attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});// 点击工作区不触发onblur事件;不被选中;禁止复制
 	this.$bgDiv.children(".GooFlow_work").append(this.$workArea);
 	this.$draw = null;// 画矢量线条的容器

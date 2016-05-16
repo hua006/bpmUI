@@ -30,6 +30,8 @@ var initDataObject = {
 		workAreaX:{// 工作区
 //			width : 700,
 //			height : 500,
+			widthDraw : 2400,	// 画布宽度(固定)
+			heightDraw : 1800,	// 画布高度(固定)
 			hack:5		// margin(3)+border(1*2)=5
 		},
 		nodeX : {// 节点
@@ -47,7 +49,7 @@ var initDataObject = {
 	init:function(property){
 		
 		// 创建设计器常量信息的一个拷贝;
-		$.extend(true,this.$DataX, this.$DataConst);
+		$.extend(true, this.$DataX, this.$DataConst);
 		
 		var containerX =this.$DataX.containerX;
 		var headX =this.$DataX.headX;

@@ -190,3 +190,9 @@
 .ui-button-custom{
 	padding: 2px 2px;
 }
+
+/* 设置dialg按钮居中 */
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+	text-align: center;
+	float: inherit;
+}

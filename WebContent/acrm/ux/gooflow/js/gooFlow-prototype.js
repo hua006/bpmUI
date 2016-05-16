@@ -992,9 +992,9 @@ GooFlow.prototype={
 ////////////////////////以下为区域分组块操作
 	
 	//重构整个流程图设计器的宽高
-	reinitSize:function(width,height){
+	reinitSize:function(){
 		
-		this.reSize(width,height);
+//		this.reSize(width,height);
 		
 		var containerX =this.$DataX.containerX;
 		var headX =this.$DataX.headX;
@@ -1002,27 +1002,43 @@ GooFlow.prototype={
 		var workAreaX =this.$DataX.workAreaX;
 		var nodeX =this.$DataX.nodeX;
 		
-		var w=containerX.width;
-		var h=containerX.height;
+		var width = containerX.width;
+		var height = containerX.height;
 		
-		this.$bgDiv.css({height:h+"px",width:w+"px"});
-		var toolHeight = h-headX.height-headX.h_Hack; // 工具栏高度=容器高度-减去标题栏高度-标题栏偏移量
-		if(this.$tool!=null){
-			this.$tool.css({height:toolHeight+"px"});
+		// 设置设计器最外层DIV尺寸
+		this.$bgDiv.css({
+			width : width + "px",
+			height : height + "px"
+		});
+		console.log("width:"+width+",height:"+height);
+		
+		// 设置左侧工具栏尺寸
+		var toolHeight = height-headX.height-headX.h_Hack; // 工具栏高度=容器高度-减去标题栏高度-标题栏偏移量
+		if (this.$tool != null) {
+			this.$tool.css({
+				height : toolHeight + "px"
+			});
 		}
 		
-		var workWidth = w - toolX.width - toolX.w_Hack - workAreaX.hack;// 工作区宽度=容器宽度-工具栏宽度-工具栏偏移量-工作区偏移量
-		var workHeight = toolHeight;
+		// 设置工作区外层DIV尺寸
+		this.$workArea.parent().css({
+			width : workAreaX.width + "px",
+			height : workAreaX.height + "px"
+		});
 		
-		this.$workArea.parent().css({height:workHeight+"px",width:workWidth+"px"});
-		this.$workArea.css({height:height*3+"px",width:workWidth*3+"px"});
-		if(GooFlow.prototype.useSVG==""){
-			this.$draw.coordsize = workWidth*3+","+height*3;
-		}
-		this.$draw.style.width = workWidth*3 + "px";
-		this.$draw.style.height = +height*3 + "px";
-		if(this.$group==null){
-			this.$group.css({height:height*3+"px",width:workWidth*3+"px"});
-		}
+
+		// 设置画布尺寸
+//		this.$workArea.css({
+//			width : workAreaX.width + "px",
+//			height : workAreaX.height * 3 + "px"
+//		});
+//		if (GooFlow.prototype.useSVG == "") {
+//			this.$draw.coordsize = workWidth * 3 + "," + workHeight * 3;
+//		}
+
+//		this.$bgDiv.children(".GooFlow_work").css({
+//			width : workAreaX.width + "px",
+//			height : workAreaX.height + "px"
+//		});
 	}
 }

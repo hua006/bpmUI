@@ -59,8 +59,18 @@ GlobalNS.options={
 		{name:'bottom',text:'显示在表单对象下方'},
 		{name:'right',text:'显示在表单对象右面，默认'},
 		{name:'left',text:'显示在表单对象左面，此时显示在表单对象label的下方。'}
-	]
-	,
+	],
+	rootNodes : [
+		{name:'end',text:'结束节点'}, 
+		{name:'task',text:'任务节点'},
+		{name:'decision',text:'判断节点'},
+		{name:'state',text:'状态节点'},
+		{name:'sub-process',text:'子流程'},
+		{name:'fork',text:'分支结点'},
+		{name:'join',text:'聚合结点'},
+		{name:'math',text:'计算结点'},
+		{name:'define',text:'赋值结点'}
+	],
 	trueOrFalse:[
 //		{name:'',text:''},
 		{name:'true',text:'是'},
@@ -140,20 +150,42 @@ GlobalNS.fn = {
 		childWindow.$form.settings.saveDataMethod = GlobalNS.fn.saveDataMethodFn;
 		var idField = childWindow.$form.settings.idField;
 		var id = null;
-		if(idField){
+		if (idField && operFlag == 'modify') {
 			id = childValue[idField];
+			if (id == null || id == undefined) {
+				id = demo.$id + '_name_' + demo.$max;
+				demo.$max++;
+				childValue[idField] = id;
+			}
 		}
 		console.log('id='+id);
 		childWindow.$form.settings.params = {
-			This : this,
-			operFlag : operFlag,
-			id : id
+				This : this,
+				operFlag : operFlag,
+				id : id
 		};
 		if (operFlag == 'add') {
 			childValue = {};
 		}
 		
 		childWindow.showWindow(childValue, operFlag);
+	},
+	openCreateNodeWindow:function() {
+		var childName = this.settings.name;
+		var childValue = this.val();
+	
+		var This = demo;
+		var childWindow = This.getPropWindow('createNode');
+		var baseNodeData = This.$nodeData[This.$focus];
+		var left = baseNodeData.left;
+		var top = baseNodeData.top;
+		childWindow.$form.settings.params = {
+			This : demo,
+			X : left,
+			Y : top
+		};
+		
+		childWindow.showWindow(childValue);
 	},
 	/**
 	 * 保存操作回调函数(非工作流节点属性保存时调用)

@@ -22,7 +22,10 @@ var property = {
 //	toolBtns : [ "start round", "end round", "task round", "node", "chat", "state", "plug", "join", "fork", "complex mix" ],
 	toolBtns : [ "start", "end", "task", "decision", "state", "sub-process", "join", "fork","math", "define" ],
 	haveHead : true,
-	headBtns : [ "new", "open", "save", "undo", "redo", "reload" ],// 如果haveHead=true，则定义HEAD区的按钮
+	headBtns : [ "new", "open", "save", "undo", "redo", "reload"
+	            ,{cls:"refreshForce",text:"强制刷新"}
+				,{cls:"refresh",text:"刷新"}
+				,{cls:"export",text:"导出"}],// 如果haveHead=true，则定义HEAD区的按钮
 	haveTool : true,
 	haveGroup : false,
 	useOperStack : true,
@@ -58,7 +61,14 @@ var remark = {
 };
 
 var demo; // 设计器对象
+var dialogExport;
 $(document).ready(function() {
+	
+	property.width = document.body.clientWidth-20;
+	property.height = document.body.clientHeight-20;
+//	width : document.body.clientWidth,
+//	height : document.body.clientHeight,
+	
 	// 使用jQuery Ui 的tip插件
 	$(document).tooltip();
 	
@@ -194,6 +204,24 @@ $(document).ready(function() {
 	// 执行顶部工具栏打开按钮事件
 	demo.onBtnOpenClick();
 //	demo.loadData(jsondata);
+	
+	// 导出弹出窗口
+	dialogExport = $('#dialog-export').dialog({
+		modal : true,
+		hide : true,	// 点击关闭按钮时隐藏
+		autoOpen : false,
+		width : 500,
+		height : 600,
+		show : false
+	});
+	
+	$(window).resize(function(){
+		property.width = document.body.clientWidth-20;
+		property.height = document.body.clientHeight-20;
+		demo.init(property);
+		
+		demo.reinitSize();
+	});
 });
 
 var out;

@@ -33,7 +33,7 @@
 			// TextField的控件值可以是数组
 			var $field = this.$parent.find('[name="' + options.name + '"]');
 			if (arguments.length != 0) {
-				if (value instanceof Array) {
+				if (value instanceof Array||value instanceof Object) {
 					if (valueType == 'Array'){
 						var array = [];
 						var items = options.items;
@@ -57,6 +57,9 @@
 							}
 						});
 						value = array.join(",");
+					}else if (valueType == 'Object'){
+						var item = options.item;
+						value = value[item];
 					}
 				}
 				$field.val(value);
@@ -87,6 +90,10 @@
 					});
 					
 					return array2;
+				}else if (valueType == 'Object'){
+					var obj={};
+					obj[options.item]=value;
+					return obj;
 				}else{
 					return value;
 				}
