@@ -11,7 +11,7 @@
 			xtype : 'form',
 			url : '', 				// 数据来源url
 			action : '',			// 请求url
-			params : {},
+			params : {},			// 运行时参数信息,将在打开弹出窗口时进行设置,如[focusId,baseType,operFlag,id,This,x,y]等
 			width : 500,
 			height : 600,
 			labelWidth : 100,

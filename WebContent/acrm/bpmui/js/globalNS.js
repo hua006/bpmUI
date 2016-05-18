@@ -170,17 +170,22 @@ GlobalNS.fn = {
 		
 		childWindow.showWindow(childValue, operFlag);
 	},
+	/** 
+	 * 打开新增节点窗口
+	 */
 	openCreateNodeWindow:function() {
-		var childName = this.settings.name;
+//		var childName = this.settings.name;
 		var childValue = this.val();
+		var focusId = this._parentCom.settings.params.focusId;
 	
 		var This = demo;
 		var childWindow = This.getPropWindow('createNode');
-		var baseNodeData = This.$nodeData[This.$focus];
+		var baseNodeData = This.$nodeData[focusId];
 		var left = baseNodeData.left;
 		var top = baseNodeData.top;
 		childWindow.$form.settings.params = {
-			This : demo,
+			focusId : focusId,
+			This : this,
 			X : left,
 			Y : top
 		};
@@ -261,9 +266,11 @@ GlobalNS.fn = {
 	 * 删除表单
 	 */
 	deleteForm : function() {
-		alert('delete ' + this.settings.name);
-		this.$me.empty();
-		this.val({});
+		var flag = confirm('确认删除 ' + this.settings.name);
+		if (flag == true) {
+			this.$me.empty();
+			this.val({});
+		}
 	},
 	
 	/*{
@@ -297,16 +304,18 @@ GlobalNS.fn = {
 					var datas = event.data.data;
 					var This = event.data.This;
 					var id = datas.record[datas.idField];
-					alert('delete '+id);
-					var array =[];
-					var itemData = This.val();
-					for(var i=0;i<itemData.length;i++){
-						if (itemData[i][datas.idField] != id) {
-							array.push(itemData[i]);
+					var flag = confirm('确认删除 ' + id);
+					if (flag == true) {
+						var array = [];
+						var itemData = This.val();
+						for (var i = 0; i < itemData.length; i++) {
+							if (itemData[i][datas.idField] != id) {
+								array.push(itemData[i]);
+							}
 						}
+						This.val(array);
+						var $td = This.$me.find('.tr-' + id).remove();
 					}
-					This.val(array);
-					var $td = This.$me.find('.tr-'+id).remove();
 				}
 		).appendTo(data.td).css("margin-right", "5px");
 	},

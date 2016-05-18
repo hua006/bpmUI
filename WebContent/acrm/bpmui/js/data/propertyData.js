@@ -177,35 +177,68 @@ GlobalNS.formDatas['createNode']=(function(){
 			var idField = this.settings.idField;
 			var params = this.settings.params;
 			
-			var This = params.This;	// 设计器对象
+			var designer = demo;	// 设计器对象
+			var This = params.This;
 			
 			var number = parseInt(itemValue.number) || 1;
+			var tranFlag = itemValue.tranFlag;
 			var X = params.X + 120;
 			var Y = params.Y;
+			var index='';
 			for (var i = 0; i < number; i++) {
-				var id = This.$id + "_node_" + This.$max;
-				This.$max++;
-				This.addNode(id, {
-					name : itemValue.name,
+				var id = designer.$id + "_node_" + designer.$max;
+				designer.$max++;
+				if(i==0){
+					index='';
+				}else{
+					index=i;
+				}
+				
+				// 工作区添加节点
+				designer.addNode(id, {
+					name : (itemValue.text || itemValue.name) + index,
 					left : X,
 					top : Y,
 					type : itemValue.type,
 				});
 				Y += 120;
-				This.reloadWfData(id);
+				designer.reloadWfData(id, itemValue.name + index);
+				
+				// 是否创建连线
+				if (!tranFlag||tranFlag.length==0) {
+					continue;
+				}
+				
+				// 工作区添加连线
+				var lineStartId = params.focusId;
+				var lineEndId = id;
+				designer.addLine(designer.$id + "_line_" + designer.$max, {
+					from : lineStartId,
+					to : lineEndId,
+					name : ""
+				});
+				designer.$max++;
+				
+				// 添加节点transition属性
+				var transitionValue = {
+					to : lineEndId,
+					text : itemValue.tranText || itemValue.name + index,
+					name : itemValue.tranName || itemValue.name + index
+				};
+				This.datas.push(transitionValue);
+				This.val(This.datas);
 			}
 			
-			// TODO 添加连线
+			This.val();
 		},
 		items:[
 			{xtype:'text',name:'name',text:'节点名称'},
-			{xtype:'select',name:'type',text:'节点类型',items:GlobalNS.options.rootNodes},
+			{xtype:'select',name:'type',text:'节点类型',required:true,items:GlobalNS.options.rootNodes},
+			{xtype:'text',name:'text',text:'节点描述'},
 			{xtype:'text',name:'number',text:'节点数量'},
-			
-			{xtype:'text',name:'name',text:'出口名称',modify:true},//modify:true,是否在编辑模式下可以修改,若为false则不可修改
-			{xtype:'text',name:'text',text:'出口描述'},
-			{xtype:'text',name:'condition',text:'条件', valueType : 'Object', item:'expr'},
-			{xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}, valueType : 'Array', items:['ATTR-class']}
+			{xtype:'checkbox',name:'tranFlag',text:'创建连线',items:[{name:'true',text:''}]},
+			{xtype:'text',name:'tranName',text:'连线名称'},
+			{xtype:'text',name:'tranText',text:'连线描述'}
 		]
 	}
 })();

@@ -81,14 +81,14 @@ $.extend(Arvato.MyDesigner.prototype, {
 	 * 场景:工作区;更新节点的工作流信息;
 	 * 当打开属性窗口或导出工作流文件时,需要根据工作区的节点或连线属性更新节点中的工作流属性(wfDatas)
 	 */
-	reloadWfData : function(nodeId) {
+	reloadWfData : function(nodeId,nodeName) {
 		var nodeData = this.$nodeData[nodeId];
 		var lineDataMap = this.$lineData;
 		nodeData.wfDatas = nodeData.wfDatas || {};
 
 		var data = nodeData.wfDatas;
-		data.name = data.name || nodeId; 				// 节点名称
-		data.text = data.text || nodeData.name; 		// 节点显示文本
+		data.name = nodeName || data.name || nodeId; 				// 节点名称
+		data.text = data.text || nodeName || nodeData.name; 		// 节点显示文本
 		data.transition = data.transition || []; 		// 节点的连线信息
 		this._reloadTransitions(nodeId, data.transition, lineDataMap); // 更新节点的连线信息
 	},

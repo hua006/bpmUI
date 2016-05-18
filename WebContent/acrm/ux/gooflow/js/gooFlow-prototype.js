@@ -40,8 +40,7 @@ GooFlow.prototype={
 			defs.appendChild(GooFlow.prototype.getSvgMarker("arrow1",GooFlow.prototype.color.line||"#3892D3"));
 			defs.appendChild(GooFlow.prototype.getSvgMarker("arrow2",GooFlow.prototype.color.mark||"#ff3300"));
 			defs.appendChild(GooFlow.prototype.getSvgMarker("arrow3",GooFlow.prototype.color.mark||"#ff3300"));
-		}
-		else{
+		} else{
 			this.$draw = document.createElement("v:group");
 			this.$draw.coordsize = width*3+","+height*3;
 			this.$workArea.prepend("<div class='GooFlow_work_vml' style='position:relative;width:"+width*3+"px;height:"+height*3+"px'></div>");
@@ -988,9 +987,6 @@ GooFlow.prototype={
 		this.$deletedItem={};
 	},
 	
-///////////以下为有关线段的操作
-////////////////////////以下为区域分组块操作
-	
 	//重构整个流程图设计器的宽高
 	reinitSize:function(){
 		
@@ -1041,4 +1037,7 @@ GooFlow.prototype={
 //			height : workAreaX.height + "px"
 //		});
 	}
+	
+///////////以下为有关线段的操作
+////////////////////////以下为区域分组块操作
 }
