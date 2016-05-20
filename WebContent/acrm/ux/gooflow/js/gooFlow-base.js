@@ -248,10 +248,11 @@ function GooFlow(bgDiv,property){
 				$(this).css("cursor","auto").removeData("lineStart").removeData("lineEnd");
 		        This.$mpTo.hide().removeData("p");
 		        This.$mpFrom.hide().removeData("p");
+		        This.hideMovePoints();
 		        This.$draw.removeChild(tmp);
 		        This.focusItem(This.$focus,false);
 			}else{
-				This.$lineOper.removeData("tid");
+				//This.$lineOper.removeData("tid");
 			}
 		});
 		
@@ -343,6 +344,7 @@ function GooFlow(bgDiv,property){
 		this.$mpFrom=$("<div class='GooFlow_line_mp' style='display:none'></div>");
 		this.$mpTo=$("<div class='GooFlow_line_mp' style='display:none'></div>");
 		this.$workArea.append(this.$mpFrom).append(this.$mpTo);
+		this.createMovePoints(50);
 		this.initLinePointsChg();
 	  
 		//下面绑定当结点/线/分组块的一些操作事件,这些事件可直接通过this访问对象本身
@@ -381,8 +383,8 @@ function GooFlow(bgDiv,property){
 		this.onItemMark=null;
 		
 		if(property.useOperStack&&this.$editable){//如果要使用堆栈记录操作并提供“撤销/重做”的功能,只在编辑状态下有效
-			this.$undoStack=[];
-			this.$redoStack=[];
+			this.$undoStack=[];	// 撤销:保存后退按钮执行的操作
+			this.$redoStack=[];	// 重做:保存前进按钮执行操作
 			this.$isUndo=0;
 			///////////////以下是构造撤销操作/重做操作的方法
 			//为了节省浏览器内存空间,undo/redo中的操作缓存栈,最多只可放40步操作;超过40步时,将自动删掉最旧的一个缓存

@@ -103,6 +103,10 @@ v\:group,v\:rect,v\:imagedata,v\:oval,v\:line,v\:polyline,v\:stroke,v\:textbox {
 
 .GooFlow .GooFlow_line_mp{
 	width:9px;height:9px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
+	position:absolute;z-index:9999;background:#333;cursor:move
+}
+.GooFlow .GooFlow_line_mp1{
+	width:9px;height:9px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
 	position:absolute;z-index:9999;background:#333;cursor:crosshair
 }
 

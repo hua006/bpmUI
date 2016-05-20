@@ -61,6 +61,17 @@ GooFlow.prototype={
 		$(this.$draw).delegate(tmpClk,"dblclick",{inthis:this},function(e){
 			var oldTxt,x,y,from,to;
 			var This=e.data.inthis;
+			
+			if(This.$lineData[this.id].type=='sl'){
+				// TODO 在线段双击位置添加转折点
+				var ev = mousePosition(e), t = getElCoordinate(this);
+				X = ev.x - t.left + this.parentNode.scrollLeft - 1;
+				Y = ev.y - t.top + this.parentNode.scrollTop - 1;
+				
+				This.addLinePoint(this.id, null, [X,Y], true);
+				return;
+			}
+			
 			if(GooFlow.prototype.useSVG!=""){
 				oldTxt=this.childNodes[2].textContent;
 				from=this.getAttribute("from").split(",");
@@ -248,7 +259,8 @@ GooFlow.prototype={
 			var pe=This.$mpTo.data("p").split(",");
 			$(this).hide();
 			This.$workArea.data("lineEnd",{"x":pe[0],"y":pe[1],"id":This.$lineData[This.$lineOper.data("tid")].to}).css("cursor","crosshair");
-			var line=GooFlow.prototype.drawLine("GooFlow_tmp_line",[ps[0],ps[1]],[pe[0],pe[1]],true,true);
+			var res = This.getResPoint([ ps[0], ps[1] ], [ pe[0], pe[1] ]);
+			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true,true);
 			This.$draw.appendChild(line);
 			return false;
 		});
@@ -259,10 +271,12 @@ GooFlow.prototype={
 			var pe=This.$mpTo.data("p").split(",");
 			$(this).hide();
 			This.$workArea.data("lineStart",{"x":ps[0],"y":ps[1],"id":This.$lineData[This.$lineOper.data("tid")].from}).css("cursor","crosshair");
-			var line=GooFlow.prototype.drawLine("GooFlow_tmp_line",[ps[0],ps[1]],[pe[0],pe[1]],true,true);
+			var res = This.getResPoint([ ps[0], ps[1] ], [ pe[0], pe[1] ]);
+			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true,true);
 			This.$draw.appendChild(line);
 			return false;
 		});
+		this.regMovePointsEvent();
 	},
 	//每一种类型结点及其按钮的说明文字
 	setNodeRemarks:function(remark){
@@ -442,7 +456,9 @@ GooFlow.prototype={
 			X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
 			Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop;
 			This.$workArea.data("lineStart",{"x":X,"y":Y,"id":this.id}).css("cursor","crosshair");
-			var line=GooFlow.prototype.drawLine("GooFlow_tmp_line",[X,Y],[X,Y],true,true);
+			
+			var res = This.getResPoint([X,Y],[X,Y]);
+			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true,true);
 			This.$draw.appendChild(line);
 		});
 		//绑定连线时确定结束点
@@ -587,6 +603,7 @@ GooFlow.prototype={
 						this.$lineOper.hide().removeData("tid");
 						this.$mpFrom.hide().removeData("p");
 						this.$mpTo.hide().removeData("p");
+						this.hideMovePoints();
 				}
 			}
 		}
@@ -660,6 +677,9 @@ GooFlow.prototype={
 			if(this.$editable){
 				this.$mpFrom.css({display:"block",left:n[0]-4+"px",top:n[1]-4+"px"}).data("p",n[0]+","+n[1]);
 				this.$mpTo.css({display:"block",left:n[2]-4+"px",top:n[3]-4+"px"}).data("p",n[2]+","+n[3]);
+				
+				var points = this.$lineData[id].points;
+				this.showMovePoints(points, id);
 			}
 			this.$draw.appendChild(jq[0]);
 		}
