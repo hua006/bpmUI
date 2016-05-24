@@ -24,8 +24,8 @@ import com.arvato.acrm.commons.util.Tools;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class JsonParseSupport {
-	private Logger logger = Logger.getLogger(JsonParseSupport.class);
+public class JsonParseSupport2 {
+	private Logger logger = Logger.getLogger(JsonParseSupport2.class);
 	
 	/**
 	 * xml格式化
@@ -47,6 +47,24 @@ public class JsonParseSupport {
 		return out.toString();
 	}
 	
+	private JSONObject getJSONObject(JSONObject lines, String from, String to) {
+		for (Iterator iter = lines.keys(); iter.hasNext();) {
+
+			// 取连线图形化信息
+			String lineId = (String) iter.next();
+			JSONObject line = getJSONObject(lines, lineId);
+			String type = getValue(line, "type");
+			String M = getValue(line, "M");
+			String f = getValue(line, "from");
+			String t = getValue(line, "to");
+			String points = getValue(line, "points");
+			if (f.equals(from) && t.equals(to)) {
+				return line;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * 将json格式字符串转换为xml格式的字符串;
 	 * 1.json转换为XElement对象;
@@ -64,6 +82,7 @@ public class JsonParseSupport {
 		Element _root = _document.addElement("process");
 		_root.addAttribute("name", defKey);
 		_root.addAttribute("text", title);
+		
 		
 		// 生成xml节点对象
 		Map<String, String> nameMap = new HashMap<String, String>();
@@ -85,6 +104,46 @@ public class JsonParseSupport {
 			Element element = _root.addElement(type);
 			addElement(wfDatas, element);
 			element.addAttribute("pos", pos);
+			
+			// 更新连线
+			List<Element> list = element.selectNodes("//transition");
+			for (Element el : list) {
+				Attribute attribute = el.attribute("to");
+				if (attribute != null) {
+					String toId = attribute.getValue();
+					String toName = nameMap.get(toId);
+					attribute.setValue(toName);
+					JSONObject lineObject = getJSONObject(lines, nodeId, toId);
+					if (lineObject != null) {
+						String lineType = getValue(lineObject, "type");
+						String m = getValue(lineObject, "M");
+						JSONArray points = getJSONArray(lineObject, "points");
+						if (Tools.isBlank(lineType)) {
+							lineType = "sl";
+						}
+						Element elLine = el.addElement("line");
+						elLine.addAttribute("type", lineType);
+						if (!Tools.isBlank(m)) {
+							elLine.addAttribute("M", m);
+						}
+						if (points != null) {
+							for (int index = 0; index < points.size(); index++) {
+								Object obj2 = points.get(index);
+								if (obj2 instanceof JSONArray) {
+									JSONArray array2 = (JSONArray) obj2;
+									String value = "";
+									if (array2.size() == 2) {
+										value = array2.get(0).toString();
+										value += "," + array2.get(1).toString();
+										elLine.addElement("point", value);
+									}
+								}
+							}
+						}
+					}
+					
+				}
+			}
 		}
 		
 		// 更新节点id
@@ -198,11 +257,7 @@ public class JsonParseSupport {
 				Element child = element.addElement(name);
 				addElement(name, jsonTemp, child);
 			} else {
-				if(name.equals("point")){
-					System.out.println(obj.toString());
-				}
-				Element child = element.addElement(name);
-				child.setText(obj.toString().trim());
+				element.addElement(name, obj.toString().trim());
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -17,12 +18,14 @@ import com.arvato.acrm.bpmui.model.NodeIDBean;
 import com.arvato.acrm.bpmui.model.Position;
 import com.arvato.acrm.bpmui.model.XElement;
 import com.arvato.acrm.bpmui.util.XElementSupport;
+import com.arvato.acrm.bpmui.web.BPMUIAction;
 import com.arvato.acrm.commons.util.Tools;
 
 import net.sf.json.JSONObject;
 
 public class BPMUIService {
 	private XElementSupport support = new XElementSupport();
+	private Logger logger = Logger.getLogger(BPMUIService.class);
 	
 	public String readWorkFlow(String flowFileName) throws Exception{
 		
@@ -65,6 +68,7 @@ public class BPMUIService {
 			Object valueJson = entry.getValue().toJson();
 			lineJsonMap.put(entry.getKey(), valueJson);
 		}
+		lineJsonMap.get("consultNewTest-LINE-4");
 		
 		Map<String,Object> JsonMap = new HashMap<String,Object>();
 		JsonMap.put("defKey", processName);
@@ -221,7 +225,6 @@ public class BPMUIService {
 			String connId = idBean.getLineID();
 			// 设置连线属性
 			XElement connect = new XElement(connId, "");
-			connect.addChild(new XElement("type", "sl"));
 			connect.addChild(new XElement("from", from));
 			connect.addChild(new XElement("to", to));
 			connect.addChild(new XElement("name", name));
@@ -229,8 +232,21 @@ public class BPMUIService {
 			// 生成连线的线段信息
 			XElement lineNode = support.getChild(transitionNode, "line");
 			if(lineNode!=null){
+				
+				XElement typeEl = support.getChild(lineNode, "type");
+				String type = "sl";
+				if (typeEl != null && typeEl.getValue() != null && !Tools.isBlank(typeEl.getValue().toString())) {
+					type = Tools.trimToEmpty(typeEl.getValue());
+				}
+				connect.addChild(new XElement("type", type));
+				
+				XElement mEl = support.getChild(lineNode, "M");
+				if (mEl != null) {
+					connect.addChild(new XElement("M", getValue(mEl.getValue().toString())));
+				}
+				
 				XElement line = new XElement("line", "");
-				connect.addChild(line);
+//				connect.addChild(line);
 				
 				XElement beginAttr = support.getChild(lineNode, "begin");
 				if(beginAttr!=null){
@@ -262,20 +278,40 @@ public class BPMUIService {
 				
 				List<String[]> posList = getPositionList(lineNode, "point");
 				if (posList != null && posList.size() > 0) {
-					XElement point = new XElement("point", "");
+					XElement point = new XElement("points", "");
 					point.setType(1);
-					line.addChild(point);
+					connect.addChild(point);
 					for (String[] array : posList) {
-						XElement linePoint = new XElement("point", array[0] + "," + array[1]);
-						linePoint.addChild(new XElement("X", array[0]));
-						linePoint.addChild(new XElement("Y", array[1]));
+						int p1 = getValue(array[0]);
+						int p2 = getValue(array[1]);
+						if (p1 <= 0 || p2 <= 0) {
+							logger.error("point error[" + array[0] + "," + array[1] + "]");
+							continue;
+						}
+						
+						XElement linePoint = new XElement("point", p1 + "," + p2);
+						linePoint.setType(1);
+						linePoint.addChild(new XElement("point", p1));
+						linePoint.addChild(new XElement("point", p2));
 						point.addChild(linePoint);
 					}
 				}
+			}else{
+				connect.addChild(new XElement("type", "sl"));
 			}
 			connMap.put(connId, connect);
 		}
 		return connMap;
+	}
+	
+	private int getValue(String s) {
+		int p1 = 0;
+		try {
+			p1 = (int)Double.parseDouble(s);
+		} catch (NumberFormatException e) {
+			logger.error(s, e);
+		}
+		return p1;
 	}
 	
 	/**
@@ -345,11 +381,23 @@ public class BPMUIService {
 		}
 		List<XElement> positionList = support.getChildList(element, positionName);
 		for (XElement positionNode : positionList) {
-			String pos = Tools.trimToEmpty(positionNode.getValue());
-			if (!Tools.isBlank(pos)) {
-				String[] array = pos.split(",");
-				if (array != null && array.length == 2) {
-					list.add(array);
+			List<Object> pList = new ArrayList<Object>();
+			if (positionNode.getType() == 1) {
+				List<XElement> elList = positionNode.getChildren();
+				for (XElement el : elList) {
+					pList.add(el.getValue());
+				}
+			} else {
+				pList.add(positionNode.getValue());
+			}
+			
+			for (Object obj : pList) {
+				String pos = Tools.trimToEmpty(obj);
+				if (!Tools.isBlank(pos)) {
+					String[] array = pos.split(",");
+					if (array != null && array.length == 2) {
+						list.add(array);
+					}
 				}
 			}
 		}

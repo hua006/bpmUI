@@ -1,5 +1,6 @@
 var s = {
 	"title" : "业务咨询",
+	"defKey" : "consultNewTest",
 	"nodes" : {
 		"consultNewTest-NODE-0" : {
 			"name" : "start",
@@ -21,14 +22,17 @@ var s = {
 					"event-listener" : [ {
 						"ATTR-class" : "com.arvato.ext.truck.workflow.listener.AddSendSMS"
 					} ],
-					"line" : {}
+					"line" : {
+						"type" : "tb",
+						"M" : "110"
+					}
 				} ]
 			}
 		},
 		"consultNewTest-NODE-1" : {
 			"name" : "任务1",
-			"left" : 111,
-			"top" : 86,
+			"left" : 112,
+			"top" : 164,
 			"type" : "task",
 			"width" : 32,
 			"height" : 32,
@@ -36,7 +40,7 @@ var s = {
 				"name" : "accept",
 				"text" : "任务1",
 				"nodeType" : "task",
-				"pos" : "111,86",
+				"pos" : "112,164",
 				"assignType" : "assignee",
 				"useAssignExcept" : "true",
 				"useAssignPrior" : "true",
@@ -49,7 +53,10 @@ var s = {
 					"event-listener" : [ {
 						"ATTR-class" : "com.arvato.ext.truck.workflow.listener.AddSendSMS"
 					} ],
-					"line" : {}
+					"line" : {
+						"type" : "sl",
+						"point" : [ "220,175", "249,125", "417,166" ]
+					}
 				} ],
 				"on" : [ {
 					"event" : "start",
@@ -74,8 +81,8 @@ var s = {
 		},
 		"consultNewTest-NODE-2" : {
 			"name" : "结单",
-			"left" : 353,
-			"top" : 16,
+			"left" : 509,
+			"top" : 42,
 			"type" : "end",
 			"width" : 32,
 			"height" : 32,
@@ -83,41 +90,24 @@ var s = {
 				"name" : "end",
 				"text" : "结单",
 				"nodeType" : "end",
-				"pos" : "353,16",
-				"transition" : []
-			}
-		},
-		"demo_node_1" : {
-			"name" : "aaa",
-			"left" : 231,
-			"top" : 86,
-			"type" : "decision",
-			"width" : 32,
-			"height" : 32,
-			"alt" : true,
-			"wfDatas" : {
-				"name" : "demo_node_1",
-				"text" : "aaa",
-				"transition" : []
+				"pos" : "509,42"
 			}
 		}
 	},
 	"lines" : {
 		"consultNewTest-LINE-3" : {
-			"type" : "sl",
 			"from" : "consultNewTest-NODE-0",
 			"to" : "consultNewTest-NODE-1",
-			"name" : "提交",
-			"alt" : true
+			"name" : "toAccept",
+			"type" : "tb",
+			"M" : 110
 		},
 		"consultNewTest-LINE-4" : {
-			"type" : "sl",
 			"from" : "consultNewTest-NODE-1",
 			"to" : "consultNewTest-NODE-2",
-			"name" : "提交",
-			"alt" : true
+			"name" : "toEnd",
+			"type" : "sl",
+			"points" : [ [ 220, 175 ], [ 249, 125 ], [ 417, 166 ] ]
 		}
-	},
-	"areas" : {},
-	"initNum" : 2
+	}
 }

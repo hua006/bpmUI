@@ -9,6 +9,7 @@
  * */
 GooFlow.prototype={
 	useSVG:"",
+	color:{mark:'#003300'},
 	
 	// 设置标记,标记中可以放形状,然后通过url在直线的顶点被引用
 	getSvgMarker:function(id,color){
@@ -68,7 +69,7 @@ GooFlow.prototype={
 				X = ev.x - t.left + this.parentNode.scrollLeft - 1;
 				Y = ev.y - t.top + this.parentNode.scrollTop - 1;
 				
-				This.addLinePoint(this.id, null, [X,Y], true);
+				This.addLinePoint(this.id, null, [X,Y]);
 				return;
 			}
 			
@@ -250,34 +251,6 @@ GooFlow.prototype={
 			}
 		});
 	},
-	//初始化用来改变连线的连接端点的两个小方块的操作事件
-	initLinePointsChg:function(){
-		this.$mpFrom.on("mousedown",{inthis:this},function(e){
-			var This=e.data.inthis;
-			This.switchToolBtn("cursor");
-			var ps=This.$mpFrom.data("p").split(",");
-			var pe=This.$mpTo.data("p").split(",");
-			$(this).hide();
-			This.$workArea.data("lineEnd",{"x":pe[0],"y":pe[1],"id":This.$lineData[This.$lineOper.data("tid")].to}).css("cursor","crosshair");
-			var res = This.getResPoint([ ps[0], ps[1] ], [ pe[0], pe[1] ]);
-			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true,true);
-			This.$draw.appendChild(line);
-			return false;
-		});
-		this.$mpTo.on("mousedown",{inthis:this},function(e){
-			var This=e.data.inthis;
-			This.switchToolBtn("cursor");
-			var ps=This.$mpFrom.data("p").split(",");
-			var pe=This.$mpTo.data("p").split(",");
-			$(this).hide();
-			This.$workArea.data("lineStart",{"x":ps[0],"y":ps[1],"id":This.$lineData[This.$lineOper.data("tid")].from}).css("cursor","crosshair");
-			var res = This.getResPoint([ ps[0], ps[1] ], [ pe[0], pe[1] ]);
-			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true,true);
-			This.$draw.appendChild(line);
-			return false;
-		});
-		this.regMovePointsEvent();
-	},
 	//每一种类型结点及其按钮的说明文字
 	setNodeRemarks:function(remark){
 		if(this.$tool==null)  return;
@@ -431,26 +404,59 @@ GooFlow.prototype={
 			}
 		});
 		if(!this.$editable)	return;
+		
+		// TODO 划线操作
+		/*
+		 * 若为连线操作,则鼠标覆盖时标红,鼠标移出时正常;
+		 * 鼠标up时:若未划线,则所有节点正常,同时鼠标=direct;若划线则所有节点正常,当前节点仍然标红(若未在当前节点up则不标红)
+		 * GooFlow_tmp_line: 划线时出现的临时线段;
+		 * direct : 左侧工具栏连线操作;
+		 */
+		
 		//绑定鼠标覆盖/移出事件
 		this.$workArea.delegate(".GooFlow_item","mouseenter",{inthis:this},function(e){
-			if(e.data.inthis.$nowType!="direct"&&!document.getElementById("GooFlow_tmp_line"))	return;
-			// 选中连线按钮,鼠标置于节点上时显示连线样式(十字,红色边框)
-			$(this).addClass("item_mark").addClass("crosshair").css("border-color",GooFlow.prototype.color.mark||"#ff3300");
+			var tmpLine = document.getElementById("GooFlow_tmp_line");
+			console.log('mouseenter='+e.data.inthis.$nowType+",tmpLine="+tmpLine);
+			if(e.data.inthis.$nowType!="direct"&&!tmpLine)	return;
+			
+			// 标记节点
+			e.data.inthis.addMarkStyle(this);
 		});
 		this.$workArea.delegate(".GooFlow_item","mouseleave",{inthis:this},function(e){
-			if(e.data.inthis.$nowType!="direct"&&!document.getElementById("GooFlow_tmp_line"))	return;
-			$(this).removeClass("item_mark").removeClass("crosshair");
-			if(this.id==e.data.inthis.$focus){
-				$(this).css("border-color",GooFlow.prototype.color.line||"#3892D3");
+			var tmpLine = document.getElementById("GooFlow_tmp_line");
+			console.log('mouseleave='+e.data.inthis.$nowType+",tmpLine="+tmpLine);
+			if(e.data.inthis.$nowType!="direct"&&!tmpLine)	return;
+			
+			// 删除节点标记
+			if (!tmpLine) {
+				e.data.inthis.removeMarkStyle(this);
 			}else{
-				$(this).css("border-color",GooFlow.prototype.color.node||"#A1DCEB");
+				var lineStart = e.data.inthis.$workArea.data("lineStart");
+				var lineEnd = e.data.inthis.$workArea.data("lineEnd");
+				console.log(lineStart);
+				console.log(lineEnd);
+				if ((!lineStart || lineStart.id != this.id) && (!lineEnd || (lineEnd.id != this.id))) {
+					e.data.inthis.removeMarkStyle(this);
+				}
 			}
 		});
+		
 		//绑定连线时确定初始点
 		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
+			console.log('mousedown='+e.data.inthis.$nowType);
 			if(e.button==2)return false;
 			var This=e.data.inthis;
-			if(This.$nowType!="direct")	return;
+			if ($(this).id == This.$id) {
+				console.log('error');
+				alert('error');
+				// $(this).removeClass("item_mark").removeClass("crosshair");
+			}
+			if (This.$nowType != "direct") {
+				return;
+			}
+//			$(this).removeClass("item_mark").removeClass("crosshair");
+			
+			// 添加临时线段
 			var ev=mousePosition(e),t=getElCoordinate(This.$workArea[0]);
 			var X,Y;
 			X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
@@ -458,7 +464,7 @@ GooFlow.prototype={
 			This.$workArea.data("lineStart",{"x":X,"y":Y,"id":this.id}).css("cursor","crosshair");
 			
 			var res = This.getResPoint([X,Y],[X,Y]);
-			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true,true);
+			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true);
 			This.$draw.appendChild(line);
 		});
 		//绑定连线时确定结束点
@@ -468,6 +474,10 @@ GooFlow.prototype={
 			var lineStart=This.$workArea.data("lineStart");
 			var lineEnd=This.$workArea.data("lineEnd");
 			if(lineStart&&!This.$mpTo.data("p")){
+				if(!lineEnd){
+					console.log('lineEnd');
+					e.data.inthis.removeMarkStyle($('#'+lineStart.id));
+				}
 				This.addLine(This.$id+"_line_"+This.$max,{from:lineStart.id,to:this.id,name:""});
 				This.$max++;
 			}else{
@@ -477,12 +487,7 @@ GooFlow.prototype={
 					This.moveLinePoints(This.$focus,this.id,lineEnd.id);
 				}
 				if(!This.$nodeData[this.id].marked){
-					$(this).removeClass("item_mark");
-					if(this.id!=This.$focus){
-						$(this).css("border-color",GooFlow.prototype.color.node);
-					}else{
-						$(this).css("border-color",GooFlow.prototype.color.line);
-					}
+					This.removeMarkStyle(this);
 				}
 			}
 		});
@@ -492,6 +497,7 @@ GooFlow.prototype={
 			e.data.inthis.itemDblClick(e.data.inthis.$focus);
 			return false;
 		});
+		// 双击编辑节点名称
 		this.$workArea.delegate(".ico + td","dblclick",{inthis:this},function(e){
 			var oldTxt=this.innerHTML;
 			var This=e.data.inthis;
@@ -579,31 +585,28 @@ GooFlow.prototype={
 				if(this.onItemBlur!=null&&!this.onItemBlur(this.$focus,"node"))	return false;
 				jq.removeClass("item_focus").children("div:eq(0)").css("display","none");
 				if(GooFlow.prototype.color.line){
-          if(this.$nodeData[this.$focus].marked){
-            jq.css("border-color",GooFlow.prototype.color.mark||"#ff3300");
-          }
-          else{
-            jq.css("border-color",GooFlow.prototype.color.node||"#A1DCEB");
-          }
-				}
-			}
-			else{
-				if(this.onItemBlur!=null&&!this.onItemBlur(this.$focus,"line"))	return false;
-				if(GooFlow.prototype.useSVG!=""){
-					if(!this.$lineData[this.$focus].marked){
-						jq[0].childNodes[1].setAttribute("stroke",GooFlow.prototype.color.line||"#3892D3");
-						jq[0].childNodes[1].setAttribute("marker-end","url(#arrow1)");
+					if (this.$nodeData[this.$focus].marked) {
+						jq.css("border-color", GooFlow.prototype.color.mark || "#ff3300");
+					} else {
+						jq.css("border-color", GooFlow.prototype.color.node || "#A1DCEB");
 					}
 				}
-				else{
-					if(!this.$lineData[this.$focus].marked)	jq[0].strokeColor=GooFlow.prototype.color.line||"#3892D3";
+			} else {
+				if (this.onItemBlur != null && !this.onItemBlur(this.$focus, "line"))
+					return false;
+				if (GooFlow.prototype.useSVG != "") {
+					if (!this.$lineData[this.$focus].marked) {
+						jq[0].childNodes[1].setAttribute("stroke", GooFlow.prototype.color.line || "#3892D3");
+						jq[0].childNodes[1].setAttribute("marker-end", "url(#arrow1)");
+					}
+				} else {
+					if (!this.$lineData[this.$focus].marked)
+						jq[0].strokeColor = GooFlow.prototype.color.line || "#3892D3";
 				}
 				this.$lineMove.hide().removeData("type").removeData("tid");
-				if(this.$editable){
-						this.$lineOper.hide().removeData("tid");
-						this.$mpFrom.hide().removeData("p");
-						this.$mpTo.hide().removeData("p");
-						this.hideMovePoints();
+				if (this.$editable) {
+					this.$lineOper.hide().removeData("tid");
+					this.hideMovePoints();
 				}
 			}
 		}
@@ -675,11 +678,10 @@ GooFlow.prototype={
 			y=(from[1]+to[1])/2+6;
 			this.$lineOper.css({display:"block",left:x+"px",top:y+"px"}).data("tid",id);
 			if(this.$editable){
-				this.$mpFrom.css({display:"block",left:n[0]-4+"px",top:n[1]-4+"px"}).data("p",n[0]+","+n[1]);
-				this.$mpTo.css({display:"block",left:n[2]-4+"px",top:n[3]-4+"px"}).data("p",n[2]+","+n[3]);
-				
 				var points = this.$lineData[id].points;
-				this.showMovePoints(points, id);
+				var ps = [n[0],n[1]];
+				var pe = [n[2],n[3]];
+				this.showMovePoints(id, points, ps, pe);
 			}
 			this.$draw.appendChild(jq[0]);
 		}
@@ -856,6 +858,8 @@ GooFlow.prototype={
 			this.addArea(k,data.areas[k]);
 		this.$editable=t;
 		this.$deletedItem={};
+		this.$undoStack=[];	// 撤销:保存后退按钮执行的操作
+		this.$redoStack=[];	// 重做:保存前进按钮执行操作
 	},
 	// 获取最大的序列号,并赋值给$max
 	setMaxSeq : function(data) {
@@ -1056,8 +1060,49 @@ GooFlow.prototype={
 //			width : workAreaX.width + "px",
 //			height : workAreaX.height + "px"
 //		});
+	},
+	// 用颜色标注/取消标注一个结点或转换线，常用于显示重点或流程的进度。
+	// 这是一个在编辑模式中无用,但是在纯浏览模式中非常有用的方法，实际运用中可用于跟踪流程的进度。
+	markItem : function(id, type, mark) {
+		if (type == "node") {
+			if (!this.$nodeData[id])
+				return;
+			if (this.onItemMark != null && !this.onItemMark(id, "node", mark))
+				return;
+			this.$nodeData[id].marked = mark || false;
+			if (mark) {
+				this.$nodeDom[id].addClass("item_mark");
+				jq.css("border-color", GooFlow.prototype.color.mark);
+			} else {
+				this.$nodeDom[id].removeClass("item_mark");
+				if (id != this.$focus)
+					jq.css("border-color", "transparent");
+			}
+
+		} else if (type == "line") {
+			if (!this.$lineData[id])
+				return;
+			if (this.onItemMark != null && !this.onItemMark(id, "line", mark))
+				return;
+			this.$lineData[id].marked = mark || false;
+			if (GooFlow.prototype.useSVG != "") {
+				if (mark) {
+					this.$nodeDom[id].childNodes[1].setAttribute("stroke", GooFlow.prototype.color.mark || "#ff3300");
+					this.$nodeDom[id].childNodes[1].setAttribute("marker-end", "url(#arrow2)");
+				} else {
+					this.$nodeDom[id].childNodes[1].setAttribute("stroke", GooFlow.prototype.color.line || "#3892D3");
+					this.$nodeDom[id].childNodes[1].setAttribute("marker-end", "url(#arrow1)");
+				}
+			} else {
+				if (mark)
+					this.$nodeDom[id].strokeColor = GooFlow.prototype.color.mark || "#ff3300";
+				else
+					this.$nodeDom[id].strokeColor = GooFlow.prototype.color.line || "#3892D3"
+			}
+		}
+		if (this.$undoStatck) {
+			var paras = [ id, type, !mark ];
+			this.pushOper("markItem", paras);
+		}
 	}
-	
-///////////以下为有关线段的操作
-////////////////////////以下为区域分组块操作
 }

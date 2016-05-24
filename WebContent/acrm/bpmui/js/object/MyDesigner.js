@@ -101,8 +101,20 @@ $.extend(Arvato.MyDesigner.prototype, {
 		for ( var key in lineDataMap) {
 			var to = null;
 			if (lineDataMap[key].from == nodeId) {
-				to = lineDataMap[key].to;
-				var line = lineDataMap[key].line || {};
+				var lineData = lineDataMap[key];
+				to = lineData.to;
+				var line = {
+					type : lineData.type,
+					M : lineData.M,
+					point : []
+				};
+				
+				if(lineData.points){
+					for(var index in lineData.points){
+						line.point.push(lineData.points[index].join(','));
+					}
+				}
+				
 				if (!to) {
 					continue;
 				}
@@ -120,6 +132,7 @@ $.extend(Arvato.MyDesigner.prototype, {
 					transitions.push({
 						name : tranName,
 						to : to,
+						text : lineData.name,
 						line : line
 					});
 				}

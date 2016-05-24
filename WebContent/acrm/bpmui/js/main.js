@@ -137,6 +137,8 @@ $(document).ready(function() {
 				demo.clearData();
 				demo.loadData(msg);
 				demo.refreshLineName();
+				demo.$undoStack=[];
+				demo.$redoStack=[];
 			}
 		});
 	};
@@ -215,6 +217,7 @@ $(document).ready(function() {
 		show : false
 	});
 	
+	// 自适应工作区大小
 	$(window).resize(function(){
 		property.width = document.body.clientWidth-20;
 		property.height = document.body.clientHeight-20;

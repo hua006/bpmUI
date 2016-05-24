@@ -17,6 +17,7 @@ public class BPMUIConstants {
 		arrayNodes.add("variable");
 		arrayNodes.add("item");
 		arrayNodes.add("on");
+		arrayNodes.add("point");
 
 		// start,end,task,decision,state,sub-process,fork,join,math,define;group;
 		nodes.add("");

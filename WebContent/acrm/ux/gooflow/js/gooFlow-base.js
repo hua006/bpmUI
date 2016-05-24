@@ -185,7 +185,6 @@ function GooFlow(bgDiv,property){
 				if (n == "svg" || (n == "DIV" && t.prop("class").indexOf("GooFlow_work") > -1) || n == "LABEL") {
 					if (This.$lineOper.data("tid")) {
 						This.focusItem(This.$lineOper.data("tid"), false);	// 选定某个节点/连线
-						// This.$mpFrom.removeData("p");
 					} else {
 						This.blurItem();									// 取消所有结点/连线被选定的状态
 					}
@@ -244,13 +243,25 @@ function GooFlow(bgDiv,property){
 			var This=e.data.inthis;
 			if(This.$nowType!="direct"&&!This.$mpTo.data("p"))	return;
 			var tmp=document.getElementById("GooFlow_tmp_line");
+			console.log('this.$workArea.mouseup({inthis:this}');
+			console.log(tmp);
 			if(tmp){
-				$(this).css("cursor","auto").removeData("lineStart").removeData("lineEnd");
-		        This.$mpTo.hide().removeData("p");
-		        This.$mpFrom.hide().removeData("p");
+				var $workArea = $(this);
+				var lineStart = $workArea.data("lineStart");
+				var lineEnd = $workArea.data("lineEnd");
+				if(lineStart){
+					This.removeMarkStyle($('#'+lineStart.id));
+				}
+				if(lineEnd){
+					This.removeMarkStyle($('#'+lineEnd.id));
+				}
+				$workArea.css("cursor","auto").removeData("lineStart").removeData("lineEnd");
+				
 		        This.hideMovePoints();
 		        This.$draw.removeChild(tmp);
-		        This.focusItem(This.$focus,false);
+		        var focusId = This.$focus;
+		        This.blurItem();
+		        This.focusItem(focusId,false);
 			}else{
 				//This.$lineOper.removeData("tid");
 			}
@@ -340,12 +351,9 @@ function GooFlow(bgDiv,property){
 			}
 		});
 		
-		//新增移动线两个端点至新的结点功能移动功能，这里要提供移动用的DOM
-		this.$mpFrom=$("<div class='GooFlow_line_mp' style='display:none'></div>");
-		this.$mpTo=$("<div class='GooFlow_line_mp' style='display:none'></div>");
-		this.$workArea.append(this.$mpFrom).append(this.$mpTo);
-		this.createMovePoints(50);
-		this.initLinePointsChg();
+		// 增加连线转折点拖动功能，这里要提供移动用的DOM(div小方块)
+		this.initMovePoints(50);
+		this.regMovePointsEvent();
 	  
 		//下面绑定当结点/线/分组块的一些操作事件,这些事件可直接通过this访问对象本身
 		//当操作某个单元（结点/线/分组块）被添加时，触发的方法，返回FALSE可阻止添加事件的发生

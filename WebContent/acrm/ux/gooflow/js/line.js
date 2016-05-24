@@ -104,10 +104,10 @@ GlobalNS.lineObject = {
 				poly.setAttribute("id", id);
 			poly.setAttribute("from", sp[0] + "," + sp[1]);
 			poly.setAttribute("to", ep[0] + "," + ep[1]);
-//			hi.setAttribute("visibility", "hidden");
-			hi.setAttribute("stroke-width", 20);
+			hi.setAttribute("visibility", "hidden");
+			hi.setAttribute("stroke-width", 9);
 			hi.setAttribute("fill", "none");
-			hi.setAttribute("stroke", "green");
+			hi.setAttribute("stroke", "white");
 			strPath = "M " + sp[0] + " " + sp[1];
 			if (points && points.length > 0) {
 				for (var i = 0; i < points.length; i++) {
@@ -296,7 +296,7 @@ GlobalNS.lineObject = {
 		var points = []; 	// 所有转折点
 		var m1=sp, m2=ep; 		// 位于中间位置的两个转折点
 		
-		if ((M instanceof Array) && (M.length > 0)) {
+		if (M && (M instanceof Array) && (M.length > 0)) {
 			for (var i = 0; i < M.length; i++) {
 				points.push([ M[i][0], M[i][1] ]);
 			}
@@ -325,6 +325,7 @@ GlobalNS.lineObject = {
 	 */
 	calcPolyPoints : function(n1, n2, type, M) {
 		
+		
 		// 画直线
 		// TODO 指定了所有转折点
 		if (type == 'sl') {
@@ -343,7 +344,9 @@ GlobalNS.lineObject = {
 		// 粗略计算起始点
 		sp = [ SP.x, SP.y ];
 		ep = [ EP.x, EP.y ];
-		
+		if(M){
+			M = parseInt(M);
+		}
 		// 如果是允许中段可左右移动的折线,则参数M为可移动中段线的X坐标
 		if (type == "lr") {
 			// 粗略计算2个中点
@@ -410,6 +413,8 @@ GlobalNS.lineObject = {
 			return (n1.top + n1.height / 2 + n2.top + n2.height / 2) / 2;
 		}
 	},
+	
+	
 	// 原lineData已经设定好的情况下，只在绘图工作区画一条线的页面元素
 	addLineDom : function(id, lineData) {
 		var n1 = this.$nodeData[lineData.from], n2 = this.$nodeData[lineData.to];// 获取开始/结束结点的数据
@@ -490,6 +495,30 @@ GlobalNS.lineObject = {
 				delete this.$deletedItem[id];// 在回退删除操作时,去掉该元素的删除记录
 		}
 	},
+	// 删除转换线
+	delLine : function(id) {
+		if (!this.$lineData[id])
+			return;
+		if (this.onItemDel != null && !this.onItemDel(id, "line"))
+			return;
+		if (this.$undoStack) {
+			var paras = [ id, this.$lineData[id] ];
+			this.pushOper("addLine", paras);
+		}
+		this.$draw.removeChild(this.$lineDom[id]);
+		delete this.$lineData[id];
+		delete this.$lineDom[id];
+		if (this.$focus == id)
+			this.$focus = "";
+		--this.$lineCount;
+		if (this.$editable) {
+			// 在回退新增操作时,如果节点ID以this.$id+"_line_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
+			if (id.indexOf(this.$id + "_line_") < 0)
+				this.$deletedItem[id] = "line";
+			this.hideMovePoints();
+		}
+		this.$lineOper.hide().removeData("tid");
+	},
 	// 重构所有连向某个结点的线的显示，传参结构为$nodeData数组的一个单元结构
 	resetLines : function(id, node) {
 		for ( var i in this.$lineData) {
@@ -521,6 +550,8 @@ GlobalNS.lineObject = {
 			this.$draw.removeChild(this.$lineDom[i]);
 			this.$lineDom[i] = GooFlow.prototype.drawPolyLine(i, res, this.$lineData[i].marked);
 			this.$draw.appendChild(this.$lineDom[i]);
+			//this.showMovePoints(i, res.points, res.start, res.end);
+			
 			if (GooFlow.prototype.useSVG == "") {
 				this.$lineDom[i].childNodes[1].innerHTML = this.$lineData[i].name;
 				if (this.$lineData[i].type != "sl") {
@@ -543,13 +574,13 @@ GlobalNS.lineObject = {
 		}
 	},
 	// 重新设置连线的样式 newType= "sl":直线, "lr":中段可左右移动型折线, "tb":中段可上下移动型折线
-	setLineType : function(id, newType, M) {
+	setLineType : function(id, newType, M, points) {
 		if (!newType || newType == null || newType == "" || newType == this.$lineData[id].type)
 			return false;
 		if (this.onLineSetType != null && !this.onLineSetType(id, newType))
 			return;
 		if (this.$undoStack) {
-			var paras = [ id, this.$lineData[id].type, this.$lineData[id].M ];
+			var paras = [ id, this.$lineData[id].type, this.$lineData[id].M, this.$lineData[id].points ];
 			this.pushOper("setLineType", paras);
 		}
 		var from = this.$lineData[id].from;
@@ -569,7 +600,7 @@ GlobalNS.lineObject = {
 			delete this.$lineData[id].M;
 			this.$lineMove.hide().removeData("type").removeData("tid");
 			
-			res = GooFlow.prototype.calcStartEnd(this.$nodeData[from], this.$nodeData[to]);
+			res = GooFlow.prototype.calcPolyPoints(this.$nodeData[from], this.$nodeData[to], newType, points);
 			if (!res)
 				return;
 			this.$draw.removeChild(this.$lineDom[id]);
@@ -581,11 +612,10 @@ GlobalNS.lineObject = {
 			} else
 				this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
 			
-			// 改变起止位置
-			this.$mpFrom.css({display:"block",left:res.start[0]-4+"px",top:res.start[1]-4+"px"}).data("p",res.start[0]+","+res.start[1]);
-			this.$mpTo.css({display:"block",left:res.end[0]-4+"px",top:res.end[1]-4+"px"}).data("p",res.end[0]+","+res.end[1]);
+			this.showMovePoints(null,[],res.start,res.end);
 		}
 		if (this.$focus == id) {
+			this.blurItem();
 			this.focusItem(id);
 		}
 		if (this.$editable) {
@@ -593,128 +623,6 @@ GlobalNS.lineObject = {
 		}
 	},
 	
-	// 通过计算,判断点击位置处于哪两个连线之间
-	getLineIndex : function(res, p0) {
-		var x0=p0[0];
-		var y0=p0[1];
-		
-		var ps = [res.start];
-		ps = ps.concat(res.points);
-		ps.push(res.end);
-		
-		var index=0;
-		if (ps.length <= 2) {
-			return index;
-		}
-		var array = [];
-		for (var i = 0; i < ps.length - 1; i++) {
-			var x1 = ps[i][0];
-			var y1 = ps[i][1];
-			var x2 = ps[i + 1][0];
-			var y2 = ps[i + 1][1];
-			if ((x1 - x0) * (x0 - x2) >= 0 && (y1 - y0) * (y0 - y2) >= 0) {
-				array.push(i);
-			}
-		}
-		
-		if(array.length==0){
-			for (var i = 0; i < ps.length - 1; i++) {
-				array.push(i);
-			}
-		}
-		
-		if (array.length == 1) {
-			index = array[0];
-		}else{
-			var d = 10000000;
-			for (var i = 0; i < array.length; i++) {
-				var temp = this.getMinLength(ps[array[i]],ps[array[i]+1],p0);
-				if (temp < d) {
-					d = temp;
-					index = array[i];
-				}
-			}
-		}
-		return index;
-	},
-	// 计算点m0到直线m1m2的最短距离
-	getMinLength : function(p1, p2, p0) {
-		var x0 = p0[0];
-		var y0 = p0[1];
-		var x1 = p1[0];
-		var y1 = p1[1];
-		var x2 = p2[0];
-		var y2 = p2[1];
-		var a = y2 - y1;
-		var b = x1 - x2;
-		var c = x2 * y1 - x1 * y2;
-		var d = Math.abs((a * x0 + b * y0 + c) / (Math.sqrt(a * a + b * b)));
-		return d;
-	},
-	// TODO 在线段中删除转折点
-	removeLinePoint : function(id,index,noStack) {
-	},
-	// TODO 在线段中增加转折点
-	// 设置折线中段的X坐标值（可左右移动时）或Y坐标值（可上下移动时）
-	addLinePoint : function(id, index, p0, noStack) {
-		if (!this.$lineData[id] || !p0 || !this.$lineData[id].type)
-			return false;
-		if (this.onLineMove != null && !this.onLineMove(id, p0))
-			return false;
-		
-		var M;
-		var from = this.$lineData[id].from;
-		var to = this.$lineData[id].to;
-		if(!this.$lineData[id].points){
-			this.$lineData[id].points = [];
-		}
-		if (isNaN(parseInt(index))) {
-			/*寻找当前点击位置x位于那条线段上(a,b)
-			 * 1.x应位于a,b之间([a.x,b.x],[a.y,b.y])
-			 * 2.到ab连线切点最近
-			 */
-			var res = GooFlow.prototype.calcPolyPoints(this.$nodeData[from], this.$nodeData[to], this.$lineData[id].type, this.$lineData[id].points);
-			index = this.getLineIndex(res, p0);
-			console.log('index='+index);
-		}
-		if (this.$undoStack && !noStack) {
-			var paras = [ id, index ];
-			this.pushOper("removeLinePoint", paras);
-		}
-		
-		p0[0]=p0[0];
-		p0[1]=p0[1]+20;
-		this.$lineData[id].points.splice(index, 0, p0);	// 在指定位置插入转折点
-		var res = GooFlow.prototype.calcPolyPoints(this.$nodeData[from], this.$nodeData[to], this.$lineData[id].type, this.$lineData[id].points);
-		this.$draw.removeChild(this.$lineDom[id]);
-		this.$lineDom[id] = GooFlow.prototype.drawPolyLine(id, res, this.$lineData[id].marked || this.$focus == id);
-		this.$draw.appendChild(this.$lineDom[id]);
-		
-		// 显示转折点方块
-		this.showMovePoints(res.points, id);
-		this.$mpFrom.css({display:"block",left:res.start[0]-4+"px",top:res.start[1]-4+"px"}).data("p",res.start[0]+","+res.start[1]);
-		this.$mpTo.css({display:"block",left:res.end[0]-4+"px",top:res.end[1]-4+"px"}).data("p",res.end[0]+","+res.end[1]);
-		
-		if (GooFlow.prototype.useSVG == "") {
-			this.$lineDom[id].childNodes[1].innerHTML = this.$lineData[id].name;
-			var Min = (res.start[0] > res.end[0] ? res.end[0] : res.start[0]);
-			if (Min > res.m2[0])
-				Min = res.m2[0];
-			if (Min > res.m1[0])
-				Min = res.m1[0];
-			this.$lineDom[id].childNodes[1].style.left = (res.m2[0] + res.m1[0]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetWidth / 2 + 4;
-			Min = (res.start[1] > res.end[1] ? res.end[1] : res.start[1]);
-			if (Min > res.m2[1])
-				Min = res.m2[1];
-			if (Min > res.m1[1])
-				Min = res.m1[1];
-			this.$lineDom[id].childNodes[1].style.top = (res.m2[1] + res.m1[1]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetHeight / 2 - 4;
-		} else
-			this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
-		if (this.$editable) {
-			this.$lineData[id].alt = true;
-		}
-	},
 	// 设置折线中段的X坐标值（可左右移动时）或Y坐标值（可上下移动时）
 	setLineM : function(id, M, noStack) {
 		if (!this.$lineData[id] || M < 0 || !this.$lineData[id].type || this.$lineData[id].type == "sl")
@@ -738,8 +646,7 @@ GlobalNS.lineObject = {
 		this.$lineData[id].points = [];
 		
 		// 改变起止位置
-		this.$mpFrom.css({display:"block",left:res.start[0]-4+"px",top:res.start[1]-4+"px"}).data("p",res.start[0]+","+res.start[1]);
-		this.$mpTo.css({display:"block",left:res.end[0]-4+"px",top:res.end[1]-4+"px"}).data("p",res.end[0]+","+res.end[1]);
+		this.showMovePoints(null,[],res.start,res.end);
 		
 		if (GooFlow.prototype.useSVG == "") {
 			this.$lineDom[id].childNodes[1].innerHTML = this.$lineData[id].name;
@@ -761,171 +668,18 @@ GlobalNS.lineObject = {
 			this.$lineData[id].alt = true;
 		}
 	},
-	// 删除转换线
-	delLine : function(id) {
-		if (!this.$lineData[id])
-			return;
-		if (this.onItemDel != null && !this.onItemDel(id, "line"))
-			return;
-		if (this.$undoStack) {
-			var paras = [ id, this.$lineData[id] ];
-			this.pushOper("addLine", paras);
-		}
-		this.$draw.removeChild(this.$lineDom[id]);
-		delete this.$lineData[id];
-		delete this.$lineDom[id];
-		if (this.$focus == id)
-			this.$focus = "";
-		--this.$lineCount;
-		if (this.$editable) {
-			// 在回退新增操作时,如果节点ID以this.$id+"_line_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
-			if (id.indexOf(this.$id + "_line_") < 0)
-				this.$deletedItem[id] = "line";
-			this.$mpFrom.hide().removeData("p");
-			this.$mpTo.hide().removeData("p");
-			this.hideMovePoints();
-		}
-		this.$lineOper.hide().removeData("tid");
+	// 添加标记样式
+	addMarkStyle:function(This){
+		$(This).addClass("item_mark").addClass("crosshair").css("border-color",GooFlow.prototype.color.mark||"#ff3300");
 	},
-	// 变更连线两个端点所连的结点
-	// 参数：要变更端点的连线ID，新的开始结点ID、新的结束结点ID；如果开始/结束结点ID是传入null或者""，则表示原端点不变
-	moveLinePoints : function(lineId, newStart, newEnd, noStack) {
-		if (newStart == newEnd)
-			return;
-		if (!lineId || !this.$lineData[lineId])
-			return;
-		if (newStart == null || newStart == "")
-			newStart = this.$lineData[lineId].from;
-		if (newEnd == null || newEnd == "")
-			newEnd = this.$lineData[lineId].to;
-
-		// 避免两个节点间不能有一条以上同向接连线
-		for ( var k in this.$lineData) {
-			if ((newStart == this.$lineData[k].from && newEnd == this.$lineData[k].to))
-				return;
-		}
-		if (this.onLinePointMove != null && !this.onLinePointMove(id, newStart, newEnd))
-			return;
-		if (this.$undoStack && !noStack) {
-			var paras = [ lineId, this.$lineData[lineId].from, this.$lineData[lineId].to ];
-			this.pushOper("moveLinePoints", paras);
-		}
-		if (newStart != null && newStart != "") {
-			this.$lineData[lineId].from = newStart;
-		}
-		if (newEnd != null && newEnd != "") {
-			this.$lineData[lineId].to = newEnd;
-		}
-		// 重建转换线
-		this.$draw.removeChild(this.$lineDom[lineId]);
-		this.addLineDom(lineId, this.$lineData[lineId]);
-		if (this.$editable) {
-			this.$lineData[lineId].alt = true;
-		}
-	},
-
-	// 用颜色标注/取消标注一个结点或转换线，常用于显示重点或流程的进度。
-	// 这是一个在编辑模式中无用,但是在纯浏览模式中非常有用的方法，实际运用中可用于跟踪流程的进度。
-	markItem : function(id, type, mark) {
-		if (type == "node") {
-			if (!this.$nodeData[id])
-				return;
-			if (this.onItemMark != null && !this.onItemMark(id, "node", mark))
-				return;
-			this.$nodeData[id].marked = mark || false;
-			if (mark) {
-				this.$nodeDom[id].addClass("item_mark");
-				jq.css("border-color", GooFlow.prototype.color.mark);
-			} else {
-				this.$nodeDom[id].removeClass("item_mark");
-				if (id != this.$focus)
-					jq.css("border-color", "transparent");
-			}
-
-		} else if (type == "line") {
-			if (!this.$lineData[id])
-				return;
-			if (this.onItemMark != null && !this.onItemMark(id, "line", mark))
-				return;
-			this.$lineData[id].marked = mark || false;
-			if (GooFlow.prototype.useSVG != "") {
-				if (mark) {
-					this.$nodeDom[id].childNodes[1].setAttribute("stroke", GooFlow.prototype.color.mark || "#ff3300");
-					this.$nodeDom[id].childNodes[1].setAttribute("marker-end", "url(#arrow2)");
-				} else {
-					this.$nodeDom[id].childNodes[1].setAttribute("stroke", GooFlow.prototype.color.line || "#3892D3");
-					this.$nodeDom[id].childNodes[1].setAttribute("marker-end", "url(#arrow1)");
-				}
-			} else {
-				if (mark)
-					this.$nodeDom[id].strokeColor = GooFlow.prototype.color.mark || "#ff3300";
-				else
-					this.$nodeDom[id].strokeColor = GooFlow.prototype.color.line || "#3892D3"
-			}
-		}
-		if (this.$undoStatck) {
-			var paras = [ id, type, !mark ];
-			this.pushOper("markItem", paras);
-		}
-	},
-	// 创建用于线段转折点移动的小方块
-	createMovePoints:function(num){
-		this.$mps = [];
-		for (var i = 0; i < num; i++) {
-			var $mp = $("<div class='GooFlow_line_mp1' style='display:none'></div>").appendTo(this.$workArea).data('index', i);
-			$mp.draggable();
-//			$mp.on( "drag", function( event, ui ) {} );
-			$mp.on( "dragstop",{inthis:this}, function( event, ui ) {
-				var This = event.data.inthis;
-				This.switchToolBtn("cursor");
-				var $mp = $(this);
-				var p = [ ui.position.left, ui.position.top ];
-				var index = $mp.data("index");
-				var id = $mp.data("tid");
-				This.$lineData[id].points.splice(index, 1, p);
-//				$mp.hide();
-				
-				var from = This.$nodeData[This.$lineData[id].from];
-				var to = This.$nodeData[This.$lineData[id].to];
-				res = GooFlow.prototype.calcPolyPoints(from, to, This.$lineData[id].type, This.$lineData[id].points);
-				
-				This.$draw.removeChild(This.$lineDom[id]);
-				This.$lineDom[id] = GooFlow.prototype.drawPolyLine(id, res, This.$lineData[id].marked || This.$focus == id);
-				This.$draw.appendChild(This.$lineDom[id]);
-				
-				// 显示转折点方块
-				This.showMovePoints(res.points, id);
-				// 修改起止点位置
-				This.$mpFrom.css({display:"block",left:res.start[0]-4+"px",top:res.start[1]-4+"px"}).data("p",res.start[0]+","+res.start[1]);
-				This.$mpTo.css({display:"block",left:res.end[0]-4+"px",top:res.end[1]-4+"px"}).data("p",res.end[0]+","+res.end[1]);
-			} );
-			this.$mps.push($mp);
-		}
-	},
-	// 显示用于移动的小方块
-	showMovePoints : function(points, id) {
-		for (var i = 0; i < this.$mps.length; i++) {
-			if (i < points.length) {
-				this.$mps[i].css({display:"block",left:points[i][0]-4+"px",top:points[i][1]-4+"px"}).data("p",points[i][0]+","+points[i][1]);
-				this.$mps[i].data('tid',id);
-			}else{
-				this.$mps[i].hide().removeData("p").removeData("tid");
-			}
-		}
-	},
-	hideMovePoints:function(points){
-		if (points && points instanceof Array) {
-			for (var i = 0; i < points.length; i++) {
-				this.$mps[i].hide().removeData("p").removeData("tid");
-			}
+	// 删除标记样式
+	removeMarkStyle:function(This){
+		$(This).removeClass("item_mark").removeClass("crosshair");
+		if (This.id == this.$focus) {
+			$(This).css("border-color", GooFlow.prototype.color.line || "#3892D3");
 		} else {
-			for (var i = 0; i < this.$mps.length; i++) {
-				this.$mps[i].hide().removeData("p").removeData("tid");
-			}
+			$(This).css("border-color", GooFlow.prototype.color.node || "#A1DCEB");
 		}
-	},
-	// TODO 根据方块位置划线
-	regMovePointsEvent:function(){
 	},
 	f:function(){}
 }
