@@ -13,83 +13,49 @@ GlobalNS.lineObject = {
 		
 		var poly, strPath;
 		
-		if (GooFlow.prototype.useSVG != "") {
-			poly = document.createElementNS("http://www.w3.org/2000/svg", "g");
-			var hi = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			if (id != "")
-				poly.setAttribute("id", id);
-			poly.setAttribute("from", sp[0] + "," + sp[1]);
-			poly.setAttribute("to", ep[0] + "," + ep[1]);
-			hi.setAttribute("visibility", "hidden");
-			hi.setAttribute("stroke-width", 9);
-			hi.setAttribute("fill", "none");
-			hi.setAttribute("stroke", "white");
-			strPath = "M " + sp[0] + " " + sp[1];
-			if (points && points.length > 0) {
-				for (var i = 0; i < points.length; i++) {
-					strPath += " L" + points[i][0] + " " + points[i][1];
-				}
+		poly = document.createElementNS("http://www.w3.org/2000/svg", "g");
+		var hi = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		if (id != "")
+			poly.setAttribute("id", id);
+		poly.setAttribute("from", sp[0] + "," + sp[1]);
+		poly.setAttribute("to", ep[0] + "," + ep[1]);
+		hi.setAttribute("visibility", "hidden");
+		hi.setAttribute("stroke-width", 9);
+		hi.setAttribute("fill", "none");
+		hi.setAttribute("stroke", "white");
+		strPath = "M " + sp[0] + " " + sp[1];
+		if (points && points.length > 0) {
+			for (var i = 0; i < points.length; i++) {
+				strPath += " L" + points[i][0] + " " + points[i][1];
 			}
-			strPath += " L" + ep[0] + " " + ep[1];
-			hi.setAttribute("d", strPath);
-			hi.setAttribute("pointer-events", "stroke");
-			path.setAttribute("d", strPath);
-			path.setAttribute("stroke-width", 1.4);
-			path.setAttribute("stroke-linecap", "round");
-			path.setAttribute("fill", "none");
-			if (mark) {
-				path.setAttribute("stroke", GooFlow.prototype.color.mark || "#ff3300");
-				path.setAttribute("marker-end", "url(#arrow2)");
-			} else {
-				path.setAttribute("stroke", GooFlow.prototype.color.line || "#3892D3");
-				path.setAttribute("marker-end", "url(#arrow1)");
-			}
-			poly.appendChild(hi);
-			poly.appendChild(path);
-			var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-			text.setAttribute("fill", GooFlow.prototype.color.font || "#333");
-			poly.appendChild(text);
-			var x = (m2[0] + m1[0]) / 2;
-			var y = (m2[1] + m1[1]) / 2;
-			text.setAttribute("text-anchor", "middle");
-			text.setAttribute("x", x);
-			text.setAttribute("y", y);
-			text.style.cursor = "text";
-			poly.style.cursor = "pointer";
-		} else {
-			poly = document.createElement("v:Polyline");
-			if (id != "")
-				poly.id = id;
-			poly.filled = "false";
-			strPath = sp[0] + "," + sp[1];
-			if (points && points.length > 0) {
-				for (var i = 0; i < points.length; i++) {
-					strPath += " " + points[i][0] + "," + points[i][1];
-				}
-			}
-			strPath += " " + ep[0] + "," + ep[1];
-			poly.points.value = strPath;
-			poly.setAttribute("fromTo", sp[0] + "," + sp[1] + "," + ep[0] + "," + ep[1]);
-			poly.strokeWeight = "1.2";
-			poly.stroke.EndArrow = "Block";
-			var text = document.createElement("div");
-			// text.innerHTML=id;
-			poly.appendChild(text);
-			var x = (m2[0] - m1[0]) / 2;
-			var y = (m2[1] - m1[1]) / 2;
-			if (x < 0)
-				x = x * -1;
-			if (y < 0)
-				y = y * -1;
-			text.style.left = x + "px";
-			text.style.top = y - 4 + "px";
-			poly.style.cursor = "pointer";
-			if (mark)
-				poly.strokeColor = GooFlow.prototype.color.mark || "#ff3300";
-			else
-				poly.strokeColor = GooFlow.prototype.color.line || "#3892D3";
 		}
+		strPath += " L" + ep[0] + " " + ep[1];
+		hi.setAttribute("d", strPath);
+		hi.setAttribute("pointer-events", "stroke");
+		path.setAttribute("d", strPath);
+		path.setAttribute("stroke-width", 1.4);
+		path.setAttribute("stroke-linecap", "round");
+		path.setAttribute("fill", "none");
+		if (mark) {
+			path.setAttribute("stroke", GooFlow.prototype.color.mark || "#ff3300");
+			path.setAttribute("marker-end", "url(#arrow2)");
+		} else {
+			path.setAttribute("stroke", GooFlow.prototype.color.line || "#3892D3");
+			path.setAttribute("marker-end", "url(#arrow1)");
+		}
+		poly.appendChild(hi);
+		poly.appendChild(path);
+		var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+		text.setAttribute("fill", GooFlow.prototype.color.font || "#333");
+		poly.appendChild(text);
+		var x = (m2[0] + m1[0]) / 2;
+		var y = (m2[1] + m1[1]) / 2;
+		text.setAttribute("text-anchor", "middle");
+		text.setAttribute("x", x);
+		text.setAttribute("y", y);
+		text.style.cursor = "text";
+		poly.style.cursor = "pointer";
 		return poly;
 	},
 	// 根据指定的起止点,获取连线转折点信息
@@ -349,25 +315,8 @@ GlobalNS.lineObject = {
 		this.$lineDom[id] = GooFlow.prototype.drawPolyLine(id, res, lineData.marked);
 		
 		this.$draw.appendChild(this.$lineDom[id]);
-		if (GooFlow.prototype.useSVG == "") {
-			this.$lineDom[id].childNodes[1].innerHTML = lineData.name;
-			if (lineData.type != "sl") {
-				var Min = (res.start[0] > res.end[0] ? res.end[0] : res.start[0]);
-				if (Min > res.m2[0])
-					Min = res.m2[0];
-				if (Min > res.m1[0])
-					Min = res.m1[0];
-				this.$lineDom[id].childNodes[1].style.left = (res.m2[0] + res.m1[0]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetWidth / 2 + 4;
-				Min = (res.start[1] > res.end[1] ? res.end[1] : res.start[1]);
-				if (Min > res.m2[1])
-					Min = res.m2[1];
-				if (Min > res.m1[1])
-					Min = res.m1[1];
-				this.$lineDom[id].childNodes[1].style.top = (res.m2[1] + res.m1[1]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetHeight / 2;
-			} else
-				this.$lineDom[id].childNodes[1].style.left = ((res.end[0] - res.start[0]) * (res.end[0] > res.start[0] ? 1 : -1) - this.$lineDom[id].childNodes[1].offsetWidth) / 2 + 4;
-		} else
-			this.$lineDom[id].childNodes[2].textContent = lineData.name;
+		this.$lineDom[id].childNodes[2].textContent = lineData.name;
+			
 	},
 	// 增加一条线
 	addLine : function(id, json) {
@@ -469,25 +418,7 @@ GlobalNS.lineObject = {
 			this.$draw.appendChild(this.$lineDom[i]);
 			//this.showMovePoints(i, res.points, res.start, res.end);
 			
-			if (GooFlow.prototype.useSVG == "") {
-				this.$lineDom[i].childNodes[1].innerHTML = this.$lineData[i].name;
-				if (this.$lineData[i].type != "sl") {
-					var Min = (res.start[0] > res.end[0] ? res.end[0] : res.start[0]);
-					if (Min > res.m2[0])
-						Min = res.m2[0];
-					if (Min > res.m1[0])
-						Min = res.m1[0];
-					this.$lineDom[i].childNodes[1].style.left = (res.m2[0] + res.m1[0]) / 2 - Min - this.$lineDom[i].childNodes[1].offsetWidth / 2 + 4;
-					Min = (res.start[1] > res.end[1] ? res.end[1] : res.start[1]);
-					if (Min > res.m2[1])
-						Min = res.m2[1];
-					if (Min > res.m1[1])
-						Min = res.m1[1];
-					this.$lineDom[i].childNodes[1].style.top = (res.m2[1] + res.m1[1]) / 2 - Min - this.$lineDom[i].childNodes[1].offsetHeight / 2 - 4;
-				} else
-					this.$lineDom[i].childNodes[1].style.left = ((res.end[0] - res.start[0]) * (res.end[0] > res.start[0] ? 1 : -1) - this.$lineDom[i].childNodes[1].offsetWidth) / 2 + 4;
-			} else
-				this.$lineDom[i].childNodes[2].textContent = this.$lineData[i].name;
+			this.$lineDom[i].childNodes[2].textContent = this.$lineData[i].name;
 		}
 	},
 	// 重新设置连线的样式 newType= "sl":直线, "lr":中段可左右移动型折线, "tb":中段可上下移动型折线
@@ -523,11 +454,7 @@ GlobalNS.lineObject = {
 			this.$draw.removeChild(this.$lineDom[id]);
 			this.$lineDom[id] = GooFlow.prototype.drawPolyLine(id, res, this.$lineData[id].marked || this.$focus == id);
 			this.$draw.appendChild(this.$lineDom[id]);
-			if (GooFlow.prototype.useSVG == "") {
-				this.$lineDom[id].childNodes[1].innerHTML = this.$lineData[id].name;
-				this.$lineDom[id].childNodes[1].style.left = ((res.end[0] - res.start[0]) * (res.end[0] > res.start[0] ? 1 : -1) - this.$lineDom[id].childNodes[1].offsetWidth) / 2 + 4;
-			} else
-				this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
+			this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
 			
 			this.showMovePoints(null,[],res.start,res.end);
 		}
@@ -564,26 +491,27 @@ GlobalNS.lineObject = {
 		
 		// 改变起止位置
 		this.showMovePoints(null,[],res.start,res.end);
-		
-		if (GooFlow.prototype.useSVG == "") {
-			this.$lineDom[id].childNodes[1].innerHTML = this.$lineData[id].name;
-			var Min = (res.start[0] > res.end[0] ? res.end[0] : res.start[0]);
-			if (Min > res.m2[0])
-				Min = res.m2[0];
-			if (Min > res.m1[0])
-				Min = res.m1[0];
-			this.$lineDom[id].childNodes[1].style.left = (res.m2[0] + res.m1[0]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetWidth / 2 + 4;
-			Min = (res.start[1] > res.end[1] ? res.end[1] : res.start[1]);
-			if (Min > res.m2[1])
-				Min = res.m2[1];
-			if (Min > res.m1[1])
-				Min = res.m1[1];
-			this.$lineDom[id].childNodes[1].style.top = (res.m2[1] + res.m1[1]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetHeight / 2 - 4;
-		} else
-			this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
+		this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
 		if (this.$editable) {
 			this.$lineData[id].alt = true;
 		}
+	},
+	changeLineStart : function(lineEnd, pos) {
+		line.childNodes[0].setAttribute("d", "M " + pos[0] + " " + pos[1] + " L " + lineEnd.x + " " + lineEnd.y);
+		line.childNodes[1].setAttribute("d", "M " + pos[0] + " " + pos[1] + " L " + lineEnd.x + " " + lineEnd.y);
+		if (line.childNodes[1].getAttribute("marker-end") == "url(\"#arrow2\")")
+			line.childNodes[1].setAttribute("marker-end", "url(#arrow3)");
+		else
+			line.childNodes[1].setAttribute("marker-end", "url(#arrow2)");
+	},
+	changeLineEnd : function(lineStart, pos) {
+		var line = document.getElementById("GooFlow_tmp_line");
+		line.childNodes[0].setAttribute("d", "M " + lineStart.x + " " + lineStart.y + " L " + pos[0] + " " + pos[1]);
+		line.childNodes[1].setAttribute("d", "M " + lineStart.x + " " + lineStart.y + " L " + pos[0] + " " + pos[1]);
+		if (line.childNodes[1].getAttribute("marker-end") == "url(\"#arrow2\")")
+			line.childNodes[1].setAttribute("marker-end", "url(#arrow3)");
+		else
+			line.childNodes[1].setAttribute("marker-end", "url(#arrow2)");
 	},
 	// 添加标记样式
 	addMarkStyle:function(This){

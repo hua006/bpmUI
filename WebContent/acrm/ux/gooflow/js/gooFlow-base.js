@@ -206,36 +206,21 @@ function GooFlow(bgDiv,property){
 			This.$max++;
 		});
 		
-		//划线或改线时用的绑定(鼠标指针在指定的元素中移动)
+		// 划线或改线时用的绑定(鼠标指针在指定的元素中移动)
 		this.$workArea.mousemove({inthis:this},function(e){
 			if(e.data.inthis.$nowType!="direct"&&!e.data.inthis.$mpTo.data("p"))	return;
 			var lineStart=$(this).data("lineStart");
 			var lineEnd=$(this).data("lineEnd");
 			if(!lineStart&&!lineEnd)return;
 			
-			var ev=mousePosition(e),t=getElCoordinate(this);
-			var X,Y;
-			X=ev.x-t.left+this.parentNode.scrollLeft;
-			Y=ev.y-t.top+this.parentNode.scrollTop;
-			var line=document.getElementById("GooFlow_tmp_line");
-			if(lineStart){
-				if(GooFlow.prototype.useSVG!=""){
-					line.childNodes[0].setAttribute("d","M "+lineStart.x+" "+lineStart.y+" L "+X+" "+Y);
-					line.childNodes[1].setAttribute("d","M "+lineStart.x+" "+lineStart.y+" L "+X+" "+Y);
-					if(line.childNodes[1].getAttribute("marker-end")=="url(\"#arrow2\")")
-						line.childNodes[1].setAttribute("marker-end","url(#arrow3)");
-					else	line.childNodes[1].setAttribute("marker-end","url(#arrow2)");
-				}
-				else	line.points.value=lineStart.x+","+lineStart.y+" "+X+","+Y;
-			}else if(lineEnd){
-				if(GooFlow.prototype.useSVG!=""){
-					line.childNodes[0].setAttribute("d","M "+X+" "+Y+" L "+lineEnd.x+" "+lineEnd.y);
-					line.childNodes[1].setAttribute("d","M "+X+" "+Y+" L "+lineEnd.x+" "+lineEnd.y);
-					if(line.childNodes[1].getAttribute("marker-end")=="url(\"#arrow2\")")
-						line.childNodes[1].setAttribute("marker-end","url(#arrow3)");
-					else	line.childNodes[1].setAttribute("marker-end","url(#arrow2)");
-				}
-				else	line.points.value=X+","+Y+" "+lineEnd.x+","+lineEnd.y;
+			var ev = mousePosition(e), t = getElCoordinate(this);
+			var X, Y;
+			X = ev.x - t.left + this.parentNode.scrollLeft;
+			Y = ev.y - t.top + this.parentNode.scrollTop;
+			if (lineStart) {
+				e.data.inthis.changeLineEnd(lineStart, [ X, Y ]);
+			} else if (lineEnd) {
+				e.data.inthis.changeLineStart(lineEnd, [ X, Y ]);
 			}
 		});
 		// 划线或改线时用的绑定(在元素上放松鼠标按钮时)

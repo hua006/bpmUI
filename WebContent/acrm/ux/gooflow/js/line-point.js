@@ -216,23 +216,7 @@ GlobalNS.linePointObject = {
 		
 		// 显示转折点方块
 		this.showMovePoints(id, res.points, res.start, res.end);
-		
-		if (GooFlow.prototype.useSVG == "") {
-			this.$lineDom[id].childNodes[1].innerHTML = this.$lineData[id].name;
-			var Min = (res.start[0] > res.end[0] ? res.end[0] : res.start[0]);
-			if (Min > res.m2[0])
-				Min = res.m2[0];
-			if (Min > res.m1[0])
-				Min = res.m1[0];
-			this.$lineDom[id].childNodes[1].style.left = (res.m2[0] + res.m1[0]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetWidth / 2 + 4;
-			Min = (res.start[1] > res.end[1] ? res.end[1] : res.start[1]);
-			if (Min > res.m2[1])
-				Min = res.m2[1];
-			if (Min > res.m1[1])
-				Min = res.m1[1];
-			this.$lineDom[id].childNodes[1].style.top = (res.m2[1] + res.m1[1]) / 2 - Min - this.$lineDom[id].childNodes[1].offsetHeight / 2 - 4;
-		} else
-			this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
+		this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
 		if (this.$editable) {
 			this.$lineData[id].alt = true;
 		}
