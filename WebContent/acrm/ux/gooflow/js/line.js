@@ -2,89 +2,6 @@
 //绘制一条箭头线，并返回线的DOM
 GlobalNS.lineObject = {
 
-	// 画直线
-	drawLine2 : function(id, res, mark, dash) {
-		var sp = res.start;
-		var ep = res.end;
-		
-		var line; // 连线,一组元素的组合
-		if (GooFlow.prototype.useSVG != "") {
-			line = document.createElementNS("http://www.w3.org/2000/svg", "g"); // <g> 用于把相关元素进行组合的容器元素
-			var hi = document.createElementNS("http://www.w3.org/2000/svg", "path"); // <path> 定义一个路径
-			var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-
-			if (id != "")
-				line.setAttribute("id", id);
-			line.setAttribute("from", sp[0] + "," + sp[1]);
-			line.setAttribute("to", ep[0] + "," + ep[1]);
-//			hi.setAttribute("visibility", "hidden");
-			hi.setAttribute("stroke-width", 20);
-			hi.setAttribute("fill", "none");
-			hi.setAttribute("stroke", "green");
-			hi.setAttribute("d", "M " + sp[0] + " " + sp[1] + " L " + ep[0] + " " + ep[1]);
-			hi.setAttribute("pointer-events", "stroke");
-			path.setAttribute("d", "M " + sp[0] + " " + sp[1] + " L " + ep[0] + " " + ep[1]);
-			path.setAttribute("stroke-width", 1.4);
-			path.setAttribute("stroke-linecap", "round");
-			path.setAttribute("fill", "none");
-			if (dash)
-				path.setAttribute("style", "stroke-dasharray:6,5");
-			if (mark) {
-				path.setAttribute("stroke", GooFlow.prototype.color.mark || "#ff3300");
-				path.setAttribute("marker-end", "url(#arrow2)");
-			} else {
-				path.setAttribute("stroke", GooFlow.prototype.color.line || "#3892D3");
-				path.setAttribute("marker-end", "url(#arrow1)");
-			}
-			line.appendChild(hi);
-			line.appendChild(path);
-			line.style.cursor = "crosshair";
-			if (id != "" && id != "GooFlow_tmp_line") {
-				var text = document.createElementNS("http://www.w3.org/2000/svg", "text"); // <text> 定义一个文本
-				text.setAttribute("fill", GooFlow.prototype.color.font || "#333");
-				line.appendChild(text);
-				var x = (ep[0] + sp[0]) / 2;
-				var y = (ep[1] + sp[1]) / 2;
-				text.setAttribute("text-anchor", "middle");
-				text.setAttribute("x", x);
-				text.setAttribute("y", y);
-				line.style.cursor = "pointer";
-				text.style.cursor = "text";
-			}
-		} else {
-			line = document.createElement("v:polyline");
-			if (id != "")
-				line.id = id;
-			// line.style.position="absolute";
-			line.points.value = sp[0] + "," + sp[1] + " " + ep[0] + "," + ep[1];
-			line.setAttribute("fromTo", sp[0] + "," + sp[1] + "," + ep[0] + "," + ep[1]);
-			line.strokeWeight = "1.2";
-			line.stroke.EndArrow = "Block";
-			line.style.cursor = "crosshair";
-			if (id != "" && id != "GooFlow_tmp_line") {
-				var text = document.createElement("div");
-				// text.innerHTML=id;
-				line.appendChild(text);
-				var x = (ep[0] - sp[0]) / 2;
-				var y = (ep[1] - sp[1]) / 2;
-				if (x < 0)
-					x = x * -1;
-				if (y < 0)
-					y = y * -1;
-				text.style.left = x + "px";
-				text.style.top = y - 6 + "px";
-				line.style.cursor = "pointer";
-			}
-			if (dash)
-				line.stroke.dashstyle = "Dash";
-			if (mark)
-				line.strokeColor = GooFlow.prototype.color.mark || "#ff3300";
-			else
-				line.strokeColor = GooFlow.prototype.color.line || "#3892D3";
-			line.fillColor = GooFlow.prototype.color.line || "#3892D3";
-		}
-		return line;
-	},
 	// TODO 划折线
 	// 画一条可以有多个转折点的折线
 	drawPolyLine : function(id, res, mark) {
@@ -408,9 +325,9 @@ GlobalNS.lineObject = {
 	// 初始化折线中段的X/Y坐标,mType='rb'时为X坐标,mType='tb'时为Y坐标
 	getMValue : function(n1, n2, mType) {
 		if (mType == "lr") {
-			return (n1.left + n1.width / 2 + n2.left + n2.width / 2) / 2;
+			return parseInt((n1.left + n1.width / 2 + n2.left + n2.width / 2) / 2);
 		} else if (mType == "tb") {
-			return (n1.top + n1.height / 2 + n2.top + n2.height / 2) / 2;
+			return parseInt((n1.top + n1.height / 2 + n2.top + n2.height / 2) / 2);
 		}
 	},
 	

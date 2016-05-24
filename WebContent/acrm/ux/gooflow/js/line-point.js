@@ -1,7 +1,7 @@
 /*
- * 以下为连线移动功能的扩展属性与方法
+ * 以下为连线转折点相关的操作
  */
-GlobalNS.lineMoveObject = {
+GlobalNS.linePointObject = {
 	$mpFrom : null,		// 用于移动连线开始点的小方块
 	$mpTo : null,		// 用于移动连线结束点的小方块
 	$mps : [],			// 用于移动连线转折点的小方块
@@ -296,4 +296,4 @@ GlobalNS.lineMoveObject = {
 	},
 	f:1
 }
-$.extend(GooFlow.prototype, GlobalNS.lineMoveObject)
+$.extend(GooFlow.prototype, GlobalNS.linePointObject)

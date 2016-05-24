@@ -28,7 +28,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/gooFlow-prototype.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/node.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/line.js<%=s%>"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/line-move.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/line-point.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/area.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/ux/gooflow/js/initData.js<%=s%>"></script>
 
