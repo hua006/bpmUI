@@ -97,6 +97,7 @@ v\:group,v\:rect,v\:imagedata,v\:oval,v\:line,v\:polyline,v\:stroke,v\:textbox {
 	filter:Alpha(Opacity=60);-moz-opacity:0.6;opacity: 0.6;z-index:10
 }
 .GooFlow .item_focus{border:#3892D3 1px solid}
+/*标记流程,常用于显示重点或流程的进度。*/
 .GooFlow .item_mark{border:#ff3300 1px solid}
 .GooFlow .item_mark td{cursor:crosshair}
 
@@ -106,11 +107,11 @@ v\:group,v\:rect,v\:imagedata,v\:oval,v\:line,v\:polyline,v\:stroke,v\:textbox {
 	filter:Alpha(Opacity=50);-moz-opacity:0.5;opacity: 0.5;z-index:10000;
 }
 .GooFlow .GooFlow_line_mp1{
-	width:9px;height:9px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
+	width:10px;height:10px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
 	position:absolute;z-index:9999;background:#333;cursor:move
 }
 .GooFlow .GooFlow_line_mp{
-	width:9px;height:9px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
+	width:10px;height:10px;filter:Alpha(Opacity=40);-moz-opacity:0.4;opacity:0.4;overflow:hidden;
 	position:absolute;z-index:9999;background:#333;cursor:crosshair
 }
 .GooFlow .GooFlow_line_move{filter:Alpha(Opacity=50);-moz-opacity:0.5;opacity:0.5;overflow:hidden;position:absolute;z-index:9999;}

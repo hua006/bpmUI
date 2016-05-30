@@ -1,7 +1,7 @@
 /*
  * 以下为连线转折点相关的操作
  */
-GlobalNS.linePointObject = {
+var temp = {
 	$mpFrom : null,		// 用于移动连线开始点的小方块
 	$mpTo : null,		// 用于移动连线结束点的小方块
 	$mps : [],			// 用于移动连线转折点的小方块
@@ -9,8 +9,8 @@ GlobalNS.linePointObject = {
 	// 创建用于线段转折点移动的小方块
 	initMovePoints:function(num){
 		// 起止点
-		this.$mpFrom = $("<div class='GooFlow_line_mp' style='display:none'></div>");
-		this.$mpTo = $("<div class='GooFlow_line_mp' style='display:none'></div>");
+		this.$mpFrom = $("<div class='GooFlow_line_mp' style='display:none'></div>").data('pointType','lineStart');
+		this.$mpTo = $("<div class='GooFlow_line_mp' style='display:none'></div>").data('pointType','lineEnd');
 		this.$workArea.append(this.$mpFrom).append(this.$mpTo);
 		
 		// 转折点
@@ -20,37 +20,77 @@ GlobalNS.linePointObject = {
 			this.$mps.push($mp);
 		}
 	},
-	//初始化连线转折点操作事件
+	// 初始化连线转折点操作事件
 	regMovePointsEvent:function(){
-		this.$mpFrom.on("mousedown",{inthis:this},function(e){
-			var This=e.data.inthis;
-			This.switchToolBtn("cursor");
-			var ps=This.$mpFrom.data("p").split(",");
-			var pe=This.$mpTo.data("p").split(",");
-			$(this).hide();
-			This.$workArea.data("lineEnd",{"x":pe[0],"y":pe[1],"id":This.$lineData[This.$lineOper.data("tid")].to}).css("cursor","crosshair");
-			var res = This.getResPoint([parseInt(ps[0]), parseInt(ps[1]) ], [parseInt(pe[0]), parseInt(pe[1]) ]);
-			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true);
-			This.$draw.appendChild(line);
-			return false;
-		});
-		this.$mpTo.on("mousedown",{inthis:this},function(e){
-			var This=e.data.inthis;
-			This.switchToolBtn("cursor");
-			var ps=This.$mpFrom.data("p").split(",");
-			var pe=This.$mpTo.data("p").split(",");
-			$(this).hide();
-			This.$workArea.data("lineStart",{"x":ps[0],"y":ps[1],"id":This.$lineData[This.$lineOper.data("tid")].from}).css("cursor","crosshair");
-			var res = This.getResPoint([parseInt(ps[0]), parseInt(ps[1]) ], [parseInt(pe[0]), parseInt(pe[1]) ]);
-			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true);
-			This.$draw.appendChild(line);
-			return false;
-		});
+		
+		this.$mpFrom.draggable({containment:'parent'});
+		this.$mpTo.draggable({containment:'parent'});
+		
+		var array = [this.$mpFrom,this.$mpTo];
+		for(var index in array){
+			array[index].on("dragstart",{inthis:this},function(e){
+				console.log('$mpFrom dragstart');
+				var This = e.data.inthis;
+				This.switchToolBtn("cursor");
+				var ps = This.$mpFrom.data("p").split(",");
+				var pe = This.$mpTo.data("p").split(",");
+				$(this).hide();
+				var pointType = $(this).data('pointType');
+				if(This.$lineData[This.$lineOper.data("tid")])
+				if (pointType == 'lineStart') {
+					This.$workArea.data('lineEnd',{"x":pe[0],"y":pe[1],"id":This.$lineData[This.$lineOper.data("tid")].to}).css("cursor","crosshair");
+				}else{
+					This.$workArea.data('lineStart',{"x":ps[0],"y":ps[1],"id":This.$lineData[This.$lineOper.data("tid")].from}).css("cursor","crosshair");
+				}
+				var res = This.getResPoint([parseInt(ps[0]), parseInt(ps[1]) ], [parseInt(pe[0]), parseInt(pe[1]) ]);
+				var line = GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true);
+				This.$draw.appendChild(line);
+			});
+			
+			array[index].on("drag",{inthis:this}, function( event, ui) {
+				console.log('$mpFrom drag');
+				var This = event.data.inthis;
+				var $workArea = This.$workArea;
+				var lineStart = $workArea.data("lineStart");
+				var lineEnd = $workArea.data("lineEnd");
+				// 鼠标移动时显示辅助线
+				var mPos = This.getMousePos(event||window.event);
+				if (lineStart) {
+					This.changeLineEnd(lineStart, mPos);
+				} else if (lineEnd) {
+					This.changeLineStart(lineEnd, mPos);
+				}
+			});
+			array[index].on("dragstop",{inthis:this}, function( event, ui) {
+				console.log('$mpFrom dragstop');
+				var This = event.data.inthis;
+				var tmp = document.getElementById("GooFlow_tmp_line");
+				if (tmp) {
+					var $workArea = This.$workArea;
+					var lineStart = $workArea.data("lineStart");
+					var lineEnd = $workArea.data("lineEnd");
+					if (lineStart) {
+						This.removeMarkStyle($('#' + lineStart.id));
+					}
+					if (lineEnd) {
+						This.removeMarkStyle($('#' + lineEnd.id));
+					}
+					$workArea.css("cursor", "auto").removeData("lineStart").removeData("lineEnd");
+					This.hideMovePoints();
+					This.$draw.removeChild(tmp);
+					var focusId = This.$focus;
+					This.blurItem();
+					This.focusItem(focusId, false);
+				}
+			});
+		}
+		
 		for(var index in this.$mps){
 			var $mp = this.$mps[index];
-			$mp.draggable();
-//			$mp.on( "drag", function( event, ui ) {} );
-			$mp.on( "dragstop",{inthis:this}, function( event, ui ) {
+			
+			$mp.draggable({containment:'parent'});
+			$mp.on("dragstop",{inthis:this}, function( event, ui ) {
+				var pw = 5;	// 小方块宽度的一半
 				var This = event.data.inthis;
 				This.switchToolBtn("cursor");
 				var $mp = $(this);
@@ -58,12 +98,9 @@ GlobalNS.linePointObject = {
 				var id = $mp.data("tid");
 				var oldPoint = $mp.data('p').split(',');
 				var op =[parseInt(oldPoint[0]),parseInt(oldPoint[1])];
-				console.log('oldPoint');
-				console.log(op);
-				
-				var np = [ ui.position.left, ui.position.top ];
+				var np = [ui.position.left+pw, ui.position.top+pw];
 				This.dragMovePointFn(id, index, op, np);
-			} );
+			});
 		}
 	},
 	/**
@@ -75,9 +112,6 @@ GlobalNS.linePointObject = {
 		
 		if (this.$undoStack && !noStack) {
 			var paras = [ id, index, np, op];
-			console.log(index);
-			console.log(np);
-			console.log(op);
 			this.pushOper('dragMovePointFn', paras);
 		}
 		$mp.data('p',np[0]+','+np[1]);
@@ -95,9 +129,14 @@ GlobalNS.linePointObject = {
 		// 显示转折点方块
 		this.showMovePoints(id, res.points, res.start, res.end);
 	},
+	moveStartEndPoint:function(ps, pe){
+		var pw = 5;	// 小方块宽度的一半
+		this.$mpFrom.css({left:ps[0]-pw+"px",top:ps[1]-pw+"px"}).data("p",ps[0]+","+ps[1]);
+		this.$mpTo.css({left:pe[0]-pw+"px",top:pe[1]-pw+"px"}).data("p",pe[0]+","+pe[1]);
+	},
 	// 显示用于移动的小方块
 	showMovePoints : function(id, points, ps, pe) {
-		var pw = 4;	// 小方块宽度的一半
+		var pw = 5;	// 小方块宽度的一半
 		for (var i = 0; i < this.$mps.length; i++) {
 			if (points && i < points.length) {
 				this.$mps[i].css({display:"block",left:points[i][0]-pw+"px",top:points[i][1]-pw+"px"}).data("p",points[i][0]+","+points[i][1]).data('tid',id);
@@ -121,6 +160,7 @@ GlobalNS.linePointObject = {
 		}
 		this.$mpTo.hide().removeData("p");
 		this.$mpFrom.hide().removeData("p");
+		console.log('hideMovePoints');
 	},
 	// 通过计算,判断点击位置处于哪两个连线之间
 	getLinePointIndex : function(res, p0) {
@@ -239,7 +279,7 @@ GlobalNS.linePointObject = {
 		this.$lineDom[id].childNodes[2].textContent = this.$lineData[id].name;
 		
 		// 显示转折点方块
-		this.showMovePoints(id, res.points, res.start, res.end);
+		 this.showMovePoints(id, res.points, res.start, res.end);
 		
 	},
 	// 变更连线两个端点所连的结点
@@ -279,5 +319,5 @@ GlobalNS.linePointObject = {
 		}
 	},
 	f:1
-}
-$.extend(GooFlow.prototype, GlobalNS.linePointObject)
+};
+$.extend(GooFlow.prototype, temp);

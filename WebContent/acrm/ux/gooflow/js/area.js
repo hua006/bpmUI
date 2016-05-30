@@ -1,24 +1,27 @@
 ////////////////////////以下为区域分组块操作
-GlobalNS.areaObject = {
+var temp = {
 
 	f:1,
 	initGroup:function(width,height){
-		this.$group=$("<div class='GooFlow_work_group' style='width:"+width*3+"px;height:"+height*3+"px'></div>");//存放背景区域的容器
+		this.$group=$("<div class='GooFlow_work_group' style='width:"+width+"px;height:"+height+"px'></div>");//存放背景区域的容器
 		this.$workArea.prepend(this.$group);
 		if(!this.$editable)	return;
 		//区域划分框操作区的事件绑定
 		this.$group.on("mousedown",{inthis:this},function(e){//绑定RESIZE功能以及移动功能
-			if(e.button==2)return false;
-			var This=e.data.inthis;
-			if(This.$nowType!="group")	return;
+			if (e.button == 2)
+				return false;
+			if (!e)
+				e = window.event;
+			var This = e.data.inthis;
+			if (This.$nowType != "group")
+				return;
 			if(This.$textArea.css("display")=="block"){
 				This.setName(This.$textArea.data("id"),This.$textArea.val(),"area");
 				This.$textArea.val("").removeData("id").hide();
 				return false;
 			};
-			if(!e)e=window.event;
-			var cursor=$(e.target).css("cursor");
-			var id=e.target.parentNode;
+			var cursor = $(e.target).css("cursor");
+			var id = e.target.parentNode;
 			switch(cursor){
 				case "nw-resize":id=id.parentNode;break;
 				case "w-resize":id=id.parentNode;break;
@@ -26,73 +29,21 @@ GlobalNS.areaObject = {
 				case "move":break;
 				default:return;
 			}
-			id=id.id;
-			var hack=1;
-			if(navigator.userAgent.indexOf("8.0")!=-1)	hack=0;
-			var ev=mousePosition(e),t=getElCoordinate(This.$workArea[0]);
-	
-			var X,Y;
-			X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
-			Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop;
-			if(cursor!="move"){
-				This.$ghost.css({display:"block",
-					width:This.$areaData[id].width-2+"px", height:This.$areaData[id].height-2+"px",
-					top:This.$areaData[id].top+t.top-This.$workArea[0].parentNode.scrollTop+hack+"px",
-					left:This.$areaData[id].left+t.left-This.$workArea[0].parentNode.scrollLeft+hack+"px",cursor:cursor});
-				var vX=(This.$areaData[id].left+This.$areaData[id].width)-X;
-				var vY=(This.$areaData[id].top+This.$areaData[id].height)-Y;
+			id = id.id;
+			
+			// 鼠标当前位置
+			var ms = This.getMousePos(e);
+			// 线段当前位置
+			var ghostData = This.$areaData[id];//{X:0,Y0}
+
+			if (cursor == 'pointer') {
+				// 注册矩形辅助框移动事件
+				This.regGhostMove(id, ghostData, ms, 'area');
+			} else {
+				// 注册矩形辅助框移动事件
+				This.regGhostResize(cursor, id, ghostData, ms, 'area');
 			}
-			else{
-				var vX=X-This.$areaData[id].left;
-				var vY=Y-This.$areaData[id].top;
-			}
-			var isMove=false;
-			This.$ghost.css("cursor",cursor);
-			document.onmousemove=function(e){
-				if(!e)e=window.event;
-				var ev=mousePosition(e);
-				if(cursor!="move"){
-					X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft-This.$areaData[id].left+vX;
-					Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop-This.$areaData[id].top+vY;
-					if(X<200)	X=200;
-					if(Y<100)	Y=100;
-					switch(cursor){
-						case "nw-resize":This.$ghost.css({width:X-2+"px",height:Y-2+"px"});break;
-						case "w-resize":This.$ghost.css({width:X-2+"px"});break;
-						case "n-resize":This.$ghost.css({height:Y-2+"px"});break;
-					}
-				}
-				else{
-					if(This.$ghost.css("display")=="none"){
-						This.$ghost.css({display:"block",
-							width:This.$areaData[id].width-2+"px", height:This.$areaData[id].height-2+"px",
-							top:This.$areaData[id].top+t.top-This.$workArea[0].parentNode.scrollTop+hack+"px",
-							left:This.$areaData[id].left+t.left-This.$workArea[0].parentNode.scrollLeft+hack+"px",cursor:cursor});
-					}
-					X=ev.x-vX;Y=ev.y-vY;
-					if(X<t.left-This.$workArea[0].parentNode.scrollLeft)
-						X=t.left-This.$workArea[0].parentNode.scrollLeft;
-					else if(X+This.$workArea[0].parentNode.scrollLeft+This.$areaData[id].width>t.left+This.$workArea.width())
-						X=t.left+This.$workArea.width()-This.$workArea[0].parentNode.scrollLeft-This.$areaData[id].width;
-					if(Y<t.top-This.$workArea[0].parentNode.scrollTop)
-						Y=t.top-This.$workArea[0].parentNode.scrollTop;
-					else if(Y+This.$workArea[0].parentNode.scrollTop+This.$areaData[id].height>t.top+This.$workArea.height())
-						Y=t.top+This.$workArea.height()-This.$workArea[0].parentNode.scrollTop-This.$areaData[id].height;
-					This.$ghost.css({left:X+hack+"px",top:Y+hack+"px"});
-				}
-				isMove=true;
-			}
-			document.onmouseup=function(e){
-				This.$ghost.empty().hide();
-				document.onmousemove=null;
-				document.onmouseup=null;
-				if(!isMove)return;
-				if(cursor!="move")
-					This.resizeArea(id,This.$ghost.outerWidth(),This.$ghost.outerHeight());
-				else
-					This.moveArea(id,X+This.$workArea[0].parentNode.scrollLeft-t.left,Y+This.$workArea[0].parentNode.scrollTop-t.top);
-				return false;
-		  	}
+			
 		});
 		//绑定修改文字说明功能
 		this.$group.on("dblclick",{inthis:this},function(e){
@@ -138,12 +89,16 @@ GlobalNS.areaObject = {
 				return false;
 			}
 			if(e.data.inthis.$ghost.css("display")=="none"){
-				var X,Y;
-				var ev=mousePosition(e),t=getElCoordinate(this);
-				X=ev.x-t.left+this.parentNode.parentNode.scrollLeft-1;
-				Y=ev.y-t.top+this.parentNode.parentNode.scrollTop-1;
+				var mp = e.data.inthis.getMousePos(e);
 				var color=["red","yellow","blue","green"];
-				e.data.inthis.addArea(e.data.inthis.$id+"_area_"+e.data.inthis.$max,{name:"area_"+e.data.inthis.$max,left:X,top:Y,color:color[e.data.inthis.$max%4],width:200,height:100});
+				e.data.inthis.addArea(e.data.inthis.$id + "_area_" + e.data.inthis.$max, {
+					name : "area_" + e.data.inthis.$max,
+					left : mp[0] - 1,
+					top : mp[1] - 1,
+					color : color[e.data.inthis.$max % 4],
+					width : 200,
+					height : 100
+				});
 				e.data.inthis.$max++;
 				return false;
 			}
@@ -258,4 +213,4 @@ GlobalNS.areaObject = {
 		}
 	}
 }
-$.extend(GooFlow.prototype, GlobalNS.areaObject)
+$.extend(GooFlow.prototype, temp)

@@ -22,7 +22,7 @@ function GooFlow(bgDiv,property){
 	
 //初始化区域图的对象
 	this.$id=bgDiv.attr("id");
-	this.$bgDiv=bgDiv;//最父框架的DIV
+	this.$bgDiv=bgDiv;//最父框架的DIV;
 	this.$bgDiv.addClass("GooFlow");
 	if (GooFlow.prototype.color.font) {
 		this.$bgDiv.css("color", GooFlow.prototype.color.font);
@@ -155,16 +155,16 @@ function GooFlow(bgDiv,property){
 		this.$editable=true;//只有具有工具栏时可编辑
 	}
 	
-	// 初始化工作区
+	// 初始化工作区(画布)
 	this.$bgDiv.append("<div class='GooFlow_work' style='width:"+(workAreaX.width)+"px;height:"+(workAreaX.height)+"px;"+(property.haveHead? "":"margin-top:3px")+"'></div>");
 	this.$workArea=$("<div class='GooFlow_work_inner' style='width:"+workAreaX.widthDraw+"px;height:"+workAreaX.heightDraw+"px'></div>")
 		.attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});// 点击工作区不触发onblur事件;不被选中;禁止复制
 	this.$bgDiv.children(".GooFlow_work").append(this.$workArea);
 	this.$draw = null;// 画矢量线条的容器
-	this.initDraw("draw_" + this.$id, workAreaX.width, workAreaX.height);
+	this.initDraw("draw_" + this.$id, workAreaX.widthDraw, workAreaX.heightDraw);
 	this.$group = null;
 	if (property.haveGroup)
-		this.initGroup(workAreaX.width, workAreaX.height);
+		this.initGroup(workAreaX.widthDraw, workAreaX.widthDraw);
 	
 	// 将节点及连线的单击事件委托给工作区
 	if (this.$editable) {
@@ -173,6 +173,7 @@ function GooFlow(bgDiv,property){
 		this.$workArea.on("click", {
 			inthis : this
 		}, function(e) {
+			console.log('$workArea click');
 			if (!e)
 				e = window.event;
 			var This = e.data.inthis;
@@ -189,152 +190,35 @@ function GooFlow(bgDiv,property){
 						This.blurItem();									// 取消所有结点/连线被选定的状态
 					}
 				}
-				return;
-			} else if (type == "direct" || type == "group")
-				return;
-			// 获取鼠标点击位置和元素坐标,并添加节点
-			var X, Y;
-			var ev = mousePosition(e), t = getElCoordinate(this);
-			X = ev.x - t.left + this.parentNode.scrollLeft - 1;
-			Y = ev.y - t.top + this.parentNode.scrollTop - 1;
-			This.addNode(This.$id + "_node_" + This.$max, {
-				name : "node_" + This.$max,
-				left : X,
-				top : Y,
-				type : This.$nowType
-			});
-			This.$max++;
-		});
-		
-		// 划线或改线时用的绑定(鼠标指针在指定的元素中移动)
-		this.$workArea.mousemove({inthis:this},function(e){
-			if(e.data.inthis.$nowType!="direct"&&!e.data.inthis.$mpTo.data("p"))	return;
-			var lineStart=$(this).data("lineStart");
-			var lineEnd=$(this).data("lineEnd");
-			if(!lineStart&&!lineEnd)return;
-			
-			var ev = mousePosition(e), t = getElCoordinate(this);
-			var X, Y;
-			X = ev.x - t.left + this.parentNode.scrollLeft;
-			Y = ev.y - t.top + this.parentNode.scrollTop;
-			if (lineStart) {
-				e.data.inthis.changeLineEnd(lineStart, [ X, Y ]);
-			} else if (lineEnd) {
-				e.data.inthis.changeLineStart(lineEnd, [ X, Y ]);
-			}
-		});
-		// 划线或改线时用的绑定(在元素上放松鼠标按钮时)
-		this.$workArea.mouseup({inthis:this},function(e){
-			var This=e.data.inthis;
-			if(This.$nowType!="direct"&&!This.$mpTo.data("p"))	return;
-			var tmp=document.getElementById("GooFlow_tmp_line");
-			console.log('this.$workArea.mouseup({inthis:this}');
-			console.log(tmp);
-			if(tmp){
-				var $workArea = $(this);
-				var lineStart = $workArea.data("lineStart");
-				var lineEnd = $workArea.data("lineEnd");
-				if(lineStart){
-					This.removeMarkStyle($('#'+lineStart.id));
-				}
-				if(lineEnd){
-					This.removeMarkStyle($('#'+lineEnd.id));
-				}
-				$workArea.css("cursor","auto").removeData("lineStart").removeData("lineEnd");
+			} else if (type == "direct" || type == "mutiselect"){
 				
-		        This.hideMovePoints();
-		        This.$draw.removeChild(tmp);
-		        var focusId = This.$focus;
-		        This.blurItem();
-		        This.focusItem(focusId,false);
 			}else{
-				//This.$lineOper.removeData("tid");
+				
+				// 获取鼠标点击位置和元素坐标,并添加节点
+				var mPos = This.getMousePosForNode(e);
+				This.addNode(This.$id + "_node_" + This.$max, {
+					name : "node_" + This.$max,
+					left : mPos[0] - 1,
+					top : mPos[1] - 1,
+					type : This.$nowType
+				});
+				This.$max++;
 			}
+			
 		});
 		
 		// 为了结点而增加的一些集体delegate绑定
 		this.initWorkForNode();
 		// 对结点进行移动或者RESIZE时用来显示的遮罩层
 		this.$ghost=$("<div class='rs_ghost'></div>").attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});
-		this.$bgDiv.append(this.$ghost);
+		this.$workArea.append(this.$ghost);
 		this.$textArea=$("<textarea></textarea>");
 		this.$bgDiv.append(this.$textArea);
 		
-		// 操作折线时的移动框,绑定折线移动事件
-		this.$lineMove=$("<div class='GooFlow_line_move' style='display:none'></div>");
-		this.$workArea.append(this.$lineMove);
-		this.$lineMove.on("mousedown",{inthis:this},function(e){
-			if(e.button==2)return false;
-			var lm=$(this);
-			lm.css({"background-color":GooFlow.prototype.color.font||"#333"});
-			var This=e.data.inthis;
-			var ev=mousePosition(e),t=getElCoordinate(This.$workArea[0]);
-			var X,Y;
-			X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
-			Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop;
-			var p=This.$lineMove.position();
-			var vX=X-p.left,vY=Y-p.top;
-			var isMove=false;
-			document.onmousemove=function(e){
-				if(!e)e=window.event;
-				var ev=mousePosition(e);
-				var ps=This.$lineMove.position();
-				X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
-				Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop;
-				if(This.$lineMove.data("type")=="lr"){
-					X=X-vX;
-					if(X<0)
-						X=0;
-					else if(X>This.$workArea.width())
-						X=This.$workArea.width();
-					This.$lineMove.css({left:X+"px"});
-				}else if(This.$lineMove.data("type")=="tb"){
-					Y=Y-vY;
-					if(Y<0)
-						Y=0;
-					else if(Y>This.$workArea.height())
-						Y=This.$workArea.height();
-					This.$lineMove.css({top:Y+"px"});
-				}
-				isMove=true;
-			}
-			document.onmouseup=function(e){
-				if(isMove){
-					var p=This.$lineMove.position();
-					if(This.$lineMove.data("type")=="lr")
-						This.setLineM(This.$lineMove.data("tid"),p.left+3);
-					else if(This.$lineMove.data("type")=="tb")
-						This.setLineM(This.$lineMove.data("tid"),p.top+3);
-				}
-				This.$lineMove.css({"background-color":"transparent"});
-				if(This.$focus==This.$lineMove.data("tid")){
-					This.focusItem(This.$lineMove.data("tid"));
-				}
-				document.onmousemove=null;
-				document.onmouseup=null;
-			}
-		});
-		
-		//选定一条转换线后出现的浮动操作栏，有改变线的样式和删除线等按钮。
-		this.$lineOper=$("<div class='GooFlow_line_oper' style='display:none'><i class='b_l1'></i><i class='b_l2'></i><i class='b_l3'></i><i class='b_x'></i></div>");//选定线时显示的操作框
-		this.$workArea.parent().append(this.$lineOper);
-		this.$lineOper.on("click",{inthis:this},function(e){
-			if(!e)e=window.event;
-			if(e.target.tagName!="I")	return;
-			var This=e.data.inthis;
-			var id=$(this).data("tid");
-			switch($(e.target).attr("class")){
-			case "b_x":	
-				This.delLine(id);
-				this.style.display="none";break;
-			case "b_l1":
-				This.setLineType(id,"lr");break;
-			case "b_l2":
-				This.setLineType(id,"tb");break;
-			case "b_l3":
-				This.setLineType(id,"sl");break;
-			}
-		});
+		// 注册连线移动事件;
+		this.initAndRegLineMove();
+		// 注册连线操作事件;
+		this.initAndRegLineOper();
 		
 		// 增加连线转折点拖动功能，这里要提供移动用的DOM(div小方块)
 		this.initMovePoints(50);
@@ -375,7 +259,8 @@ function GooFlow(bgDiv,property){
 		//格式function(id，type，mark)：id是单元的唯一标识ID,type是单元类型（"node"结点,"line"转换线），mark为布尔值,表示是要标注TRUE还是取消标注FALSE
 		this.onItemMark=null;
 		
-		if(property.useOperStack&&this.$editable){//如果要使用堆栈记录操作并提供“撤销/重做”的功能,只在编辑状态下有效
+		// 如果要使用堆栈记录操作并提供“撤销/重做”的功能,只在编辑状态下有效
+		if(property.useOperStack && this.$editable){
 			this.$undoStack=[];	// 撤销:保存后退按钮执行的操作
 			this.$redoStack=[];	// 重做:保存前进按钮执行操作
 			this.$isUndo=0;
@@ -447,8 +332,9 @@ function GooFlow(bgDiv,property){
 				}
 			};
 		}
+		
+		// 绑定键盘操作
 		$(document).keydown({inthis:this},function(e){
-			//绑定键盘操作
 			var This=e.data.inthis;
 			if(This.$focus=="")return;
 			switch(e.keyCode){

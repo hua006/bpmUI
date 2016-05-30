@@ -1,5 +1,5 @@
 ///////////以下为有关节点的方法
-GlobalNS.nodeObject = {
+var temp = {
 	f:1,
 	// 每一种类型结点及其按钮的说明文字
 	setNodeRemarks : function(remark) {
@@ -11,8 +11,8 @@ GlobalNS.nodeObject = {
 		});
 		this.$nodeRemark = remark;
 	},
-	//增加一个流程结点,传参为一个JSON,有id,name,top,left,width,height,type(结点类型)等属性
-	addNode:function(id,json){
+	// 增加一个流程结点,传参为一个JSON,有id,name,top,left,width,height,type(结点类型)等属性
+	addNode : function(id, json) {
 		if (this.onItemAdd != null && !this.onItemAdd(id, "node", json)) {
 			return;
 		}
@@ -65,8 +65,10 @@ GlobalNS.nodeObject = {
 		
 		if(GooFlow.prototype.color.node){
 			this.$nodeDom[id].css({"background-color":GooFlow.prototype.color.node,"border-color":GooFlow.prototype.color.node});
-			if(mark&&GooFlow.prototype.color.mark){
-				this.$nodeDom[id].css({"border-color":GooFlow.prototype.color.mark});
+			if (mark && GooFlow.prototype.color.mark) {
+				this.$nodeDom[id].css({
+					"border-color" : GooFlow.prototype.color.mark
+				});
 			}
 		}
 		var ua = navigator.userAgent.toLowerCase();
@@ -165,67 +167,114 @@ GlobalNS.nodeObject = {
 				this.$deletedItem[id] = "node";
 		}
 	},
+	// 将指定值加入数组,若数组中已存在指定值则不再新增;
+	pushValue : function(array, value) {
+		var find = false;
+		for (var i = 0; i < array.length; i++) {
+			if (array[i] === value) {
+				find = true;
+				break;
+			}
+		}
+		if (!find) {
+			array.push(value);
+		}
+	},
+	// 从数组中删除指定值
+	delValue : function(array, value) {
+		for (var i = 0; i < array.length; i++) {
+			if (array[i] === value) {
+				array.splice(i, 1);
+				i--;
+			}
+		}
+	},
+	// 节点选中处理
+	selectNode : function(id, selected) {
+		var $item = $("#" + id);
+		console.log(id+','+selected);
+		if (selected) {
+			$item.css("border-color", GooFlow.prototype.color.selected || "#555500");
+			this.pushValue(this.selectedNodes, id);
+		} else {
+			$item.css("border-color", GooFlow.prototype.color.node || "#A1DCEB");
+			this.delValue(this.selectedNodes, id);
+		}
+	},
 	// 增加节点事件绑定 
 	initWorkForNode:function(){
-		//绑定点击事件
+		
+		// 绑定点击事件
 		this.$workArea.delegate(".GooFlow_item","click",{inthis:this},function(e){
-			e.data.inthis.focusItem(this.id,true);
-			$(this).removeClass("item_mark");
+			console.log('GooFlow_item click');
+			e.stopPropagation();
 		});
-		//绑定用鼠标移动事件
-		this.$workArea.delegate(".ico","mousedown",{inthis:this},function(e){
-			if(!e)e=window.event;
-			if(e.button==2)return false;
-			var This=e.data.inthis;
-			if(This.$nowType=="direct")	return;
-			var Dom=$(this).parents(".GooFlow_item");
-			var id=Dom.attr("id");
-			This.focusItem(id,true);
-			var hack=1;
-			if(navigator.userAgent.indexOf("8.0")!=-1)	hack=0;
-			var ev=mousePosition(e),t=getElCoordinate(This.$workArea[0]);
+		// 绑定多选
+		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
+			if (e.button == 2) {
+				e.stopImmediatePropagation();
+			}
 			
-			Dom.children("table").clone().prependTo(This.$ghost);
-			var X,Y;
-			X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
-			Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop;
-			var vX=X-This.$nodeData[id].left,vY=Y-This.$nodeData[id].top;
-			var isMove=false;
-			document.onmousemove=function(e){
-				if(!e)e=window.event;
-				var ev=mousePosition(e);
-				if(X==ev.x-vX&&Y==ev.y-vY)	return false;
-				X=ev.x-vX;Y=ev.y-vY;
+			var This = e.data.inthis;
+			if (This.$nowType != "direct"){
+				var $item =  $(this);
+				var id = $item.attr("id");
 				
-				if(isMove&&This.$ghost.css("display")=="none"){
-					This.$ghost.css({display:"block",
-						width:This.$nodeData[id].width-2+"px", height:This.$nodeData[id].height-2+"px",
-						top:This.$nodeData[id].top+t.top-This.$workArea[0].parentNode.scrollTop+hack+"px",
-						left:This.$nodeData[id].left+t.left-This.$workArea[0].parentNode.scrollLeft+hack+"px",cursor:"move"
-					});
+				// 设置选中状态
+				var selected = true;
+				if (e.ctrlKey) {
+					selected = !$item.data('selected');
 				}
-
-				if(X<t.left-This.$workArea[0].parentNode.scrollLeft)
-					X=t.left-This.$workArea[0].parentNode.scrollLeft;
-				else if(X+This.$workArea[0].parentNode.scrollLeft+This.$nodeData[id].width>t.left+This.$workArea.width())
-					X=t.left+This.$workArea.width()-This.$workArea[0].parentNode.scrollLeft-This.$nodeData[id].width;
-				if(Y<t.top-This.$workArea[0].parentNode.scrollTop)
-					Y=t.top-This.$workArea[0].parentNode.scrollTop;
-				else if(Y+This.$workArea[0].parentNode.scrollTop+This.$nodeData[id].height>t.top+This.$workArea.height())
-					Y=t.top+This.$workArea.height()-This.$workArea[0].parentNode.scrollTop-This.$nodeData[id].height;
-				This.$ghost.css({left:X+hack+"px",top:Y+hack+"px"});
-				isMove=true;
+				$item.data('selected', selected);
+				
+				// 节点选中处理
+				This.selectNode(id, selected);
+				if (This.selectedNodes.length > 1){
+					e.stopImmediatePropagation();
+				}
 			}
-			document.onmouseup=function(e){
-				if(isMove)This.moveNode(id,X+This.$workArea[0].parentNode.scrollLeft-t.left,Y+This.$workArea[0].parentNode.scrollTop-t.top);
-				This.$ghost.empty().hide();
-				document.onmousemove=null;
-				document.onmouseup=null;
+		})
+		// 绑定节点移动
+		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
+			console.log('GooFlow_item mousedown');
+			e = e || window.event;
+			var This = e.data.inthis;
+			if (This.$nowType != "direct"){
+				var $item =  $(this);
+				var id = $item.attr("id");
+				
+				// 取第一个选中的组件作为焦点组件;
+				var focusId = This.selectedNodes[0] || id;
+				This.focusItem(focusId, true);
+				$item.children("table").clone().prependTo(This.$ghost);
+				
+				// 鼠标当前位置
+				var ms = This.getMousePosForNode(e);
+				// 线段当前位置
+				var point = This.$nodeData[id];//{X:0,Y0}
+				// 注册矩形辅助框移动事件
+				This.regGhostMove(id, point, ms, 'node');
 			}
 		});
+		
 		if(!this.$editable){
 			return;
 		}
+		// 绑定连线时确定初始点
+		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
+			console.log('GooFlow_item mousedown 2');
+			e = e || window.event;
+			var This = e.data.inthis;
+			if (This.$nowType == "direct") {
+				// 添加临时线段
+				var mp = This.getMousePos(e);
+				This.$workArea.data("lineStart",{"x":mp[0],"y":mp[1],"id":this.id}).css("cursor","crosshair");
+				var res = This.getResPoint(mp, mp);
+				
+				// 为线段添加移动功能
+				This.regTempLineMove(res);
+			}
+		});
 		
 		// TODO 划线操作
 		/*
@@ -238,16 +287,16 @@ GlobalNS.nodeObject = {
 		//绑定鼠标覆盖/移出事件
 		this.$workArea.delegate(".GooFlow_item","mouseenter",{inthis:this},function(e){
 			var tmpLine = document.getElementById("GooFlow_tmp_line");
-			console.log('mouseenter='+e.data.inthis.$nowType+",tmpLine="+tmpLine);
-			if(e.data.inthis.$nowType!="direct"&&!tmpLine)	return;
+			if (e.data.inthis.$nowType != "direct" && !tmpLine)
+				return;
 			
 			// 标记节点
 			e.data.inthis.addMarkStyle(this);
 		});
 		this.$workArea.delegate(".GooFlow_item","mouseleave",{inthis:this},function(e){
 			var tmpLine = document.getElementById("GooFlow_tmp_line");
-			console.log('mouseleave='+e.data.inthis.$nowType+",tmpLine="+tmpLine);
-			if(e.data.inthis.$nowType!="direct"&&!tmpLine)	return;
+			if (e.data.inthis.$nowType != "direct" && !tmpLine)
+				return;
 			
 			// 删除节点标记
 			if (!tmpLine) {
@@ -255,61 +304,34 @@ GlobalNS.nodeObject = {
 			}else{
 				var lineStart = e.data.inthis.$workArea.data("lineStart");
 				var lineEnd = e.data.inthis.$workArea.data("lineEnd");
-				console.log(lineStart);
-				console.log(lineEnd);
 				if ((!lineStart || lineStart.id != this.id) && (!lineEnd || (lineEnd.id != this.id))) {
 					e.data.inthis.removeMarkStyle(this);
 				}
 			}
 		});
 		
-		//绑定连线时确定初始点
-		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
-			console.log('mousedown='+e.data.inthis.$nowType);
-			if(e.button==2)return false;
-			var This=e.data.inthis;
-			if ($(this).id == This.$id) {
-				console.log('error');
-				alert('error');
-				// $(this).removeClass("item_mark").removeClass("crosshair");
-			}
-			if (This.$nowType != "direct") {
-				return;
-			}
-//			$(this).removeClass("item_mark").removeClass("crosshair");
-			
-			// 添加临时线段
-			var ev=mousePosition(e),t=getElCoordinate(This.$workArea[0]);
-			var X,Y;
-			X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
-			Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop;
-			This.$workArea.data("lineStart",{"x":X,"y":Y,"id":this.id}).css("cursor","crosshair");
-			
-			var res = This.getResPoint([X,Y],[X,Y]);
-			var line=GooFlow.prototype.drawPolyLine("GooFlow_tmp_line",res,true);
-			This.$draw.appendChild(line);
-		});
-		//绑定连线时确定结束点
+		// 绑定连线时确定结束点
 		this.$workArea.delegate(".GooFlow_item","mouseup",{inthis:this},function(e){
+			console.log('GooFlow_item mouseup');
 			var This=e.data.inthis;
-			if(This.$nowType!="direct"&&!This.$mpTo.data("p"))	return;
-			var lineStart=This.$workArea.data("lineStart");
-			var lineEnd=This.$workArea.data("lineEnd");
-			if(lineStart&&!This.$mpTo.data("p")){
-				if(!lineEnd){
-					console.log('lineEnd');
-					e.data.inthis.removeMarkStyle($('#'+lineStart.id));
-				}
-				This.addLine(This.$id+"_line_"+This.$max,{from:lineStart.id,to:this.id,name:""});
-				This.$max++;
-			}else{
-				if(lineStart){
-					This.moveLinePoints(This.$focus,lineStart.id,this.id);
-				}else if(lineEnd){
-					This.moveLinePoints(This.$focus,this.id,lineEnd.id);
-				}
-				if(!This.$nodeData[this.id].marked){
-					This.removeMarkStyle(this);
+			if (This.$nowType == "direct" || This.$mpTo.data("p")){
+				var lineStart=This.$workArea.data("lineStart");
+				var lineEnd=This.$workArea.data("lineEnd");
+				if(lineStart&&!This.$mpTo.data("p")){
+					if(!lineEnd){
+						e.data.inthis.removeMarkStyle($('#'+lineStart.id));
+					}
+					This.addLine(This.$id+"_line_"+This.$max,{from:lineStart.id,to:this.id,name:""});
+					This.$max++;
+				}else{
+					if(lineStart){
+						This.moveLinePoints(This.$focus,lineStart.id,this.id);
+					}else if(lineEnd){
+						This.moveLinePoints(This.$focus,this.id,lineEnd.id);
+					}
+					if(!This.$nodeData[this.id].marked){
+						This.removeMarkStyle(this);
+					}
 				}
 			}
 		});
@@ -344,51 +366,26 @@ GlobalNS.nodeObject = {
 		// 绑定结点的RESIZE功能
 		this.$workArea.delegate(".GooFlow_item > div > div[class!=rs_close]","mousedown",{inthis:this},function(e){
 			if(!e)e=window.event;
-			if(e.button==2)return false;
-			var cursor=$(this).css("cursor");
-			if(cursor=="pointer"){return;}
-			var This=e.data.inthis;
-			var id=This.$focus;
+			if (e.button == 2){
+				return false;
+			}
+			var cursor = $(this).css("cursor");
+			if (cursor == "pointer") {
+				return false;
+			}
+			
+			var This = e.data.inthis;
 			This.switchToolBtn("cursor");
 			e.cancelBubble = true;
 			e.stopPropagation();
-			var hack=1;
-			if(navigator.userAgent.indexOf("8.0")!=-1)	hack=0;
-			var ev=mousePosition(e),t=getElCoordinate(This.$workArea[0]);
-			This.$ghost.css({display:"block",
-				width:This.$nodeData[id].width-2+"px", height:This.$nodeData[id].height-2+"px",
-				top:This.$nodeData[id].top+t.top-This.$workArea[0].parentNode.scrollTop+hack+"px",
-				left:This.$nodeData[id].left+t.left-This.$workArea[0].parentNode.scrollLeft+hack+"px",cursor:cursor
-			});
-			var X,Y;
-			X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft;
-			Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop;
-			var vX=(This.$nodeData[id].left+This.$nodeData[id].width)-X;
-			var vY=(This.$nodeData[id].top+This.$nodeData[id].height)-Y;
-			var isMove=false;
-			This.$ghost.css("cursor",cursor);
-			document.onmousemove=function(e){
-				if(!e)e=window.event;
-				var ev=mousePosition(e);
-				X=ev.x-t.left+This.$workArea[0].parentNode.scrollLeft-This.$nodeData[id].left+vX;
-				Y=ev.y-t.top+This.$workArea[0].parentNode.scrollTop-This.$nodeData[id].top+vY;
-				if(X<100)	X=100;
-				if(Y<24)	Y=24;
-				isMove=true;
-				switch(cursor){
-					case "nw-resize":This.$ghost.css({width:X-2+"px",height:Y-2+"px"});break;
-					case "w-resize":This.$ghost.css({width:X-2+"px"});break;
-					case "n-resize":This.$ghost.css({height:Y-2+"px"});break;
-				}
-			}
-			document.onmouseup=function(e){
-				This.$ghost.hide();
-				if(!isMove)return;
-				if(!e)e=window.event;
-				This.resizeNode(id,This.$ghost.outerWidth(),This.$ghost.outerHeight());
-				document.onmousemove=null;
-				document.onmouseup=null;
-	  		}
+			
+			// 鼠标当前位置
+			var ms = This.getMousePos(e);
+
+			// 注册矩形辅助框移动事件
+			var id = This.$focus;
+			var ghostData = This.$nodeData[id];//{X:0,Y0}
+			This.regGhostResize(cursor, id, ghostData, ms, 'node');
 		});
 	},
 	// 节点双击
@@ -398,4 +395,4 @@ GlobalNS.nodeObject = {
 		}
 	}
 }
-$.extend(GooFlow.prototype, GlobalNS.nodeObject)
+$.extend(GooFlow.prototype, temp)

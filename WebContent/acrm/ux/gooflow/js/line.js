@@ -1,6 +1,7 @@
 ///////////以下为有关画线的方法
 //绘制一条箭头线，并返回线的DOM
-GlobalNS.lineObject = {
+//GlobalNS.lineObject
+var temp = {
 
 	// TODO 划折线
 	// 画一条可以有多个转折点的折线
@@ -208,10 +209,10 @@ GlobalNS.lineObject = {
 	 */
 	calcPolyPoints : function(n1, n2, type, M) {
 		
-		
-		// 画直线
 		// TODO 指定了所有转折点
 		if (type == 'sl') {
+			
+			// 画直线
 			return this.calcStartEnd(n1, n2, M);
 		}
 		// 开始/结束两个结点的中心
@@ -316,9 +317,8 @@ GlobalNS.lineObject = {
 		
 		this.$draw.appendChild(this.$lineDom[id]);
 		this.$lineDom[id].childNodes[2].textContent = lineData.name;
-			
 	},
-	// 增加一条线
+	// 增加一条连线
 	addLine : function(id, json) {
 		if (this.onItemAdd != null && !this.onItemAdd(id, "line", json))
 			return;
@@ -361,7 +361,7 @@ GlobalNS.lineObject = {
 				delete this.$deletedItem[id];// 在回退删除操作时,去掉该元素的删除记录
 		}
 	},
-	// 删除转换线
+	// 删除连线
 	delLine : function(id) {
 		if (!this.$lineData[id])
 			return;
@@ -416,7 +416,8 @@ GlobalNS.lineObject = {
 			this.$draw.removeChild(this.$lineDom[i]);
 			this.$lineDom[i] = GooFlow.prototype.drawPolyLine(i, res, this.$lineData[i].marked);
 			this.$draw.appendChild(this.$lineDom[i]);
-			//this.showMovePoints(i, res.points, res.start, res.end);
+			this.moveStartEndPoint(res.start, res.end);
+//			this.showMovePoints(i, res.points, res.start, res.end);
 			
 			this.$lineDom[i].childNodes[2].textContent = this.$lineData[i].name;
 		}
@@ -497,6 +498,7 @@ GlobalNS.lineObject = {
 		}
 	},
 	changeLineStart : function(lineEnd, pos) {
+		var line = document.getElementById("GooFlow_tmp_line");
 		line.childNodes[0].setAttribute("d", "M " + pos[0] + " " + pos[1] + " L " + lineEnd.x + " " + lineEnd.y);
 		line.childNodes[1].setAttribute("d", "M " + pos[0] + " " + pos[1] + " L " + lineEnd.x + " " + lineEnd.y);
 		if (line.childNodes[1].getAttribute("marker-end") == "url(\"#arrow2\")")
@@ -526,6 +528,126 @@ GlobalNS.lineObject = {
 			$(This).css("border-color", GooFlow.prototype.color.node || "#A1DCEB");
 		}
 	},
+	/**
+	 * 绑定转折线移动功能
+	 */
+	initAndRegLineMove: function(){
+		this.$lineMove = $("<div class='GooFlow_line_move' style='display:none'></div>");
+		this.$workArea.append(this.$lineMove);
+		this.$lineMove.on("mousedown",{inthis:this},function(e){
+			if(e.button==2)return false;
+			var lm=$(this);
+			lm.css({"background-color":GooFlow.prototype.color.font||"#333"});
+			var This = e.data.inthis;
+			
+			// 鼠标当前位置
+			var ms = This.getMousePos(e);
+			// 线段当前位置
+			var p = This.$lineMove.position();
+			console.log(p);
+			
+			var isMove=false;
+			document.onmousemove = function(e){
+				// 线段移动位置
+				var pmp = This.getPointMovePos(p, ms, e);
+				console.log(pmp);
+				if(This.$lineMove.data("type")=="lr"){
+					This.$lineMove.css({left:pmp[0]+"px"});
+				}else if(This.$lineMove.data("type")=="tb"){
+					This.$lineMove.css({top:pmp[1]+"px"});
+				}
+				isMove=true;
+			}
+			document.onmouseup=function(e){
+				if (isMove) {
+					var p = This.$lineMove.position();
+					console.log(p);
+					if (This.$lineMove.data("type") == "lr") {
+						This.setLineM(This.$lineMove.data("tid"), p.left + 3);
+					} else if (This.$lineMove.data("type") == "tb") {
+						This.setLineM(This.$lineMove.data("tid"), p.top + 3);
+					}
+				}
+				This.$lineMove.css({"background-color":"transparent"});
+				if(This.$focus==This.$lineMove.data("tid")){
+					This.focusItem(This.$lineMove.data("tid"));
+				}
+				document.onmousemove=null;
+				document.onmouseup=null;
+			}
+		});
+	},
+	/**
+	 * 注册连线操作事件:选定一条转换线后出现的浮动操作栏，有改变线的样式和删除线等按钮。
+	 */
+	initAndRegLineOper:function(){
+		this.$lineOper=$("<div class='GooFlow_line_oper' style='display:none'><i class='b_l1'></i><i class='b_l2'></i><i class='b_l3'></i><i class='b_x'></i></div>");//选定线时显示的操作框
+		this.$workArea.parent().append(this.$lineOper);
+		this.$lineOper.on("click",{inthis:this},function(e){
+			if(!e)e=window.event;
+			if(e.target.tagName!="I")	return;
+			var This=e.data.inthis;
+			var id=$(this).data("tid");
+			switch($(e.target).attr("class")){
+			case "b_x":	
+				This.delLine(id);
+				this.style.display="none";break;
+			case "b_l1":
+				This.setLineType(id,"lr");break;
+			case "b_l2":
+				This.setLineType(id,"tb");break;
+			case "b_l3":
+				This.setLineType(id,"sl");break;
+			}
+		});
+	},
+	// 绑定临时线段移动功能:根据鼠标位置改变连线起止点
+	regTempLineMove : function(res) {
+		var This = this;
+		var line = GooFlow.prototype.drawPolyLine("GooFlow_tmp_line", res, true);
+		This.$draw.appendChild(line);
+		
+		// 临时线段跟随鼠标移动
+		document.onmousemove = function(e) {
+			if (This.$nowType != "direct" && !This.$mpTo.data("p")) {
+				return false;
+			}
+
+			var $workArea = This.$workArea;
+			var lineStart = $workArea.data("lineStart");
+			var lineEnd = $workArea.data("lineEnd");
+
+			// 鼠标移动时显示辅助线
+			var mPos = This.getMousePos(e);
+			if (lineStart) {
+				This.changeLineEnd(lineStart, mPos);
+			} else if (lineEnd) {
+				This.changeLineStart(lineEnd, mPos);
+			}
+		};
+//		// 划线或改线时用的绑定(在元素上放松鼠标按钮时)
+		document.onmouseup = function(e){
+			if (This.$nowType != "direct" && !This.$mpTo.data("p")){
+				return;
+			}
+			var tmp = document.getElementById("GooFlow_tmp_line");
+			if (tmp) {
+				var $workArea = This.$workArea;
+				var lineStart = $workArea.data("lineStart");
+				var lineEnd = $workArea.data("lineEnd");
+				if (lineStart) {
+					This.removeMarkStyle($('#' + lineStart.id));
+				}
+				if (lineEnd) {
+					This.removeMarkStyle($('#' + lineEnd.id));
+				}
+				$workArea.css("cursor", "auto").removeData("lineStart").removeData("lineEnd");
+				This.$draw.removeChild(tmp);
+			}
+			document.onmousemove = null;
+			document.onmouseup = null;
+		}
+	},
 	f:function(){}
 }
-$.extend(GooFlow.prototype, GlobalNS.lineObject)
+$.extend(GooFlow.prototype, temp)
