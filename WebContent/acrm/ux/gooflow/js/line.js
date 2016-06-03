@@ -416,7 +416,7 @@ var temp = {
 			this.$draw.removeChild(this.$lineDom[i]);
 			this.$lineDom[i] = GooFlow.prototype.drawPolyLine(i, res, this.$lineData[i].marked);
 			this.$draw.appendChild(this.$lineDom[i]);
-			this.moveStartEndPoint(res.start, res.end);
+//			this.moveStartEndPoint(res.start, res.end);	// 会导致多选的节点移动后不显示边框(removeMarkStyle)
 //			this.showMovePoints(i, res.points, res.start, res.end);
 			
 			this.$lineDom[i].childNodes[2].textContent = this.$lineData[i].name;
@@ -517,10 +517,12 @@ var temp = {
 	},
 	// 添加标记样式
 	addMarkStyle:function(This){
+		console.log('addMarkStyle');
 		$(This).addClass("item_mark").addClass("crosshair").css("border-color",GooFlow.prototype.color.mark||"#ff3300");
 	},
 	// 删除标记样式
 	removeMarkStyle:function(This){
+		console.log('removeMarkStyle');
 		$(This).removeClass("item_mark").removeClass("crosshair");
 		if (This.id == this.$focus) {
 			$(This).css("border-color", GooFlow.prototype.color.line || "#3892D3");
@@ -537,7 +539,9 @@ var temp = {
 		this.$lineMove.on("mousedown",{inthis:this},function(e){
 			if(e.button==2)return false;
 			var lm=$(this);
-			lm.css({"background-color":GooFlow.prototype.color.font||"#333"});
+			lm.css({
+				"background-color" : GooFlow.prototype.color.font || "#333"
+			});
 			var This = e.data.inthis;
 			
 			// 鼠标当前位置
@@ -569,7 +573,8 @@ var temp = {
 					}
 				}
 				This.$lineMove.css({"background-color":"transparent"});
-				if(This.$focus==This.$lineMove.data("tid")){
+				if (This.$focus == This.$lineMove.data("tid")) {
+					This.blurItem();
 					This.focusItem(This.$lineMove.data("tid"));
 				}
 				document.onmousemove=null;

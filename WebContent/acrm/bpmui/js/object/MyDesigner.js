@@ -54,6 +54,21 @@ $.extend(Arvato.MyDesigner.prototype, {
 		dialogExport.dialog("open");
 		$('#result').val(JSON.stringify(demo.exportNewData()));
 	},
+	copyFn:function(){
+		console.log('copyFn');
+		console.log(demo.selectedNodes);
+		//document.location.href='/bpmUI/?defKey='+wfDefkey+'&num='+Math.random();
+	},
+	pasteFn:function(){
+		console.log('pasteFn');
+		console.log(demo.selectedNodes);
+		
+		for(var key in demo.selectedNodes){
+			var nodeId = demo.selectedNodes[key];
+			demo.copyNode(nodeId);
+		}
+		//document.location.href='/bpmUI/?defKey='+wfDefkey+'&num='+Math.random();
+	},
 	/**
 	 * 获取节点对应的属性窗口
 	 */

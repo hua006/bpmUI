@@ -34,14 +34,15 @@ var temp = {
 			// 鼠标当前位置
 			var ms = This.getMousePos(e);
 			// 线段当前位置
-			var ghostData = This.$areaData[id];//{X:0,Y0}
+			var ghostData = {};
+			ghostData[id] = This.$areaData[id];
 
 			if (cursor == 'pointer') {
 				// 注册矩形辅助框移动事件
-				This.regGhostMove(id, ghostData, ms, 'area');
+				This.regGhostMove(ghostData, ms, 'area');
 			} else {
 				// 注册矩形辅助框移动事件
-				This.regGhostResize(cursor, id, ghostData, ms, 'area');
+				This.regGhostResize(cursor, ghostData, ms, 'area');
 			}
 			
 		});

@@ -169,48 +169,14 @@ function GooFlow(bgDiv,property){
 	// 将节点及连线的单击事件委托给工作区
 	if (this.$editable) {
 		
-		// 单击选中节点/连线,或者添加节点,或者划线()
-		this.$workArea.on("click", {
-			inthis : this
-		}, function(e) {
-			console.log('$workArea click');
-			if (!e)
-				e = window.event;
-			var This = e.data.inthis;
-			if (!This.$editable)
-				return;
-			var type = This.$nowType;
-			if (type == "cursor") {
-				var t = $(e.target);
-				var n = t.prop("tagName");
-				if (n == "svg" || (n == "DIV" && t.prop("class").indexOf("GooFlow_work") > -1) || n == "LABEL") {
-					if (This.$lineOper.data("tid")) {
-						This.focusItem(This.$lineOper.data("tid"), false);	// 选定某个节点/连线
-					} else {
-						This.blurItem();									// 取消所有结点/连线被选定的状态
-					}
-				}
-			} else if (type == "direct" || type == "mutiselect"){
-				
-			}else{
-				
-				// 获取鼠标点击位置和元素坐标,并添加节点
-				var mPos = This.getMousePosForNode(e);
-				This.addNode(This.$id + "_node_" + This.$max, {
-					name : "node_" + This.$max,
-					left : mPos[0] - 1,
-					top : mPos[1] - 1,
-					type : This.$nowType
-				});
-				This.$max++;
-			}
-			
-		});
+		// 为工作区绑定事件
+		this.regWorkAreaEvent();
 		
 		// 为了结点而增加的一些集体delegate绑定
 		this.initWorkForNode();
 		// 对结点进行移动或者RESIZE时用来显示的遮罩层
 		this.$ghost=$("<div class='rs_ghost'></div>").attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});
+		this.ghosts={};
 		this.$workArea.append(this.$ghost);
 		this.$textArea=$("<textarea></textarea>");
 		this.$bgDiv.append(this.$textArea);
@@ -290,6 +256,7 @@ function GooFlow(bgDiv,property){
 			//撤销上一步操作
 			this.undo=function(){
 				if(this.$undoStack.length==0)	return;
+				this.clearSelectNodeAll();
 				this.blurItem();
 				var tmp=this.$undoStack.pop();
 				this.$isUndo=1;
@@ -312,6 +279,7 @@ function GooFlow(bgDiv,property){
 			//重做最近一次被撤销的操作
 			this.redo=function(){
 				if(this.$redoStack.length==0)	return;
+				this.clearSelectNodeAll();
 				this.blurItem();
 				var tmp=this.$redoStack.pop();
 				this.$isUndo=2;

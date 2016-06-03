@@ -7,14 +7,15 @@
 //  font:"#357425"
 //};
 GooFlow.prototype.color = {};
-//GooFlow.prototype.color = {
-//	main : "#A8C508",	// 绘图器HEAD/图标的颜色
-//	node : "#DFE9B4",	// 结点背景色
-//	line : "#A8C508",	// 连线/结点选中时边框颜色
-//	mark : "#E98200",	// 连线被选中/元素被标注时颜色;节点被选中
-//	mix : "#B6F700",	// 复合结点自定义背景颜色
-//	font : "#357425"	// 字体颜色
-//};
+GooFlow.prototype.color = {
+//	m                                                                             ain : "#A8C508",	// 绘图器HEAD/图标的颜色
+	node : "#DFE9B4",	// 结点背景色
+	line : "#A8C508",	// 连线/结点选中时边框颜色
+	selected : "#A8C508",	// 连线/结点选中时边框颜色
+	mark : "#E98200",	// 连线被选中/元素被标注时颜色;节点被选中
+	mix :  "#B6F700",	// 复合结点自定义背景颜色
+	font : "#357425"	// 字体颜色
+};
 
 
 // 将此类的构造函数加入至JQUERY对象中
@@ -34,7 +35,10 @@ var property = {
 	headBtns : [ "new", "open", "save", "undo", "redo", "reload"
 	            ,{cls:"refreshForce",text:"强制刷新"}
 				,{cls:"refresh",text:"刷新"}
-				,{cls:"export",text:"导出"}],// 如果haveHead=true，则定义HEAD区的按钮
+				,{cls:"export",text:"导出"}
+				,{cls:"copy",text:"复制"}
+				,{cls:"paste",text:"粘贴"}
+			],// 如果haveHead=true，则定义HEAD区的按钮
 	haveTool : true,
 	haveGroup : false,
 	useOperStack : true,

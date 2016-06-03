@@ -11,6 +11,34 @@ var temp = {
 		});
 		this.$nodeRemark = remark;
 	},
+	copyNode : function(id) {
+		var newId  = this.$id + "_node_" + this.$max;
+		var node = this.$nodeData[id];
+		console.log(node);
+		console.log(newId+'---'+id);
+		this.addNode(newId, {
+			name : node.name + this.$max,
+			left : parseInt(node.left) + 10,
+			top : parseInt(node.top) + 10,
+			type : node.type
+		});
+		
+		var newNode = this.$nodeData[newId];
+		
+		// 获取鼠标点击位置和元素坐标,并添加节点
+		$.extend(true, newNode, node);
+		newNode.wfDatas={};
+		newNode.wfDatas.transition=[];
+		newNode.wfDatas.name= node.wfDatas.name + this.$max;
+		newNode.wfDatas.text= node.wfDatas.text + this.$max;
+		console.log(newNode.wfDatas.name);
+		console.log(node.wfDatas.name);
+		
+//		console.log(this.$nodeData[id]);
+//		console.log(this.$nodeData[newId]);
+		
+		this.$max++;
+	},
 	// 增加一个流程结点,传参为一个JSON,有id,name,top,left,width,height,type(结点类型)等属性
 	addNode : function(id, json) {
 		if (this.onItemAdd != null && !this.onItemAdd(id, "node", json)) {
@@ -86,17 +114,21 @@ var temp = {
 		}
 	},
 	// 移动结点到一个新的位置
-	moveNode : function(id, left, top) {
+	moveNode : function(id, left, top, noStack) {
+		console.log('moveNode:'+left)
 		if (!this.$nodeData[id])
 			return;
 		if (this.onItemMove != null && !this.onItemMove(id, "node", left, top))
 			return;
-		if (this.$undoStack) {
+		if (this.$undoStack && !noStack) {
 			var paras = [ id, this.$nodeData[id].left, this.$nodeData[id].top ];
 			this.pushOper("moveNode", paras);
 		}
-		if (left < 0)
+		if (left < 0){
+			alert(left);
+			console.log(left);
 			left = 0;
+		}
 		if (top < 0)
 			top = 0;
 		$("#" + id).css({
@@ -167,6 +199,16 @@ var temp = {
 				this.$deletedItem[id] = "node";
 		}
 	},
+	getValueIndex : function(array, value){
+		var find = -1;
+		for (var i = 0; i < array.length; i++) {
+			if (array[i] === value) {
+				find = i;
+				break;
+			}
+		}
+		return find;
+	},
 	// 将指定值加入数组,若数组中已存在指定值则不再新增;
 	pushValue : function(array, value) {
 		var find = false;
@@ -189,17 +231,27 @@ var temp = {
 			}
 		}
 	},
+	// 清空所有选中的节点;
+	clearSelectNodeAll:function(){
+		var selectedNodes = this.selectedNodes.concat();
+		for(var index in selectedNodes){
+			this.selectNode(selectedNodes[index], false);
+		}
+		console.log('----------clearSelectNodeAll:');
+		console.log(this.selectedNodes);
+	},
 	// 节点选中处理
 	selectNode : function(id, selected) {
 		var $item = $("#" + id);
-		console.log(id+','+selected);
+		console.log('----------selectNode:'+id+','+selected);
 		if (selected) {
-			$item.css("border-color", GooFlow.prototype.color.selected || "#555500");
+			$item.css("border-color", GooFlow.prototype.color.line || "#555500");
 			this.pushValue(this.selectedNodes, id);
 		} else {
 			$item.css("border-color", GooFlow.prototype.color.node || "#A1DCEB");
 			this.delValue(this.selectedNodes, id);
 		}
+		$item.data('selected', selected);
 	},
 	// 增加节点事件绑定 
 	initWorkForNode:function(){
@@ -207,12 +259,14 @@ var temp = {
 		// 绑定点击事件
 		this.$workArea.delegate(".GooFlow_item","click",{inthis:this},function(e){
 			console.log('GooFlow_item click');
-			e.stopPropagation();
+//			e.stopPropagation();
 		});
 		// 绑定多选
 		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
+			console.log('GooFlow_item mousedown 0');
 			if (e.button == 2) {
-				e.stopImmediatePropagation();
+				e.stopImmediatePropagation();	// 阻止事件冒泡及同类型事件
+				return false;
 			}
 			
 			var This = e.data.inthis;
@@ -223,49 +277,59 @@ var temp = {
 				// 设置选中状态
 				var selected = true;
 				if (e.ctrlKey) {
+					console.log('------------------This.selectedNodes[id]=ctrlKey'+this.$focus);
+					// focus的节点不是选中的节点,清除所有焦点
+					if (This.selectedNodes.length == 0 && This.$focus) {
+						This.blurItem();
+					}
+					// 节点选中处理
 					selected = !$item.data('selected');
+					This.selectNode(id, selected);
+				}else if(This.getValueIndex(This.selectedNodes, id) > -1){
+					// 点击已经选中的节点,不做任何处理
+					console.log('------------------This.selectedNodes[id]=true '+This.selectedNodes);
+				}else{
+					// 点击未选中的几点,重新选中;
+					console.log('------------------This.selectedNodes[id]=false '+This.selectedNodes);
+					This.clearSelectNodeAll();
+					This.blurItem();
+					This.focusItem(id, true);
+					This.selectNode(id, selected);
 				}
-				$item.data('selected', selected);
 				
-				// 节点选中处理
-				This.selectNode(id, selected);
-				if (This.selectedNodes.length > 1){
+				if (This.selectedNodes.length == 0) {
 					e.stopImmediatePropagation();
 				}
+				console.log(This.selectedNodes);
 			}
 		})
 		// 绑定节点移动
 		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
-			console.log('GooFlow_item mousedown');
+			console.log('GooFlow_item mousedown 1');
 			e = e || window.event;
 			var This = e.data.inthis;
 			if (This.$nowType != "direct"){
-				var $item =  $(this);
-				var id = $item.attr("id");
-				
-				// 取第一个选中的组件作为焦点组件;
-				var focusId = This.selectedNodes[0] || id;
-				This.focusItem(focusId, true);
-				$item.children("table").clone().prependTo(This.$ghost);
 				
 				// 鼠标当前位置
 				var ms = This.getMousePosForNode(e);
-				// 线段当前位置
-				var point = This.$nodeData[id];//{X:0,Y0}
+				var selNodeData = {};
+				for(var index in This.selectedNodes){
+					var id = This.selectedNodes[index];
+					if(!This.ghosts[id]){
+						This.ghosts[id]=$("<div class='rs_ghost'></div>").attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});
+						This.$workArea.append(This.ghosts[id]);
+					}
+					var $item = $('#' + id);
+					$item.children("table").clone().prependTo(This.ghosts[id]);
+					// 线段当前位置
+					selNodeData[id] = This.$nodeData[id];
+				}
+				
 				// 注册矩形辅助框移动事件
-				This.regGhostMove(id, point, ms, 'node');
-			}
-		});
-		
-		if(!this.$editable){
-			return;
-		}
-		// 绑定连线时确定初始点
-		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
-			console.log('GooFlow_item mousedown 2');
-			e = e || window.event;
-			var This = e.data.inthis;
-			if (This.$nowType == "direct") {
+				This.regGhostMove(selNodeData, ms, 'node');
+			}else{
+				
+				// 绑定连线时确定初始点
 				// 添加临时线段
 				var mp = This.getMousePos(e);
 				This.$workArea.data("lineStart",{"x":mp[0],"y":mp[1],"id":this.id}).css("cursor","crosshair");
@@ -275,6 +339,10 @@ var temp = {
 				This.regTempLineMove(res);
 			}
 		});
+		
+		if(!this.$editable){
+			return;
+		}
 		
 		// TODO 划线操作
 		/*
@@ -359,12 +427,14 @@ var temp = {
 		});
 		// 绑定结点的删除功能
 		this.$workArea.delegate(".rs_close","click",{inthis:this},function(e){
+			console.log(".rs_close click");
 			if(!e)e=window.event;
 			e.data.inthis.delNode(e.data.inthis.$focus);
 			return false;
 		});
 		// 绑定结点的RESIZE功能
 		this.$workArea.delegate(".GooFlow_item > div > div[class!=rs_close]","mousedown",{inthis:this},function(e){
+			console.log(".GooFlow_item > div > div[class!=rs_close]"+"mousedown");
 			if(!e)e=window.event;
 			if (e.button == 2){
 				return false;
@@ -384,8 +454,21 @@ var temp = {
 
 			// 注册矩形辅助框移动事件
 			var id = This.$focus;
-			var ghostData = This.$nodeData[id];//{X:0,Y0}
-			This.regGhostResize(cursor, id, ghostData, ms, 'node');
+			
+			var selNodeData = {};
+			for(var index in This.selectedNodes){
+				var id = This.selectedNodes[index];
+				if(!This.ghosts[id]){
+					This.ghosts[id]=$("<div class='rs_ghost'></div>").attr({"unselectable":"on","onselectstart":'return false',"onselect":'document.selection.empty()'});
+					This.$workArea.append(This.ghosts[id]);
+				}
+				var $item = $('#' + id);
+				// 线段当前位置
+				selNodeData[id] = This.$nodeData[id];
+			}
+			This.regGhostResize(cursor, selNodeData, ms, 'node');
+			
+//			var ghostData = This.$nodeData[id];//{X:0,Y0}
 		});
 	},
 	// 节点双击
