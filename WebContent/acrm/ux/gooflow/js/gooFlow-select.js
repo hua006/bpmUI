@@ -45,7 +45,6 @@ var temp = {
 					if (ghostType == 'node') {
 						var positions = This.getGhostPositions(ghostDatas);
 						var linePos = This.getLinePositions(ghostDatas, positions);
-						console.log(linePos);
 						This.moveNodes(ghostDatas, positions,linePos, ghostType);
 					} else {
 						This.moveAreas(ghostDatas, ghostType);

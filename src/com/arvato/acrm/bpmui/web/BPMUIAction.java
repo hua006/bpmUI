@@ -51,15 +51,19 @@ public class BPMUIAction extends ActionSupport {
 		System.out.println(xml);
 		
 		String downloadPath = request.getSession().getServletContext().getRealPath("/") + ConfigConstants.PATH_DOWNLOAD + System.getProperty("file.separator");
-		writeFile(downloadPath + defKey + ".xml", xml);
+		writeFile(downloadPath, defKey + ".xml", xml);
 		
 //		System.out.println("defKey="+defKey+",jsondata:");
 //		System.out.println(jsondata);
 		request.setAttribute("output", "success");
 		return SUCCESS;
 	}
-	private void writeFile(String fileName, String xml) {
-		File file = new File(fileName);
+	private void writeFile(String filePath,String fileName, String xml) {
+		File path = new File(filePath);
+		if (!path.exists()) {
+			path.mkdirs();
+		}
+		File file = new File(filePath + fileName);
 		System.out.println(file.getAbsolutePath());
 		FileOutputStream out = null;
 		BufferedOutputStream bo = null;

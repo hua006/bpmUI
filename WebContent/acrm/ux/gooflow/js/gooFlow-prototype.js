@@ -13,7 +13,7 @@ GooFlow.prototype = {
 		mark : '#003300',
 		selected:'#555500',	// 多选
 	},
-	selectedNodes:[],
+	selectedNodes:[],		// 选中的节点ID集合,用于多选;
 	// 切换左边工具栏按钮,传参TYPE表示切换成哪种类型的按钮;切换之后取消所有的节点/连线选中
 	switchToolBtn:function(type){
 		this.$tool.children("#"+this.$id+"_btn_"+this.$nowType.split(" ")[0]).attr("class","GooFlow_tool_btn");
@@ -26,12 +26,14 @@ GooFlow.prototype = {
 		this.$nowType=type;
 		this.$tool.children("#"+this.$id+"_btn_"+type.split(" ")[0]).attr("class","GooFlow_tool_btndown");
 		if(this.$nowType=="group"){
+			this.clearSelectNodeAll();
 			this.blurItem();
 			this.$workArea.append(this.$group);
 			for(var key in this.$areaDom){
 				this.$areaDom[key].removeClass("lock").children("div:eq(1)").css("display","");
 			}
 		}else if(this.$nowType=="direct"){
+			this.clearSelectNodeAll();
 			this.blurItem();
 		}
 		if(this.$textArea.css("display")=="none"){
@@ -114,12 +116,12 @@ GooFlow.prototype = {
 			this.$head.children("label").attr("title",text).text(text);
 		}
 	},
-	//载入一组数据
+	// 载入一组数据
 	loadData:function(data){
 		var t=this.$editable;
 		this.$editable=false;
 		if(data.title)	this.setTitle(data.title);
-		this.$defKey = data.defKey||'demo';
+		this.$name = data.defKey||'demo';
 		this.setMaxSeq(data);
 		for(var i in data.nodes)
 			this.addNode(i,data.nodes[i]);
@@ -132,26 +134,35 @@ GooFlow.prototype = {
 		this.$undoStack=[];	// 撤销:保存后退按钮执行的操作
 		this.$redoStack=[];	// 重做:保存前进按钮执行操作
 	},
-	// 获取最大的序列号,并赋值给$max
+	// 设置序列号:在加载数据后需要修改序列号为已使用的最大的序列号,并加1
 	setMaxSeq : function(data) {
 		if(data.initNum){
 			this.$max = data.initNum;
 		}else {
 			var idArray = [];
-			var prefix = "demo_node_";
-			for(var i in data.nodes){
+			var prefix = this.$name+"_node_";
+			for ( var i in data.nodes) {
 				var str = data.nodes[i].wfDatas.name + "";
 				if (str.indexOf(prefix) >= 0) {
-					idArray.push(str.replace(prefix,''));
+					idArray.push(str.replace(prefix, ''));
 				}
 			}
-			prefix = "demo_transition_";
-			for(var i in data.lines){
+			prefix =  this.$name+"_line_";
+			for ( var i in data.lines) {
 				var str = data.lines[i].name + "";
 				if (str.indexOf(prefix) >= 0) {
-					idArray.push(str.replace(prefix,''));
+					idArray.push(str.replace(prefix, ''));
 				}
 			}
+			
+			prefix =  this.$name+"_tran_";
+			for ( var i in data.lines) {
+				var str = data.lines[i].name + "";
+				if (str.indexOf(prefix) >= 0) {
+					idArray.push(str.replace(prefix, ''));
+				}
+			}
+			
 			var max = 0;
 			for (var i = 0; i < idArray.length; i++) {
 				var num = parseInt(idArray[i]);
@@ -254,7 +265,7 @@ GooFlow.prototype = {
 			break;
 		}
 	},
-	//清空工作区及已载入的数据
+	// 清空工作区及已载入的数据
 	clearData : function() {
 		for ( var key in this.$nodeData) {
 			this.delNode(key, true);
@@ -267,7 +278,7 @@ GooFlow.prototype = {
 		}
 		this.$deletedItem = {};
 	},
-	//销毁自己
+	// 销毁自己
 	destrory : function() {
 		this.$bgDiv.empty();
 		this.$lineData = null;
@@ -301,7 +312,6 @@ GooFlow.prototype = {
 			width : width + "px",
 			height : height + "px"
 		});
-		console.log("width:"+width+",height:"+height);
 		
 		// 设置左侧工具栏尺寸
 		var toolHeight = height-headX.height-headX.h_Hack; // 工具栏高度=容器高度-减去标题栏高度-标题栏偏移量
@@ -316,5 +326,53 @@ GooFlow.prototype = {
 			width : workAreaX.width + "px",
 			height : workAreaX.height + "px"
 		});
-	}
+	},
+	/**
+	 * 生成一个序列号
+	 */
+	nextSeq : function() {
+		return this.$max++;
+	},
+	/**
+	 * 获取当前序列号
+	 */
+	curSeq : function() {
+		return this.$max;
+	},
+	/**
+	 * 生成一个ID,用于新增节点/连线等对象;
+	 */
+	nextId : function(type){
+		if (!type) {
+			type = $dc.NODE;
+		}
+		var str = '_other_';
+		if (type == $dc.NODE) {
+			str = '_node_';
+		} else if (type == $dc.LINE) {
+			str = '_line_';
+		} else if (type == $dc.AREA) {
+			str = '_area_';
+		} else if (type == $dc.PROP) {
+			str = '_prop_';
+		} else if (type == $dc.TRAN) {
+			str = '_tran_';
+		}
+		var id = this.$name + str + this.nextSeq();
+		return id;
+	},
+	nextLineId:function(){
+		return this.nextId($dc.LINE);
+	},
+	nextAreaId:function(){
+		return this.nextId($dc.AREA);
+	},
+	nextPropId:function(){
+		return this.nextId($dc.PROP);
+	},
+	nextTranId:function(){
+		return this.nextId($dc.TRAN);
+	},
+	f:'1'
+	
 }

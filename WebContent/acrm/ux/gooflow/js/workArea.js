@@ -42,9 +42,10 @@ var temp = {
 		
 		$(this.$draw).delegate(tmpClk,"click",{inthis:this},function(e){
 			console.log('$draw g click');
-			e.data.inthis.clearSelectNodeAll();
-			e.data.inthis.blurItem();
-			e.data.inthis.focusItem(this.id,true);
+			var This = e.data.inthis;
+			This.clearSelectNodeAll();
+			This.blurItem();
+			This.focusItem(this.id,true);
 		});
 		$(this.$draw).delegate(tmpClk,"dblclick",{inthis:this},function(e){
 			console.log('$draw g dblclick');
@@ -93,7 +94,6 @@ var temp = {
 	
 	// 取消所有结点/连线被选定的状态
 	blurItem : function() {
-		console.log('blurItem '+this.$focus);
 		if (this.$focus != "") {
 			var $selItem = $("#" + this.$focus);
 			if ($selItem.prop("tagName") == "DIV") {	//节点
@@ -126,7 +126,6 @@ var temp = {
 	},
 	//选定某个结点/转换线 bool:TRUE决定了要触发选中事件，FALSE则不触发选中事件，多用在程序内部调用。
 	focusItem : function(id, bool) {
-		console.log('focusItem '+id+'--'+this.$focus);
 		if (id && id == this.$focus) {
 			return;
 		}
@@ -217,10 +216,22 @@ var temp = {
 		this.$focus = id;
 		this.switchToolBtn("cursor");
 	},
+	// 添加标记样式
+	addMarkStyle:function(This){
+		$(This).addClass("item_mark").addClass("crosshair").css("border-color",GooFlow.prototype.color.mark||"#ff3300");
+	},
+	// 删除标记样式
+	removeMarkStyle:function(This){
+		$(This).removeClass("item_mark").removeClass("crosshair");
+		if (This.id == this.$focus) {
+			$(This).css("border-color", GooFlow.prototype.color.line || "#3892D3");
+		} else {
+			$(This).css("border-color", GooFlow.prototype.color.node || "#A1DCEB");
+		}
+	},
 	// 用颜色标注/取消标注一个结点或转换线，常用于显示重点或流程的进度。
 	// 这是一个在编辑模式中无用,但是在纯浏览模式中非常有用的方法，实际运用中可用于跟踪流程的进度。
 	markItem : function(id, type, mark) {
-		console.log('markItem '+id+'--'+type+'--'+mark );
 		if (type == "node") {
 			if (!this.$nodeData[id])
 				return;
@@ -289,15 +300,14 @@ var temp = {
 				
 				// 获取鼠标点击位置和元素坐标,并添加节点
 				var mPos = This.getMousePosForNode(e);
-				This.addNode(This.$id + "_node_" + This.$max, {
-					name : "node_" + This.$max,
+				var seq = This.curSeq();
+				This.addNode(This.nextId(), {
+					name : "node_" + seq,
 					left : mPos[0] - 1,
 					top : mPos[1] - 1,
 					type : This.$nowType
 				});
-				This.$max++;
 			}
-			
 		});
 	},
 	// 获取鼠标的位移

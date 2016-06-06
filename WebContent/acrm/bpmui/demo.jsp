@@ -36,6 +36,7 @@
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/object/MyDesigner.js<%=s%>"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/object/MyDialog.js<%=s%>"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/object/MyEvent.js<%=s%>"></script>
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/acrm/bpmui/js/common/baseComponent.js<%=s%>"></script>
 

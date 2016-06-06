@@ -153,12 +153,9 @@ GlobalNS.fn = {
 		if (idField && operFlag == 'modify') {
 			id = childValue[idField];
 			if (id == null || id == undefined) {
-				id = demo.$id + '_name_' + demo.$max;
-				demo.$max++;
-				childValue[idField] = id;
+				childValue[idField] = demo.nextPropId();
 			}
 		}
-		console.log('id='+id);
 		childWindow.$form.settings.params = {
 				This : this,
 				operFlag : operFlag,
@@ -167,7 +164,6 @@ GlobalNS.fn = {
 		if (operFlag == 'add') {
 			childValue = {};
 		}
-		
 		childWindow.showWindow(childValue, operFlag);
 	},
 	/** 
@@ -207,11 +203,9 @@ GlobalNS.fn = {
 			}else{
 				operFlag = 'add';
 			}
-			console.log('idOld='+idOld);
 			
 			// 修改了数据主键,需判断数据主键是否重复
 			var idNew = itemValue[idField];
-			console.log('idNew='+idNew);
 			if (!idOld || idOld != idNew) {
 				var objNew = GlobalNS.fn.findRecordById(This.datas, idNew, idField);
 				if (objNew) {

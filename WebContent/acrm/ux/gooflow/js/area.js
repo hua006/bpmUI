@@ -92,15 +92,15 @@ var temp = {
 			if(e.data.inthis.$ghost.css("display")=="none"){
 				var mp = e.data.inthis.getMousePos(e);
 				var color=["red","yellow","blue","green"];
-				e.data.inthis.addArea(e.data.inthis.$id + "_area_" + e.data.inthis.$max, {
-					name : "area_" + e.data.inthis.$max,
+				var seq = e.data.inthis.curSeq();
+				e.data.inthis.addArea(e.data.inthis.nextAreaId(), {
+					name : "area_" + seq,
 					left : mp[0] - 1,
 					top : mp[1] - 1,
-					color : color[e.data.inthis.$max % 4],
+					color : color[seq % 4],
 					width : 200,
 					height : 100
 				});
-				e.data.inthis.$max++;
 				return false;
 			}
 		});
@@ -143,8 +143,8 @@ var temp = {
 		delete this.$areaDom[id];
 		--this.$areaCount;
 		if (this.$editable) {
-			// 在回退新增操作时,如果节点ID以this.$id+"_area_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
-			if (id.indexOf(this.$id + "_area_") < 0)
+			// 在回退新增操作时,如果节点ID以this.$name+"_area_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
+			if (id.indexOf(this.$name + "_area_") < 0)
 				this.$deletedItem[id] = "area";
 		}
 	},

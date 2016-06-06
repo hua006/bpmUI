@@ -12,12 +12,11 @@ var temp = {
 		this.$nodeRemark = remark;
 	},
 	copyNode : function(id) {
-		var newId  = this.$id + "_node_" + this.$max;
+		var seq = this.curSeq();
+		var newId  = this.nextId();
 		var node = this.$nodeData[id];
-		console.log(node);
-		console.log(newId+'---'+id);
 		this.addNode(newId, {
-			name : node.name + this.$max,
+			name : node.name + seq,
 			left : parseInt(node.left) + 10,
 			top : parseInt(node.top) + 10,
 			type : node.type
@@ -29,15 +28,11 @@ var temp = {
 		$.extend(true, newNode, node);
 		newNode.wfDatas={};
 		newNode.wfDatas.transition=[];
-		newNode.wfDatas.name= node.wfDatas.name + this.$max;
-		newNode.wfDatas.text= node.wfDatas.text + this.$max;
+		newNode.wfDatas.name= node.wfDatas.name + seq;
+		newNode.wfDatas.text= node.wfDatas.text + seq;
 		console.log(newNode.wfDatas.name);
 		console.log(node.wfDatas.name);
 		
-//		console.log(this.$nodeData[id]);
-//		console.log(this.$nodeData[newId]);
-		
-		this.$max++;
 	},
 	// 增加一个流程结点,传参为一个JSON,有id,name,top,left,width,height,type(结点类型)等属性
 	addNode : function(id, json) {
@@ -115,7 +110,6 @@ var temp = {
 	},
 	// 移动结点到一个新的位置
 	moveNode : function(id, left, top, noStack) {
-		console.log('moveNode:'+left)
 		if (!this.$nodeData[id])
 			return;
 		if (this.onItemMove != null && !this.onItemMove(id, "node", left, top))
@@ -125,8 +119,7 @@ var temp = {
 			this.pushOper("moveNode", paras);
 		}
 		if (left < 0){
-			alert(left);
-			console.log(left);
+			console.error(left);
 			left = 0;
 		}
 		if (top < 0)
@@ -194,8 +187,8 @@ var temp = {
 			this.$focus = "";
 
 		if (this.$editable) {
-			// 在回退新增操作时,如果节点ID以this.$id+"_node_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
-			if (id.indexOf(this.$id + "_node_") < 0)
+			// 在回退新增操作时,如果节点ID以this.$name+"_node_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
+			if (id.indexOf(this.$name + "_node_") < 0)
 				this.$deletedItem[id] = "node";
 		}
 	},
@@ -237,13 +230,10 @@ var temp = {
 		for(var index in selectedNodes){
 			this.selectNode(selectedNodes[index], false);
 		}
-		console.log('----------clearSelectNodeAll:');
-		console.log(this.selectedNodes);
 	},
 	// 节点选中处理
 	selectNode : function(id, selected) {
 		var $item = $("#" + id);
-		console.log('----------selectNode:'+id+','+selected);
 		if (selected) {
 			$item.css("border-color", GooFlow.prototype.color.line || "#555500");
 			this.pushValue(this.selectedNodes, id);
@@ -259,7 +249,7 @@ var temp = {
 		// 绑定点击事件
 		this.$workArea.delegate(".GooFlow_item","click",{inthis:this},function(e){
 			console.log('GooFlow_item click');
-//			e.stopPropagation();
+			e.stopPropagation();
 		});
 		// 绑定多选
 		this.$workArea.delegate(".GooFlow_item","mousedown",{inthis:this},function(e){
@@ -276,21 +266,20 @@ var temp = {
 				
 				// 设置选中状态
 				var selected = true;
-				if (e.ctrlKey) {
-					console.log('------------------This.selectedNodes[id]=ctrlKey'+this.$focus);
+				if (e.ctrlKey||This.$nowType=='mutiselect') {
 					// focus的节点不是选中的节点,清除所有焦点
 					if (This.selectedNodes.length == 0 && This.$focus) {
 						This.blurItem();
 					}
 					// 节点选中处理
-					selected = !$item.data('selected');
+					if (e.ctrlKey) {
+						selected = !$item.data('selected');
+					}
 					This.selectNode(id, selected);
 				}else if(This.getValueIndex(This.selectedNodes, id) > -1){
 					// 点击已经选中的节点,不做任何处理
-					console.log('------------------This.selectedNodes[id]=true '+This.selectedNodes);
 				}else{
 					// 点击未选中的几点,重新选中;
-					console.log('------------------This.selectedNodes[id]=false '+This.selectedNodes);
 					This.clearSelectNodeAll();
 					This.blurItem();
 					This.focusItem(id, true);
@@ -300,7 +289,6 @@ var temp = {
 				if (This.selectedNodes.length == 0) {
 					e.stopImmediatePropagation();
 				}
-				console.log(This.selectedNodes);
 			}
 		})
 		// 绑定节点移动
@@ -308,6 +296,25 @@ var temp = {
 			console.log('GooFlow_item mousedown 1');
 			e = e || window.event;
 			var This = e.data.inthis;
+			
+			// 临时连线未清除,需再清除一下;
+			var tmp = document.getElementById("GooFlow_tmp_line");
+			if (tmp) {
+				console.log('GooFlow_tmp_line del again');
+				var $workArea = This.$workArea;
+				var lineStart = $workArea.data("lineStart");
+				var lineEnd = $workArea.data("lineEnd");
+				if (lineStart) {
+					This.removeMarkStyle($('#' + lineStart.id));
+				}
+				if (lineEnd) {
+					This.removeMarkStyle($('#' + lineEnd.id));
+				}
+				$workArea.css("cursor", "auto").removeData("lineStart").removeData("lineEnd");
+				This.$draw.removeChild(tmp);
+				document.onmousemove = null;
+				document.onmouseup = null;
+			}
 			if (This.$nowType != "direct"){
 				
 				// 鼠标当前位置
@@ -389,8 +396,7 @@ var temp = {
 					if(!lineEnd){
 						e.data.inthis.removeMarkStyle($('#'+lineStart.id));
 					}
-					This.addLine(This.$id+"_line_"+This.$max,{from:lineStart.id,to:this.id,name:""});
-					This.$max++;
+					This.addLine(This.nextLineId(),{from:lineStart.id,to:this.id,name:""});
 				}else{
 					if(lineStart){
 						This.moveLinePoints(This.$focus,lineStart.id,this.id);
@@ -405,36 +411,56 @@ var temp = {
 		});
 		// 绑定双击编辑事件
 		this.$workArea.delegate(".ico","dblclick",{inthis:this},function(e){
-			if(!e)e=window.event;
-			e.data.inthis.itemDblClick(e.data.inthis.$focus);
+			console.log('ico dblclick');
+			var This = e.data.inthis;
+			var tid = $(this).parents(".GooFlow_item").attr("id");
+			if (This.$nowType != "cursor") {
+				This.switchToolBtn("cursor");
+			}
+			This.clearSelectNodeAll();
+			This.blurItem(); 				// 取消所有结点/连线被选定的状态
+			if (tid) {
+				This.focusItem(tid, false); // 选定某个节点/连线
+				This.selectNode(tid, true);
+			}
+			if (This.onItemDblClick) {
+				This.onItemDblClick(This.$focus, 'node');
+			}
 			return false;
 		});
 		// 双击编辑节点名称
 		this.$workArea.delegate(".ico + td","dblclick",{inthis:this},function(e){
-			var oldTxt=this.innerHTML;
-			var This=e.data.inthis;
-			var id=$(this).parents(".GooFlow_item").attr("id");
-			var t=getElCoordinate(This.$workArea[0]);
-			This.$textArea.val(oldTxt).css({display:"block",width:$(this).width()+24,height:$(this).height(),
-				left:t.left+24+This.$nodeData[id].left-This.$workArea[0].parentNode.scrollLeft,
-				top:t.top+2+This.$nodeData[id].top-This.$workArea[0].parentNode.scrollTop})
-				.data("id",This.$focus).focus();
-			This.$workArea.parent().one("mousedown",function(e){
-				if(e.button==2)return false;
-				This.setName(This.$textArea.data("id"),This.$textArea.val(),"node");
-				This.$textArea.val("").removeData("id").hide();
-			});
+			console.log('ico + td dblclick');
+			var This = e.data.inthis;
+			if (This.$nowType != "cursor") {
+				This.switchToolBtn("cursor");
+			}
+			if (This.$nowType != "direct") {
+				var oldTxt=this.innerHTML;
+				var This=e.data.inthis;
+				var id=$(this).parents(".GooFlow_item").attr("id");
+				var t=getElCoordinate(This.$workArea[0]);
+				This.$textArea.val(oldTxt).css({display:"block",width:$(this).width()+24,height:$(this).height(),
+					left:t.left+24+This.$nodeData[id].left-This.$workArea[0].parentNode.scrollLeft,
+					top:t.top+2+This.$nodeData[id].top-This.$workArea[0].parentNode.scrollTop})
+					.data("id",This.$focus).focus();
+				This.$workArea.parent().one("mousedown",function(e){
+					if(e.button==2)return false;
+					This.setName(This.$textArea.data("id"),This.$textArea.val(),"node");
+					This.$textArea.val("").removeData("id").hide();
+				});
+			}
 		});
 		// 绑定结点的删除功能
 		this.$workArea.delegate(".rs_close","click",{inthis:this},function(e){
-			console.log(".rs_close click");
+			console.log("GooFlow_item .rs_close click");
 			if(!e)e=window.event;
 			e.data.inthis.delNode(e.data.inthis.$focus);
 			return false;
 		});
 		// 绑定结点的RESIZE功能
 		this.$workArea.delegate(".GooFlow_item > div > div[class!=rs_close]","mousedown",{inthis:this},function(e){
-			console.log(".GooFlow_item > div > div[class!=rs_close]"+"mousedown");
+			console.log("GooFlow_item > div > div[class!=rs_close]"+"mousedown");
 			if(!e)e=window.event;
 			if (e.button == 2){
 				return false;
@@ -470,12 +496,6 @@ var temp = {
 			
 //			var ghostData = This.$nodeData[id];//{X:0,Y0}
 		});
-	},
-	// 节点双击
-	itemDblClick:function(focusId,type){
-		if(this.onItemDblClick){
-			return this.onItemDblClick(focusId,type);
-		}
 	}
 }
 $.extend(GooFlow.prototype, temp)

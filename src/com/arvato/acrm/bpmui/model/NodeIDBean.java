@@ -1,8 +1,8 @@
 package com.arvato.acrm.bpmui.model;
 
 public class NodeIDBean {
-	private int index = 0;
-	private String processKey = "DEMO";
+	private int index = 1;
+	private String processKey = "demo";
 	public NodeIDBean(String processKey) {
 		super();
 		this.processKey = processKey;
@@ -11,9 +11,9 @@ public class NodeIDBean {
 		super();
 	}
 	public String getNodeID(){
-		return processKey+ "-NODE-" + (index++);
+		return processKey+ "-node-" + (index++);
 	}
 	public String getLineID(){
-		return processKey+ "-LINE-" + (index++);
+		return processKey+ "-line-" + (index++);
 	}
 }

@@ -160,7 +160,6 @@ var temp = {
 		}
 		this.$mpTo.hide().removeData("p");
 		this.$mpFrom.hide().removeData("p");
-		console.log('hideMovePoints');
 	},
 	// 通过计算,判断点击位置处于哪两个连线之间
 	getLinePointIndex : function(res, p0) {

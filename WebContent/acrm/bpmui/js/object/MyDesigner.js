@@ -18,9 +18,15 @@ Arvato.MyDesigner = function(bgDiv,property) {
 Arvato.MyDesigner.prototype = GooFlow.prototype;
 
 /*扩展原型*/
-$.extend(Arvato.MyDesigner.prototype, {
+var temp = {
 	/**
-	 * 初始化属性窗口
+	 * 为设计器添加事件操作;
+	 */
+	regEvent : function(property) {
+		$.extend(this, property);
+	},
+	/**
+	 * 初始化属性窗口;
 	 */
 	initDialogs : function(formDatas) {
 
@@ -31,43 +37,6 @@ $.extend(Arvato.MyDesigner.prototype, {
 		for ( var baseNode in formDatas) {
 			this._$pros[baseNode] = new Arvato.MyDialog(body, parent, formDatas[baseNode]);
 		}
-	},
-	/**
-	 * 导出新数据:在导出数据前需要更新一下节点的工作流属性
-	 */
-	exportNewData:function(){
-		for(var key in this.$nodeData){
-			this.reloadWfData(key);
-		}
-		return this.exportData();
-	},
-	refreshForceFn:function(){
-		console.log('refreshForceFn');
-		document.location.href='/bpmUI/?defKey='+wfDefkey+'&num='+Math.random();
-	},
-	refreshFn:function(){
-		console.log('refreshFn');
-		document.location.href='/bpmUI/?defKey='+wfDefkey+'&flag=false';
-	},
-	exportFn:function(){
-		console.log('exportFn');
-		dialogExport.dialog("open");
-		$('#result').val(JSON.stringify(demo.exportNewData()));
-	},
-	copyFn:function(){
-		console.log('copyFn');
-		console.log(demo.selectedNodes);
-		//document.location.href='/bpmUI/?defKey='+wfDefkey+'&num='+Math.random();
-	},
-	pasteFn:function(){
-		console.log('pasteFn');
-		console.log(demo.selectedNodes);
-		
-		for(var key in demo.selectedNodes){
-			var nodeId = demo.selectedNodes[key];
-			demo.copyNode(nodeId);
-		}
-		//document.location.href='/bpmUI/?defKey='+wfDefkey+'&num='+Math.random();
 	},
 	/**
 	 * 获取节点对应的属性窗口
@@ -111,6 +80,30 @@ $.extend(Arvato.MyDesigner.prototype, {
 	 * 场景:工作区;更新节点的连线信息,当在工作区绘制或修改连线后,也需要更新一下节点中的出口规则;
 	 */
 	_reloadTransitions : function(nodeId, transitions, lineDataMap) {
+		
+		// 查找规则是否在连线中存在,若不存在需删除;
+		var delLine = [];
+		for (var i = 0; i < transitions.length; i++) {
+			// 入口与出口节点相同,不需要显示连线;
+			if (transitions[i].to == nodeId) {
+				continue;
+			}
+			var find = false;
+			for ( var key in lineDataMap){
+				var lineData = lineDataMap[key];
+				if (lineData.from == nodeId && lineData.to == transitions[i].to) {
+					find = true;
+					break;
+				}
+			}
+			if(!find){
+				delLine.push(i);
+			}
+		}
+		for(var key in delLine){
+			transitions.splice(delLine[key], 1);
+		}
+		
 		// 查找from为当前节点的连线,若连线的to属性不在当前节点的transitions属性中,则为当前节点添加一条transition
 		// 20160419新增:更新transition节点的连线信息
 		for ( var key in lineDataMap) {
@@ -142,10 +135,8 @@ $.extend(Arvato.MyDesigner.prototype, {
 					}
 				}
 				if (!find) {
-					var tranName = this.$id + "_transition_" + this.$max;
-					this.$max++;
 					transitions.push({
-						name : tranName,
+						name : this.nextTranId(),
 						to : to,
 						text : lineData.name,
 						line : line
@@ -154,7 +145,10 @@ $.extend(Arvato.MyDesigner.prototype, {
 			}
 		}
 	},
-	refreshLineName:function(){
+	/**
+	 * 根据节点属性中的规则名称,更新连线名称
+	 */
+	refreshLineName : function(){
 		for (var i in this.$lineData) {
 			var lineData = this.$lineData[i];
 			var from = lineData.from;
@@ -246,8 +240,7 @@ $.extend(Arvato.MyDesigner.prototype, {
 			// 增加连线
 			if (addLine.length > 0) {
 				for (var i = 0; i < addLine.length; i++) {
-					var lineId = this.$id + '_line_' + this.$max;
-					this.$max++;
+					var lineId = this.nextLineId();
 					this.addLine(lineId, {
 						type : 'sl',
 						from : nodeId,
@@ -258,4 +251,5 @@ $.extend(Arvato.MyDesigner.prototype, {
 			}
 		}
 	}
-})
+};
+$.extend(Arvato.MyDesigner.prototype, temp);

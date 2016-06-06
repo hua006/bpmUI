@@ -186,8 +186,7 @@ GlobalNS.formDatas['createNode']=(function(){
 			var Y = params.Y;
 			var index='';
 			for (var i = 0; i < number; i++) {
-				var id = designer.$id + "_node_" + designer.$max;
-				designer.$max++;
+				var id = designer.nextId();
 				if(i==0){
 					index='';
 				}else{
@@ -212,12 +211,11 @@ GlobalNS.formDatas['createNode']=(function(){
 				// 工作区添加连线
 				var lineStartId = params.focusId;
 				var lineEndId = id;
-				designer.addLine(designer.$id + "_line_" + designer.$max, {
+				designer.addLine(designer.nextLineId(), {
 					from : lineStartId,
 					to : lineEndId,
 					name : ""
 				});
-				designer.$max++;
 				
 				// 添加节点transition属性
 				var transitionValue = {
@@ -578,7 +576,6 @@ $.each(GlobalNS.formDatas,function(index,obj){
 	
 	if(GlobalNS.fn.isBPMNode(index)){
 		obj.validateMethod = GlobalNS.fn.validateMethodFn;
-		console.log("isBPMNode="+index);
 	}
 	
 	// 初始化表单字段属性

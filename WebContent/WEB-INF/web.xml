@@ -18,7 +18,7 @@
 	&acrm_servlet;
 	
 	<welcome-file-list>
-		<welcome-file>demo.jsp</welcome-file>
+		<welcome-file>acrm/bpmui/demo.jsp</welcome-file>
 	</welcome-file-list>
 	
     <filter>

@@ -330,6 +330,15 @@ var temp = {
 		var n1 = this.$nodeData[json.from], n2 = this.$nodeData[json.to];// 获取开始/结束结点的数据
 		if (!n1 || !n2)
 			return;
+		if(n1.type=='end'){
+			console.warn('结束节点不能为连线的起点!');
+			return;
+		}
+		if(n2.type=='start'){
+			console.warn('开始节点不能为连线的终点!');
+			return;
+		}
+		
 		// 避免两个节点间不能有一条以上同向接连线
 		for ( var k in this.$lineData) {
 			if ((json.from == this.$lineData[k].from && json.to == this.$lineData[k].to))
@@ -378,8 +387,8 @@ var temp = {
 			this.$focus = "";
 		--this.$lineCount;
 		if (this.$editable) {
-			// 在回退新增操作时,如果节点ID以this.$id+"_line_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
-			if (id.indexOf(this.$id + "_line_") < 0)
+			// 在回退新增操作时,如果节点ID以this.$name+"_line_"开头,则表示为本次编辑时新加入的节点,这些节点的删除不用加入到$deletedItem中
+			if (id.indexOf(this.$name + "_line_") < 0)
 				this.$deletedItem[id] = "line";
 			this.hideMovePoints();
 		}
@@ -515,21 +524,6 @@ var temp = {
 		else
 			line.childNodes[1].setAttribute("marker-end", "url(#arrow2)");
 	},
-	// 添加标记样式
-	addMarkStyle:function(This){
-		console.log('addMarkStyle');
-		$(This).addClass("item_mark").addClass("crosshair").css("border-color",GooFlow.prototype.color.mark||"#ff3300");
-	},
-	// 删除标记样式
-	removeMarkStyle:function(This){
-		console.log('removeMarkStyle');
-		$(This).removeClass("item_mark").removeClass("crosshair");
-		if (This.id == this.$focus) {
-			$(This).css("border-color", GooFlow.prototype.color.line || "#3892D3");
-		} else {
-			$(This).css("border-color", GooFlow.prototype.color.node || "#A1DCEB");
-		}
-	},
 	/**
 	 * 绑定转折线移动功能
 	 */
@@ -611,10 +605,13 @@ var temp = {
 		var This = this;
 		var line = GooFlow.prototype.drawPolyLine("GooFlow_tmp_line", res, true);
 		This.$draw.appendChild(line);
+		var s = new Date().getMilliseconds();
+		console.log("------------"+s);
 		
 		// 临时线段跟随鼠标移动
 		document.onmousemove = function(e) {
 			if (This.$nowType != "direct" && !This.$mpTo.data("p")) {
+				console.log('document.onmousemove:'+This.$nowType+'---'+This.$mpTo.data("p"));
 				return false;
 			}
 
@@ -632,7 +629,10 @@ var temp = {
 		};
 //		// 划线或改线时用的绑定(在元素上放松鼠标按钮时)
 		document.onmouseup = function(e){
+			console.log("+++++++++++"+s);
 			if (This.$nowType != "direct" && !This.$mpTo.data("p")){
+				console.error(This.$mpTo.data("p"));
+				console.error(This.$nowType);
 				return;
 			}
 			var tmp = document.getElementById("GooFlow_tmp_line");

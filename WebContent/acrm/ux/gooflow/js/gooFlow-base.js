@@ -21,8 +21,9 @@ function GooFlow(bgDiv,property){
 		GooFlow.prototype.useSVG="1";
 	
 //初始化区域图的对象
-	this.$id=bgDiv.attr("id");
-	this.$bgDiv=bgDiv;//最父框架的DIV;
+	this.$id = bgDiv.attr("id");
+	this.$name = this.$id;	// 工作流名称(defKey)
+	this.$bgDiv = bgDiv;// 最父框架的DIV;
 	this.$bgDiv.addClass("GooFlow");
 	if (GooFlow.prototype.color.font) {
 		this.$bgDiv.css("color", GooFlow.prototype.color.font);

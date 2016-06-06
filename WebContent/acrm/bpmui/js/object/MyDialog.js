@@ -35,7 +35,6 @@ Arvato.MyDialog.prototype = {
 		// 添加窗口元素
 		this.$dialog = this._appendDialog(body);
 		// 创建表单
-		
 
 		this.$form = this.$dialog.FormPanel(formData, this).getComp();
 		var This = this;

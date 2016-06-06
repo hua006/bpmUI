@@ -1,182 +1,37 @@
 var s = {
-	"title" : "业务咨询",
+	"title" : "newFlow_1",
 	"nodes" : {
-		"consultNewTest-NODE-0" : {
-			"name" : "start",
-			"left" : 10,
-			"top" : 10,
+		"consultNew-node-1" : {
+			"name" : "node_1",
+			"left" : 44,
+			"top" : 60,
 			"type" : "start",
 			"width" : 32,
 			"height" : 32,
 			"wfDatas" : {
-				"name" : "start",
-				"text" : "start",
-				"nodeType" : "start",
-				"pos" : "10,10",
-				"transition" : [ {
-					"name" : "toAccept",
-					"to" : "consultNewTest-NODE-1",
-					"text" : "提交",
-					"validateMethod" : "checkFormFieldRequired1()",
-					"event-listener" : [ {
-						"ATTR-class" : "com.arvato.ext.truck.workflow.listener.AddSendSMS"
-					} ],
-					"line" : {
-						"type" : "sl",
-						"point" : []
-					}
-				} ]
-			}
-		},
-		"consultNewTest-NODE-1" : {
-			"name" : "任务1",
-			"left" : 112,
-			"top" : 86,
-			"type" : "task",
-			"width" : 32,
-			"height" : 32,
-			"wfDatas" : {
-				"name" : "accept",
-				"text" : "任务1",
-				"nodeType" : "task",
-				"pos" : "111,85",
-				"assignType" : "assignee",
-				"useAssignExcept" : "true",
-				"useAssignPrior" : "true",
-				"type" : "form",
-				"transition" : [ {
-					"name" : "toEnd",
-					"to" : "consultNewTest-NODE-2",
-					"text" : "提交",
-					"validateMethod" : "checkFormFieldRequired1()",
-					"event-listener" : [ {
-						"ATTR-class" : "com.arvato.ext.truck.workflow.listener.AddSendSMS"
-					} ],
-					"line" : {
-						"type" : "sl",
-						"point" : []
-					}
-				}, {
-					"name" : "demo_transition_10",
-					"to" : "consultNewTest-NODE-4",
-					"line" : {
-						"type" : "sl",
-						"point" : []
-					}
-				}, {
-					"name" : "112",
-					"to" : "consultNewTest-NODE-4",
-					"condition" : "12",
-					"event-listener" : [ {
-						"ATTR-class" : "qqq"
-					} ],
-					"line" : {
-						"type" : "sl",
-						"point" : []
-					}
-				} ],
-				"on" : [ {
-					"event" : "start",
-					"to" : "consultNewTest-NODE-1"
-				}, {
-					"event" : "overTime",
-					"to" : "consultNewTest-NODE-3"
-				} ],
-				"exceptNode" : "",
-				"priorNode" : ""
-			},
-			"alt" : true
-		},
-		"consultNewTest-NODE-2" : {
-			"name" : "结单",
-			"left" : 604,
-			"top" : 129,
-			"type" : "end",
-			"width" : 32,
-			"height" : 32,
-			"wfDatas" : {
-				"name" : "end",
-				"text" : "结单",
-				"nodeType" : "end",
-				"pos" : "353,16",
-				"transition" : []
-			},
-			"alt" : true
-		},
-		"consultNewTest-NODE-3" : {
-			"name" : "任务2",
-			"left" : 204,
-			"top" : 402,
-			"type" : "task",
-			"width" : 32,
-			"height" : 32,
-			"wfDatas" : {
-				"name" : "demo_node_1",
-				"text" : "任务2",
-				"nodeType" : "task",
-				"pos" : "301,255",
-				"transition" : [ {
-					"name" : "demo_transition_7",
-					"to" : "consultNewTest-NODE-4"
-				} ]
-			},
-			"alt" : true
-		},
-		"consultNewTest-NODE-4" : {
-			"name" : "任务3",
-			"left" : 138,
-			"top" : 179,
-			"type" : "task",
-			"width" : 32,
-			"height" : 32,
-			"wfDatas" : {
-				"name" : "demo_node_2",
-				"text" : "任务3",
-				"nodeType" : "task",
-				"pos" : "138,179",
-				"transition" : [ {
-					"name" : "demo_transition_8",
-					"to" : "consultNewTest-NODE-2",
-					"line" : {
-						"type" : "sl",
-						"point" : []
-					}
-				}, {
-					"name" : "demo_transition_7",
-					"to" : "consultNewTest-NODE-5",
-					"line" : {
-						"type" : "sl",
-						"point" : []
-					}
-				} ]
-			}
-		},
-		"consultNewTest-NODE-5" : {
-			"name" : "node_1",
-			"left" : 463,
-			"top" : 331,
-			"type" : "decision",
-			"width" : 32,
-			"height" : 32,
-			"wfDatas" : {
-				"name" : "demo_node_1",
+				"name" : "consultNew_node_1",
 				"text" : "node_1",
-				"pos" : "318,174",
+				"pos" : "43,25",
 				"transition" : [ {
-					"name" : "11",
-					"to" : "consultNewTest-NODE-2",
-					"condition" : "112",
+					"name" : "consultNew_tran_5",
+					"to" : "consultNew-node-3",
+					"text" : "consultNew_tran_5",
 					"line" : {
 						"type" : "sl",
 						"point" : []
 					}
 				}, {
-					"name" : "demo_transition_6",
-					"to" : "consultNewTest-NODE-5"
+					"name" : "consultNew_tran_53",
+					"to" : "consultNew-node-5",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
 				}, {
-					"name" : "demo_transition_14",
-					"to" : "consultNewTest-NODE-4",
-					"text" : "demo_transition_7",
+					"name" : "consultNew_tran_54",
+					"to" : "consultNew-node-2",
+					"text" : "",
 					"line" : {
 						"type" : "sl",
 						"point" : []
@@ -185,116 +40,327 @@ var s = {
 			},
 			"alt" : true
 		},
-		"demo_node_11" : {
-			"name" : "任务2",
-			"left" : 317,
-			"top" : 421,
-			"type" : "task",
-			"width" : 32,
-			"height" : 32,
-			"alt" : true,
-			"wfDatas" : {
-				"transition" : [],
-				"name" : "demo_node_111",
-				"text" : "任务211"
-			}
-		},
-		"demo_node_12" : {
-			"name" : "node_1",
-			"left" : 559,
-			"top" : 449,
-			"type" : "decision",
-			"width" : 32,
-			"height" : 32,
-			"alt" : true,
-			"wfDatas" : {
-				"transition" : [],
-				"name" : "demo_node_112",
-				"text" : "node_112"
-			}
-		},
-		"demo_node_13" : {
-			"name" : "结单",
-			"left" : 586,
-			"top" : 289,
+		"consultNew-node-2" : {
+			"name" : "node_2",
+			"left" : 204,
+			"top" : 20,
 			"type" : "end",
 			"width" : 32,
 			"height" : 32,
-			"alt" : true,
 			"wfDatas" : {
-				"transition" : [],
-				"name" : "end13",
-				"text" : "结单13"
-			}
+				"name" : "consultNew_node_2",
+				"text" : "node_2",
+				"pos" : "254,36",
+				"transition" : [ {
+					"name" : "consultNew_tran_55",
+					"to" : "consultNew-node-4",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_56",
+					"to" : "consultNew-node-1",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_57",
+					"to" : "consultNew-node-5",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				} ]
+			},
+			"alt" : true
 		},
-		"demo_node_15" : {
-			"name" : "node_15",
-			"left" : 420,
-			"top" : 435,
+		"consultNew-node-3" : {
+			"name" : "node_3",
+			"left" : 58,
+			"top" : 219,
 			"type" : "task",
 			"width" : 32,
 			"height" : 32,
-			"alt" : true,
 			"wfDatas" : {
-				"name" : "demo_node_15",
-				"text" : "node_15",
-				"transition" : []
-			}
+				"name" : "consultNew_node_3",
+				"text" : "node_3",
+				"pos" : "171,180",
+				"transition" : [ {
+					"name" : "consultNew_tran_6",
+					"to" : "consultNew-node-2",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_10",
+					"to" : "consultNew-node-4",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_58",
+					"to" : "consultNew-node-1",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_59",
+					"to" : "consultNew-node-5",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				} ]
+			},
+			"alt" : true
+		},
+		"consultNew-node-4" : {
+			"name" : "node_7",
+			"left" : 306,
+			"top" : 143,
+			"type" : "task",
+			"width" : 32,
+			"height" : 32,
+			"wfDatas" : {
+				"name" : "consultNew_node_7",
+				"text" : "node_7",
+				"pos" : "382,164",
+				"transition" : [ {
+					"name" : "consultNew_tran_11",
+					"to" : "consultNew-node-2",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_60",
+					"to" : "consultNew-node-3",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_61",
+					"to" : "consultNew-node-1",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_62",
+					"to" : "consultNew-node-5",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				} ]
+			},
+			"alt" : true
+		},
+		"consultNew-node-5" : {
+			"name" : "node_12",
+			"left" : 203,
+			"top" : 262,
+			"type" : "task",
+			"width" : 32,
+			"height" : 32,
+			"wfDatas" : {
+				"name" : "consultNew_node_12",
+				"text" : "node_12",
+				"pos" : "67,207",
+				"transition" : [ {
+					"name" : "consultNew_tran_63",
+					"to" : "consultNew-node-3",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_64",
+					"to" : "consultNew-node-1",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_65",
+					"to" : "consultNew-node-2",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				}, {
+					"name" : "consultNew_tran_66",
+					"to" : "consultNew-node-4",
+					"text" : "",
+					"line" : {
+						"type" : "sl",
+						"point" : []
+					}
+				} ]
+			},
+			"alt" : true
 		}
 	},
 	"lines" : {
-		"consultNewTest-LINE-6" : {
+		"consultNew-line-6" : {
 			"type" : "sl",
-			"from" : "consultNewTest-NODE-0",
-			"to" : "consultNewTest-NODE-1",
-			"name" : "提交",
+			"from" : "consultNew-node-1",
+			"to" : "consultNew-node-3",
+			"name" : "consultNew_tran_5",
 			"points" : [],
 			"alt" : true
 		},
-		"consultNewTest-LINE-7" : {
+		"consultNew-line-7" : {
 			"type" : "sl",
-			"from" : "consultNewTest-NODE-1",
-			"to" : "consultNewTest-NODE-2",
-			"name" : "提交",
+			"from" : "consultNew-node-3",
+			"to" : "consultNew-node-2",
+			"name" : "consultNew_tran_6",
+			"points" : []
+		},
+		"consultNew-line-8" : {
+			"type" : "sl",
+			"from" : "consultNew-node-3",
+			"to" : "consultNew-node-4",
+			"name" : "consultNew_tran_10",
+			"points" : []
+		},
+		"consultNew-line-9" : {
+			"type" : "sl",
+			"from" : "consultNew-node-4",
+			"to" : "consultNew-node-2",
+			"name" : "consultNew_tran_11",
+			"points" : []
+		},
+		"consultNew_line_13" : {
+			"type" : "sl",
+			"from" : "consultNew-node-5",
+			"to" : "consultNew-node-3",
+			"name" : "",
 			"points" : [],
 			"alt" : true
 		},
-		"consultNewTest-LINE-8" : {
+		"consultNew_line_14" : {
 			"type" : "sl",
-			"from" : "consultNewTest-NODE-1",
-			"to" : "consultNewTest-NODE-4",
-			"name" : "demo_transition_10",
-			"points" : []
+			"from" : "consultNew-node-3",
+			"to" : "consultNew-node-1",
+			"name" : "",
+			"points" : [],
+			"alt" : true
 		},
-		"consultNewTest-LINE-10" : {
+		"consultNew_line_15" : {
 			"type" : "sl",
-			"from" : "consultNewTest-NODE-5",
-			"to" : "consultNewTest-NODE-4",
-			"name" : "demo_transition_7",
-			"points" : []
+			"from" : "consultNew-node-1",
+			"to" : "consultNew-node-5",
+			"name" : "",
+			"points" : [],
+			"alt" : true
 		},
-		"consultNewTest-LINE-11" : {
+		"consultNew_line_17" : {
 			"type" : "sl",
-			"from" : "consultNewTest-NODE-4",
-			"to" : "consultNewTest-NODE-2",
-			"name" : "demo_transition_8",
-			"points" : []
+			"from" : "consultNew-node-5",
+			"to" : "consultNew-node-1",
+			"name" : "",
+			"points" : [],
+			"alt" : true
 		},
-		"consultNewTest-LINE-12" : {
+		"consultNew_line_18" : {
 			"type" : "sl",
-			"from" : "consultNewTest-NODE-4",
-			"to" : "consultNewTest-NODE-5",
-			"name" : "demo_transition_7",
-			"points" : []
+			"from" : "consultNew-node-5",
+			"to" : "consultNew-node-2",
+			"name" : "",
+			"points" : [],
+			"alt" : true
 		},
-		"consultNewTest-LINE-13" : {
+		"consultNew_line_19" : {
 			"type" : "sl",
-			"from" : "consultNewTest-NODE-5",
-			"to" : "consultNewTest-NODE-2",
-			"name" : "11",
-			"points" : []
+			"from" : "consultNew-node-2",
+			"to" : "consultNew-node-4",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_20" : {
+			"type" : "sl",
+			"from" : "consultNew-node-4",
+			"to" : "consultNew-node-3",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_24" : {
+			"type" : "sl",
+			"from" : "consultNew-node-4",
+			"to" : "consultNew-node-1",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_27" : {
+			"type" : "sl",
+			"from" : "consultNew-node-5",
+			"to" : "consultNew-node-4",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_28" : {
+			"type" : "sl",
+			"from" : "consultNew-node-3",
+			"to" : "consultNew-node-5",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_30" : {
+			"type" : "sl",
+			"from" : "consultNew-node-2",
+			"to" : "consultNew-node-1",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_41" : {
+			"type" : "sl",
+			"from" : "consultNew-node-2",
+			"to" : "consultNew-node-5",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_47" : {
+			"type" : "sl",
+			"from" : "consultNew-node-4",
+			"to" : "consultNew-node-5",
+			"name" : "",
+			"points" : [],
+			"alt" : true
+		},
+		"consultNew_line_50" : {
+			"type" : "sl",
+			"from" : "consultNew-node-1",
+			"to" : "consultNew-node-2",
+			"name" : "",
+			"points" : [],
+			"alt" : true
 		}
 	},
 	"areas" : {},
-	"initNum" : 16
+	"initNum" : 67
 }

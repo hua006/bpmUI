@@ -39,14 +39,20 @@ var initDataObject = {
 			icoSize:32  // 显示的图标尺寸:16,32,64
 //			width : 32,		// 默认节点图标宽度
 //			height : 32,	// 默认节点图标高度
-		}
+		},
+		// 常量信息
+		NODE:'node',	// 节点类型
+		LINE:'line',	// 连线类型
+		AREA:'area',	// 区域块类型
+		PROP:'prop',	// 属性窗口类型
+		TRAN:'tran',	// 规则类型
 	},
 	
 	// 设计器实例信息
 	$DataX:{},
 	
 	// 初始化数据,包括容器,节点,线段等初始化属性信息;
-	init:function(property){
+	init : function(property){
 		
 		// 创建设计器常量信息的一个拷贝;
 		$.extend(true, this.$DataX, this.$DataConst);
@@ -114,5 +120,6 @@ var initDataObject = {
 		}
 		return str.substr(0,str.length-length);
 	}
-}
+};
+var $dc =  initDataObject.$DataConst;	// 常量信息;
 $.extend(GooFlow.prototype, initDataObject)
