@@ -116,7 +116,7 @@ var temp = {
 				if(line.M){
 					line0.M = line.M + move[1];
 				}
-			}else if(line.type==sl){
+			}else if(line.type=='lr'){
 				if(line.M){
 					line0.M = line.M + move[0];
 				}

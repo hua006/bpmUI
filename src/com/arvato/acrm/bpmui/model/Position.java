@@ -1,5 +1,6 @@
 package com.arvato.acrm.bpmui.model;
 
+import com.arvato.acrm.bpmui.util.BPMUIUtil;
 import com.arvato.acrm.commons.util.Tools;
 
 /**
@@ -21,8 +22,8 @@ public class Position {
 		if(!Tools.isBlank(pos)){
 			String[] array = pos.split(",");
 			if (array.length == 2) {
-				left = Integer.parseInt(array[0]);
-				top = Integer.parseInt(array[1]);
+				left = BPMUIUtil.parseInt(array[0]);
+				top = BPMUIUtil.parseInt(array[1]);
 				return left;
 			}
 		}

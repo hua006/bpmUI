@@ -606,10 +606,13 @@ var temp = {
 		var line = GooFlow.prototype.drawPolyLine("GooFlow_tmp_line", res, true);
 		This.$draw.appendChild(line);
 		var s = new Date().getMilliseconds();
-		console.log("------------"+s);
+		var move = false;
+		// 拖拽时隐藏 tooltip,以避免影响
+		$(document).tooltip('option','hide',false);
 		
 		// 临时线段跟随鼠标移动
 		document.onmousemove = function(e) {
+			move=true;
 			if (This.$nowType != "direct" && !This.$mpTo.data("p")) {
 				console.log('document.onmousemove:'+This.$nowType+'---'+This.$mpTo.data("p"));
 				return false;
@@ -629,7 +632,6 @@ var temp = {
 		};
 //		// 划线或改线时用的绑定(在元素上放松鼠标按钮时)
 		document.onmouseup = function(e){
-			console.log("+++++++++++"+s);
 			if (This.$nowType != "direct" && !This.$mpTo.data("p")){
 				console.error(This.$mpTo.data("p"));
 				console.error(This.$nowType);
