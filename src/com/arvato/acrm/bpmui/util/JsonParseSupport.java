@@ -54,7 +54,7 @@ public class JsonParseSupport {
 	 * 3.连线信息合并到transition中
 	 * 4.使用dom4j转换为xml格式的字符串
 	 */
-	public String getXml(String jsonStr,String defKey) throws Exception {
+	public String getXml(String jsonStr,String processName) throws Exception {
 		JSONObject jsonObj = JSONObject.fromObject(jsonStr);
 		String title = getValue(jsonObj,"title");
 		JSONObject nodes = getJSONObject(jsonObj, "nodes");
@@ -62,7 +62,7 @@ public class JsonParseSupport {
 		
 		Document _document = DocumentHelper.createDocument();
 		Element _root = _document.addElement("process");
-		_root.addAttribute("name", defKey);
+		_root.addAttribute("name", processName);
 		_root.addAttribute("text", title);
 		
 		// 生成xml节点对象

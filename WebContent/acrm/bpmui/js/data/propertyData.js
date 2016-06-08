@@ -548,6 +548,55 @@ GlobalNS.formDatas['on']=(function(){
 		]
 	}
 })();
+GlobalNS.formDatas['newProcess']=(function(){
+	return {
+		name:'newProcess',
+		id:'dialog-newProcess',
+		title:'新增流程',
+		width:400,
+		height:300,
+		labelWidth: 80,					// 属性窗口中的左侧文本列宽度
+		cls:'',
+		items:[
+			{xtype:'text',name:'name',text:'名称'},
+			{xtype:'text',name:'title',text:'描述'}
+		]
+	}
+})();
+GlobalNS.formDatas['saveProcess']=(function(){
+	return {
+		name:'saveProcess',
+		id:'dialog-saveProcess',
+		title:'保存流程',
+		width:400,
+		height:300,
+		labelWidth: 80,					// 属性窗口中的左侧文本列宽度
+		cls:'',
+		items:[
+			{xtype:'text',name:'name',text:'名称'},
+			{xtype:'text',name:'title',text:'描述'},
+			{xtype:'text',name:'fileName',text:'文件名称'},
+		]
+	}
+})();
+GlobalNS.formDatas['uploadProcess']=(function(){
+	return {
+		name:'uploadProcess',
+		id:'dialog-uploadProcess',
+		title:'上传流程',
+		width:400,
+		height:300,
+		labelWidth: 10,
+		cls:'',
+		items : [ {
+			xtype : 'uploadfile',
+			name : 'fileName',
+			text : '',
+			swf : contextPath + '/acrm/ux/uploadify/uploadify.swf',// 属性窗口中的左侧文本列宽度
+			uploader : contextPath + '/acrm/uploadify' // 数据处理url
+		} ]
+	}
+})();
 
 // 通用信息初始化;
 $.each(GlobalNS.formDatas,function(index,obj){

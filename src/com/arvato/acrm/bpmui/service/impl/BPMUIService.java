@@ -71,7 +71,7 @@ public class BPMUIService {
 		lineJsonMap.get("consultNewTest-LINE-4");
 		
 		Map<String,Object> JsonMap = new HashMap<String,Object>();
-		JsonMap.put("defKey", processName);
+		JsonMap.put("name", processName);
 		JsonMap.put("title", processDesc);
 		JsonMap.put("nodes", nodeJsonMap);
 		JsonMap.put("lines", lineJsonMap);

@@ -98,9 +98,13 @@ $(document).ready(function() {
 	demo.initDialogs(GlobalNS.formDatas);
 	
 	// 执行顶部工具栏打开按钮事件
-	demo.$name = wfDefkey || demo.$name;
-	console.log(demo.$name);
-	demo.onBtnOpenClick();
+	demo.$name = processName || demo.$name;
+	demo.$fileName = processFileName || demo.$fileName;
+	console.log(demo.$name,demo.$fileName);
+	if (demo.$name || demo.$fileName) {
+		demo.openFile(demo.$fileName, demo.$name);
+	}
+//	demo.onBtnOpenClick();
 //	demo.loadData(jsondata);
 	
 	// 导出弹出窗口

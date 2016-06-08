@@ -121,7 +121,8 @@ GooFlow.prototype = {
 		var t=this.$editable;
 		this.$editable=false;
 		if(data.title)	this.setTitle(data.title);
-		this.$name = data.defKey||'demo';
+		this.$name = data.name || 'demo';
+		this.$fileName = data.fileName;
 		this.setMaxSeq(data);
 		for(var i in data.nodes)
 			this.addNode(i,data.nodes[i]);
@@ -195,7 +196,15 @@ GooFlow.prototype = {
 	},
 	//把画好的整个流程图导出到一个变量中(其实也可以直接访问GooFlow对象的$nodeData,$lineData,$areaData这三个JSON属性)
 	exportData:function(){
-		var ret={title:this.$title,nodes:this.$nodeData,lines:this.$lineData,areas:this.$areaData,initNum:this.$max};
+		var ret = {
+			name : this.$name,
+			fileName : this.$fileName,
+			title : this.$title,
+			nodes : this.$nodeData,
+			lines : this.$lineData,
+			areas : this.$areaData,
+			initNum : this.$max
+		};
 		for(var k1 in ret.nodes){
 			if(!ret.nodes[k1].marked){
 				delete ret.nodes[k1]["marked"];

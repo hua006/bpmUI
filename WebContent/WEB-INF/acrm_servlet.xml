@@ -9,6 +9,15 @@
 	</servlet-mapping>
 	<!--end file upload-->
 
+	<servlet>
+		<servlet-name>upLoadify</servlet-name>
+		<servlet-class>com.arvato.acrm.bpmui.web.UpLoadify</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>upLoadify</servlet-name>
+		<url-pattern>/acrm/uploadify</url-pattern>
+	</servlet-mapping>
+
 	<!-- file download -->
 	<servlet>
 	  <servlet-name>fileDownload</servlet-name>

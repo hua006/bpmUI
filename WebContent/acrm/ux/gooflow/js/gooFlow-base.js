@@ -21,9 +21,10 @@ function GooFlow(bgDiv,property){
 		GooFlow.prototype.useSVG="1";
 	
 //初始化区域图的对象
-	this.$id = bgDiv.attr("id");
-	this.$name = this.$id;	// 工作流名称(defKey)
-	this.$bgDiv = bgDiv;// 最父框架的DIV;
+	this.$id = bgDiv.attr("id");	// 设计器id,初始化时即设定,不可改变;
+	this.$fileName = '';			// 工作流保存后的文件名称;
+	this.$name = this.$id;			// 工作流名称,每个工作流文件的名称应不同,默认为$id,在加载数据时可以修改(对应xml中的process.name属性,即defKey)
+	this.$bgDiv = bgDiv;			// 最父框架的DIV;
 	this.$bgDiv.addClass("GooFlow");
 	if (GooFlow.prototype.color.font) {
 		this.$bgDiv.css("color", GooFlow.prototype.color.font);

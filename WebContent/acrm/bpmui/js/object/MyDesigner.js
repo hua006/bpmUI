@@ -250,6 +250,55 @@ var temp = {
 				}
 			}
 		}
+	},
+	openFile : function(fileName, name) {
+		var This = this;
+		$.ajax({
+			type : "get",
+			url : contextPath + '/bpmui/loadFile.action',
+			data : {
+				fileName : fileName,
+				name : name
+			},
+			dataType : "json",
+			success : function(msg) {
+				// alert("打开工作流: " + msg.title);
+				This.clearData();
+				This.loadData(msg);
+				This.refreshLineName();
+				This.$undoStack = [];
+				This.$redoStack = [];
+			}
+		});
+	},
+	saveFile : function(name, title, fileName) {
+		var path = contextPath + "/bpmui/saveFile.action";
+		name = name || this.$name;
+		fileName = fileName || this.$fileName;
+		title = title || this.$title;
+		var exportData = this.exportNewData();
+		var nodes = exportData.nodes;
+		var lines = exportData.lines;
+		exportData.name = name;
+		exportData.title = title;
+		var This = this;
+
+		var jsonData = JSON.stringify(exportData);
+		$.ajax({
+			type : "POST",
+			url : path,
+			data : {
+				fileName : fileName,
+				name : name,
+				jsondata : jsonData
+			},
+			success : function(msg) {
+				if(msg){
+					This.openFile(msg.fileName, msg.name);
+				}
+				alert("Data Saved: " + msg);
+			}
+		});
 	}
 };
 $.extend(Arvato.MyDesigner.prototype, temp);

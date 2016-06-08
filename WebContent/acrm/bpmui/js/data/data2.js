@@ -1,6 +1,6 @@
 jsondata = {
 	"title" : "业务咨询",
-	"defKey" : "consultNewTest",
+	"name" : "consultNewTest",
 	"nodes" : {
 		"consultNewTest-NODE-0" : {
 			"name" : "start",

@@ -1,5 +1,5 @@
 /**
- * 设置设计器的事件操作
+ * 设置设计器的事件操作;this对应设计器对象;
  */
 var myEvents = {
 	f:1,
@@ -46,54 +46,65 @@ var myEvents = {
 	},
 	// 设置新增操作
 	onBtnNewClick : function() {
-		demo.clearData();
-		demo.loadData({
-			'title' : '新建工作流1',
-			initNum : 0,
-			defKey : ''	// 若为空,默认为demo
-		});
-		demo.$undoStack=[];
-		demo.$redoStack=[];
+		var window = this.getPropWindow("newProcess");
+		window.showWindow({});
+		window.$form.settings.saveDataMethod = function() {
+			var itemValue = this.datas; // 当前窗口的表单数据
+			var params = this.settings.params;
+			var This = params.This;
+			if(itemValue.name){
+				This.clearData();
+				This.loadData({
+					title : itemValue.title,
+					initNum : 0,
+					name : itemValue.name	// 若为空,默认为demo
+				});
+				This.$undoStack=[];
+				This.$redoStack=[];
+			}
+		};
+		window.$form.settings.params = {
+				This : this
+		};
 	},
 	// 设置顶部工具栏打开按钮事件
 	onBtnOpenClick : function() {
-		var defKey = this.$name;
-		var path = contextPath + "/bpmui/loadFile.action?defKey=" + defKey;
-		$.ajax({
-			type : "get",
-			url : path,
-			data : "name=John&location=Boston",
-			dataType:"json",
-			success : function(msg) {
-				// alert("打开工作流: " + msg.title);
-				demo.clearData();
-				demo.loadData(msg);
-				demo.refreshLineName();
-				demo.$undoStack=[];
-				demo.$redoStack=[];
+		var window = this.getPropWindow("uploadProcess");
+		window.showWindow({});
+		window.$form.settings.saveDataMethod = function() {
+			var itemValue = this.datas; // 当前窗口的表单数据
+			var params = this.settings.params;
+			var This = params.This;
+			console.log(itemValue);
+			if(itemValue.fileName){
+				This.openFile(itemValue.fileName);
 			}
-		});
+		};
+		window.$form.settings.params = {
+				This : this
+		};
 	},
 	// 设置顶部工具栏保存按钮事件
 	onBtnSaveClick : function() {
-		var path = contextPath + "/bpmui/saveFile.action";
-		var defKey = this.$name;
-		var exportData = this.exportNewData();
-		var nodes = exportData.nodes;
-		var lines = exportData.lines;
-		
-		
-//		{title:this.$title,nodes:this.$nodeData,lines:this.$lineData,areas:this.$areaData,initNum:this.$max}
-		
-		var jsonData = JSON.stringify(exportData);
-		$.ajax({
-			type : "POST",
-			url : path,
-			data : "defKey=" + defKey + "&jsondata=" + jsonData,
-			success : function(msg) {
-				alert("Data Saved: " + msg);
+		var window = this.getPropWindow("saveProcess");
+		var pData = {
+			name : demo.$name,
+			title : demo.$title,
+			fileName : demo.$fileName
+		}; 
+		window.showWindow(pData);
+		window.$form.settings.saveDataMethod = function() {
+			var itemValue = this.datas; // 当前窗口的表单数据
+			var params = this.settings.params;
+			var This = params.This;
+			if(itemValue.name){
+				This.saveFile(itemValue.name,itemValue.title,itemValue.fileName);
 			}
-		});
+		};
+		window.$form.settings.params = {
+				This : this
+		};
+		
 	},
 	onFreshClick : function() {
 
@@ -109,13 +120,15 @@ var myEvents = {
 	},
 	refreshForceFn:function(){
 		console.log('refreshForceFn');
-		var defKey = this.$name;
-		document.location.href=contextPath+'/acrm/bpmui/demo.jsp?defKey='+defKey+'&num='+Math.random();
+		var name = this.$name;
+		var fileName = this.$fileName||'';
+		document.location.href = contextPath + '/acrm/bpmui/demo.jsp?name=' + name + '&fileName=' + fileName + '&num=' + Math.random();
 	},
 	refreshFn:function(){
 		console.log('refreshFn');
-		var defKey = this.$name;
-		document.location.href=contextPath+'/acrm/bpmui/demo.jsp?defKey='+defKey+'&flag=false';
+		var name = this.$name;
+		var fileName = this.$fileName||'';
+		document.location.href = contextPath + '/acrm/bpmui/demo.jsp?name=' + name + '&fileName=' + fileName + '&flag=false';
 	},
 	exportFn:function(){
 		console.log('exportFn');
@@ -125,8 +138,8 @@ var myEvents = {
 	copyFn:function(){
 		console.log('copyFn');
 		console.log(this.selectedNodes);
-		var defKey = this.$name;
-		//document.location.href='/bpmUI/?defKey='+defKey+'&num='+Math.random();
+		var name = this.$name;
+		//document.location.href='/bpmUI/?name='+name+'&num='+Math.random();
 	},
 	pasteFn:function(){
 		console.log('pasteFn');
@@ -136,8 +149,8 @@ var myEvents = {
 			var nodeId = this.selectedNodes[key];
 			this.copyNode(nodeId);
 		}
-		var defKey = this.$name;
-		//document.location.href='/bpmUI/?defKey='+defKey+'&num='+Math.random();
+		var name = this.$name;
+		//document.location.href='/bpmUI/?name='+name+'&num='+Math.random();
 	},
 	// 设置工作区双击事件
 	onItemDblClick : function(focusId,type){
@@ -165,10 +178,10 @@ var myEvents = {
 			var itemValue = this.datas; // 当前窗口的表单数据
 			var idField = this.settings.idField;
 			var params = this.settings.params;
-			var This = params.This;
+			var This = params.This;	// 设计器对象;
 			var nodeData = This.getBaseNodeData(params.focusId, params.baseType);
 			nodeData.wfDatas = itemValue;
-			demo.refreshWorkArea(params.focusId, nodeData);
+			This.refreshWorkArea(params.focusId, nodeData);
 		};
 		window.$form.settings.params = {
 				This : this,

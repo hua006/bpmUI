@@ -300,7 +300,7 @@ var temp = {
 			// 临时连线未清除,需再清除一下;
 			var tmp = document.getElementById("GooFlow_tmp_line");
 			if (tmp) {
-				console.log('GooFlow_tmp_line del again');
+				console.warn('GooFlow_tmp_line del again,maybe an error occured!');
 				var $workArea = This.$workArea;
 				var lineStart = $workArea.data("lineStart");
 				var lineEnd = $workArea.data("lineEnd");

@@ -23,15 +23,20 @@ public class BPMUIAction extends ActionSupport {
 	
 	public String loadFile() throws Exception {
 		HttpServletRequest request = ServletActionContext.getRequest();
-		String defKey = request.getParameter("defKey");
-		if(Tools.isBlank(defKey)){
-			defKey = "consultNew";
+		
+		String fileName = request.getParameter("fileName");
+		if(Tools.isBlank(fileName)){
+			String processName = request.getParameter("name");
+			if(Tools.isBlank(processName)){
+				processName = "consultNew";
+			}
+			String downloadPath = request.getSession().getServletContext().getRealPath("/")+ConfigConstants.PATH_DOWNLOAD+System.getProperty("file.separator");
+			fileName = downloadPath+processName+".xml";
 		}
-		String downloadPath = request.getSession().getServletContext().getRealPath("/")+ConfigConstants.PATH_DOWNLOAD+System.getProperty("file.separator");
-		String fileName = downloadPath+defKey+".xml";
-		BPMUIService s =new BPMUIService();
+		
 		String output = "";
 		try {
+			BPMUIService s =new BPMUIService();
 			output = s.readWorkFlow(fileName);
 		} catch (Exception e) {
 			logger.error("",e);
@@ -43,19 +48,24 @@ public class BPMUIAction extends ActionSupport {
 	public String saveFile() throws Exception {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		
-		String defKey = request.getParameter("defKey");
+		String fileName = request.getParameter("fileName");
+		String processName = request.getParameter("name");
 		String jsondata = request.getParameter("jsondata");
+		if(Tools.isBlank(fileName)){
+			fileName = processName + ".xml";
+		}
 		
 		JsonParseSupport s = new JsonParseSupport();
-		String xml = s.getXml(jsondata,defKey);
+		String xml = s.getXml(jsondata, processName);
 		System.out.println(xml);
 		
 		String downloadPath = request.getSession().getServletContext().getRealPath("/") + ConfigConstants.PATH_DOWNLOAD + System.getProperty("file.separator");
-		writeFile(downloadPath, defKey + ".xml", xml);
+		writeFile(downloadPath, fileName, xml);
 		
-//		System.out.println("defKey="+defKey+",jsondata:");
+//		System.out.println("name="+processName+",jsondata:");
 //		System.out.println(jsondata);
-		request.setAttribute("output", "success");
+		request.setAttribute("fileName", downloadPath + fileName);
+		request.setAttribute("name", processName);
 		return SUCCESS;
 	}
 	private void writeFile(String filePath,String fileName, String xml) {
