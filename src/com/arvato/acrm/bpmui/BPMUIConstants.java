@@ -19,7 +19,7 @@ public class BPMUIConstants {
 		arrayNodes.add("on");
 		arrayNodes.add("point");
 
-		// start,end,task,decision,state,sub-process,fork,join,math,define;group;
+		// start,end,task,task-call,task-sms,task-email,task-dm,decision,state,sub-process,fork,join,math,define;group;
 		nodes.add("");
 		
 		// 工作流文件中的元素节点与属性名有重复的情况,需要对元素名称进行重命名;

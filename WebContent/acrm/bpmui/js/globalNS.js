@@ -63,6 +63,10 @@ GlobalNS.options={
 	rootNodes : [
 		{name:'end',text:'结束节点'}, 
 		{name:'task',text:'任务节点'},
+		{name:'task-call',text:'外呼任务'},
+		{name:'task-sms',text:'短信任务'},
+		{name:'task-email',text:'Email任务'},
+		{name:'task-dm',text:'直邮任务'},
 		{name:'decision',text:'判断节点'},
 		{name:'state',text:'状态节点'},
 		{name:'sub-process',text:'子流程'},
@@ -75,6 +79,11 @@ GlobalNS.options={
 //		{name:'',text:''},
 		{name:'true',text:'是'},
 		{name:'false',text:'否'}
+	],
+	campaignStatus:[
+		//{name:'',text:''},
+		{name:'1',text:'外呼成功'},
+		{name:'2',text:'外呼失败'}
 	]
 }
 //GlobalNS.formDatas['demo']=(function(){
@@ -105,7 +114,7 @@ GlobalNS.options={
  * datas:{dialogId,name,focusId,nodeData}
  * */
 GlobalNS.fn = {
-	rootNodes:['start','end','task','decision','state','sub-process','fork','join','math'],
+	rootNodes:['start','end','task','task-call','task-sms','task-email','task-dm','decision','state','sub-process','fork','join','math'],
 	'demo':function(datas){
 	},
 	isBPMNode : function(nodeName) {

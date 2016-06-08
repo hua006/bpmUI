@@ -52,7 +52,7 @@ function GooFlow(bgDiv,property){
 	this.$title = "newFlow_1";			// 流程图的名称
 	this.$nodeRemark = {};				// 每一种结点或按钮的说明文字,JSON格式,key为类名,value为用户自定义文字说明
 	this.$nowType = "cursor";			// 当前要绘制的对象类型:cursor,mutiselect,direct;
-										// start,end,task,decision,state,sub-process,fork,join,math,define;group;
+										// start,end,task,task-call,task-sms,task-email,task-dm,decision,state,sub-process,fork,join,math,define;group;等
 	this.$lineData = {};
 	this.$lineCount = 0;
 	this.$nodeData = {};
@@ -135,7 +135,12 @@ function GooFlow(bgDiv,property){
 		if(property.toolBtns&&property.toolBtns.length>0){
 			tmp="<span/>";
 			for(var i=0;i<property.toolBtns.length;++i){
-				tmp+="<a href='javascript:void(0)' type='"+property.toolBtns[i]+"' id='"+this.$id+"_btn_"+property.toolBtns[i].split(" ")[0]+"' class='GooFlow_tool_btn'><i class='ico_"+property.toolBtns[i]+"_"+icoSize+"'/></a>";//加入自定义按钮
+				var btn = property.toolBtns[i];
+				if(btn=='-'){
+					tmp+="<span/>";
+				}else{
+					tmp+="<a href='javascript:void(0)' type='"+property.toolBtns[i]+"' id='"+this.$id+"_btn_"+property.toolBtns[i].split(" ")[0]+"' class='GooFlow_tool_btn'><i class='ico_"+property.toolBtns[i]+"_"+icoSize+"'/></a>";//加入自定义按钮
+				}
 			}
 			this.$tool.append(tmp);
 		}

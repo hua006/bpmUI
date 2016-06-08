@@ -90,6 +90,7 @@ GlobalNS.formDatas['end']=(function(){
 		]
 	}
 })();
+// 任务节点
 GlobalNS.formDatas['task']=(function(){
 	return {
 		name:'task',
@@ -103,56 +104,196 @@ GlobalNS.formDatas['task']=(function(){
 //		},
 		cls:'',
 		items:[
+		       {xtype:'text',name:'name',text:'名称'},
+		       {xtype:'text',name:'text',text:'描述'},
+		       {xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
+		       {xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
+		       {xtype:'text',name:'userLevel',text:'受理人用户级别'},
+		       {xtype:'select',name:'useAssignExcept',text:'是否使用分配避免',items:GlobalNS.options.trueOrFalse,
+		    	   listeners:{change:function(event){
+		    		   var value = $(this).val();
+		    		   var This = event.data.This;
+		    		   var $exceptNode = This._parentCom._fields['exceptNode'].$me.find('[name="exceptNode"]');
+//					var $exceptNode = This._parentCom._fields['exceptNode'].$me.find('[name="' + exceptNode + '"]:checked').removeAttr('checked');;
+		    		   if(value=='true'){
+		    			   $exceptNode.removeAttr("disabled");
+		    		   }else{
+		    			   $exceptNode.attr("disabled", "disabled");
+		    		   }
+		    	   }}},
+		    	   {xtype:'checkbox',name:'exceptNode',text:'分配避免针对节点',valueType : 'String'},
+		    	   {xtype:'select',name:'useAssignPrior',text:'是否使用分配优先',items:GlobalNS.options.trueOrFalse,
+		    		   listeners:{change:function(event){
+		    			   var value = $(this).val();
+		    			   var This = event.data.This;
+		    			   var $priorNode = This._parentCom._fields['priorNode'].$me.find('[name="priorNode"]');
+//					var $priorNode = This._parentCom._fields['exceptNode'].$me.find('[name="' + exceptNode + '"]:checked').removeAttr('checked');;
+		    			   if(value=='true'){
+		    				   $priorNode.removeAttr("disabled");
+		    			   }else{
+		    				   $priorNode.attr("disabled", "disabled");
+		    			   }
+		    		   }}},
+		    		   {xtype:'checkbox',name:'priorNode',text:'分配优先针对的节点',valueType : 'String'},
+		    		   {xtype:'text',name:'autoMemoMethod',text:'自动备注方法'},
+		    		   {xtype:'text',name:'onloadMethod',text:'页面加载方法'},
+		    		   {xtype:'select',name:'type',text:'任务类型',
+		    			   listeners:{change:function(event){
+		    				   var value = $(this).val();
+		    				   var This = event.data.This;
+		    				   var $formID = This._parentCom._fields['formID'].$me;
+		    				   var $layoutID = This._parentCom._fields['layoutID'].$me;
+		    				   if(value=='form'||value=='survey'){
+		    					   $formID.removeAttr("disabled");
+		    					   $layoutID.attr("disabled", "disabled").val('');
+		    				   }else if(value=='layout'){
+		    					   $formID.attr("disabled", "disabled").val('');
+		    					   $layoutID.removeAttr("disabled");
+		    				   }
+		    			   }},
+		    			   items:[{name:'form',text:'form'},{name:'survey',text:'survey'},{name:'layout',text:'layout'}]},
+		    			   {xtype:'text',name:'formID',text:'DFL表单ID'},
+		    			   {xtype:'text',name:'layoutID',text:'DFL布局ID'},
+		    			   {xtype:'text',name:'maxCallCount',text:'最大外呼次数',regex:GlobalNS.Regex.number},
+		    			   {xtype:'grid',name:'variable',text:'字段信息'},
+		    			   {xtype:'grid',name:'transition',text:'出口'},
+		    			   {xtype:'grid',name:'on',text:'事件'}
+		    			   ]
+	}
+})();
+// 外呼任务节点
+GlobalNS.formDatas['task-call']=(function(){
+	return {
+		name:'task-call',
+		id:'dialog-task-call',
+		title:'外呼任务',
+		width : 500,
+		height : 600,
+		labelWidth: 150,
+		cls:'',
+		items:[
+		       {xtype:'text',name:'name',text:'名称'},
+		       {xtype:'text',name:'text',text:'描述'},
+		       {xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
+		       {xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
+		       {xtype:'text',name:'userLevel',text:'受理人用户级别'},
+		       {xtype:'text',name:'formID',text:'回访脚本'},
+		       {xtype:'text',name:'layoutID',text:'回访布局'},
+		       {xtype:'text',name:'maxCallCount',text:'最大外呼次数',regex:GlobalNS.Regex.number},
+		       {xtype:'grid',name:'variable',text:'字段信息'},
+		       {xtype:'grid',name:'transition',text:'出口'},
+		       {xtype:'grid',name:'on',text:'事件'}
+		       ]
+	}
+})();
+// 短信任务节点
+GlobalNS.formDatas['task-sms']=(function(){
+	return {
+		name:'task-sms',
+		id:'dialog-task-sms',
+		title:'短信任务',
+		width : 500,
+		height : 600,
+		labelWidth: 150,
+		cls:'',
+		items:[
+		       {xtype:'text',name:'name',text:'名称'},
+		       {xtype:'text',name:'text',text:'描述'},
+		       {xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
+		       {xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
+		       {xtype:'text',name:'userLevel',text:'受理人用户级别'},
+		       {xtype:'text',name:'template',text:'短信模板'},
+		       {xtype:'text',name:'mobile',text:'手机号码'},
+		       {xtype:'textarea',name:'content',text:'短信内容'},
+		       {xtype:'text',name:'scheduleTime',text:'预约发送时间'},
+		       {xtype:'text',name:'expTime',text:'超时时间',regex:GlobalNS.Regex.number},
+		       {xtype:'text',name:'expAction',text:'超时处理方式'},
+		       {xtype:'text',name:'retryTimes',text:'最大发送次数',regex:GlobalNS.Regex.number},
+		       {xtype:'text',name:'retryInterval',text:'发送时间间隔(分钟)',regex:GlobalNS.Regex.number},
+		       {xtype:'grid',name:'variable',text:'字段信息'},
+		       {xtype:'grid',name:'transition',text:'出口'},
+		       {xtype:'grid',name:'on',text:'事件'}
+		       ]}
+})();
+// Email任务节点
+GlobalNS.formDatas['task-email']=(function(){
+	return {
+		name:'task-email',
+		id:'dialog-task-email',
+		title:'Email任务',
+		width : 500,
+		height : 600,
+		labelWidth: 150,
+		cls:'',
+		items:[
+		       {xtype:'text',name:'name',text:'名称'},
+		       {xtype:'text',name:'text',text:'描述'},
+		       {xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
+		       {xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
+		       {xtype:'text',name:'userLevel',text:'受理人用户级别'},
+		       {xtype:'text',name:'template',text:'Email模板'},
+		       {xtype:'text',name:'receiver',text:'收件人'},
+		       {xtype:'textarea',name:'subject',text:'邮件主题'},
+		       {xtype:'textarea',name:'body',text:'邮件内容'},
+		       {xtype:'uploadfile',name:'attachment',text:'附件'},
+		       {xtype:'text',name:'scheduleTime',text:'预约发送时间'},
+		       {xtype:'text',name:'expTime',text:'超时时间',regex:GlobalNS.Regex.number},
+		       {xtype:'text',name:'expAction',text:'超时处理方式'},
+		       {xtype:'text',name:'retryTimes',text:'最大发送次数',regex:GlobalNS.Regex.number},
+		       {xtype:'text',name:'retryInterval',text:'发送时间间隔(分钟)',regex:GlobalNS.Regex.number},
+		       {xtype:'grid',name:'variable',text:'字段信息'},
+		       {xtype:'grid',name:'transition',text:'出口'},
+		       {xtype:'grid',name:'on',text:'事件'}
+	]}
+})();
+// dm任务节点
+GlobalNS.formDatas['task-dm']=(function(){
+	return {
+		name:'task-dm',
+		id:'dialog-task-dm',
+		title:'直邮任务',
+		width : 500,
+		height : 600,
+		labelWidth: 150,
+		cls:'',
+		items:[
+		       {xtype:'text',name:'name',text:'名称'},
+		       {xtype:'text',name:'text',text:'描述'},
+		       {xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
+		       {xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
+		       {xtype:'text',name:'userLevel',text:'受理人用户级别'},
+		       {xtype:'text',name:'template',text:'标准信模板'},
+		       {xtype:'text',name:'receiver',text:'收件人姓名'},
+		       {xtype:'text',name:'title',text:'收件人称谓'},
+		       {xtype:'text',name:'province',text:'收件省份'},
+		       {xtype:'text',name:'city',text:'收件城市'},
+		       {xtype:'text',name:'postCode',text:'邮政编码'},
+		       {xtype:'textarea',name:'address',text:'收件地址'},
+		       {xtype:'grid',name:'variable',text:'字段信息'},
+		       {xtype:'grid',name:'transition',text:'出口'},
+		       {xtype:'grid',name:'on',text:'事件'}
+		       ]
+	}
+})();
+// 外呼任务节点
+GlobalNS.formDatas['task-call']=(function(){
+	return {
+		name:'task-call',
+		id:'dialog-task-call',
+		title:'任务',
+		width : 500,
+		height : 600,
+		labelWidth: 150,
+		cls:'',
+		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'text',name:'text',text:'描述'},
 			{xtype:'select',name:'assignType',text:'任务分配方式',items:[{name:'assignee',text:'分配到人'},{name:'group',text:'分配到组'}]},
 			{xtype:'text',name:'assignExpr',text:'任务受理者表达式'},
 			{xtype:'text',name:'userLevel',text:'受理人用户级别'},
-			{xtype:'select',name:'useAssignExcept',text:'是否使用分配避免',items:GlobalNS.options.trueOrFalse,
-				listeners:{change:function(event){
-					var value = $(this).val();
-					var This = event.data.This;
-					var $exceptNode = This._parentCom._fields['exceptNode'].$me.find('[name="exceptNode"]');
-//					var $exceptNode = This._parentCom._fields['exceptNode'].$me.find('[name="' + exceptNode + '"]:checked').removeAttr('checked');;
-					if(value=='true'){
-						$exceptNode.removeAttr("disabled");
-					}else{
-						$exceptNode.attr("disabled", "disabled");
-					}
-				}}},
-			{xtype:'checkbox',name:'exceptNode',text:'分配避免针对节点',valueType : 'String'},
-			{xtype:'select',name:'useAssignPrior',text:'是否使用分配优先',items:GlobalNS.options.trueOrFalse,
-				listeners:{change:function(event){
-					var value = $(this).val();
-					var This = event.data.This;
-					var $priorNode = This._parentCom._fields['priorNode'].$me.find('[name="priorNode"]');
-//					var $priorNode = This._parentCom._fields['exceptNode'].$me.find('[name="' + exceptNode + '"]:checked').removeAttr('checked');;
-					if(value=='true'){
-						$priorNode.removeAttr("disabled");
-					}else{
-						$priorNode.attr("disabled", "disabled");
-					}
-				}}},
-			{xtype:'checkbox',name:'priorNode',text:'分配优先针对的节点',valueType : 'String'},
-			{xtype:'text',name:'autoMemoMethod',text:'自动备注方法'},
-			{xtype:'text',name:'onloadMethod',text:'页面加载方法'},
-			{xtype:'select',name:'type',text:'任务类型',
-				listeners:{change:function(event){
-					var value = $(this).val();
-					var This = event.data.This;
-					var $formID = This._parentCom._fields['formID'].$me;
-					var $layoutID = This._parentCom._fields['layoutID'].$me;
-					if(value=='form'||value=='survey'){
-						$formID.removeAttr("disabled");
-						$layoutID.attr("disabled", "disabled").val('');
-					}else if(value=='layout'){
-						$formID.attr("disabled", "disabled").val('');
-						$layoutID.removeAttr("disabled");
-					}
-				}},
-				items:[{name:'form',text:'form'},{name:'survey',text:'survey'},{name:'layout',text:'layout'}]},
-			{xtype:'text',name:'formID',text:'DFL表单ID'},
-			{xtype:'text',name:'layoutID',text:'DFL布局ID'},
+			{xtype:'checkbox',name:'campaignStatus',text:'状态选项分类',valueType: 'String',items:GlobalNS.options.campaignStatus},
+			{xtype:'text',name:'formID',text:'回访脚本'},
+			{xtype:'text',name:'layoutID',text:'回访布局'},
 			{xtype:'text',name:'maxCallCount',text:'最大外呼次数',regex:GlobalNS.Regex.number},
 			{xtype:'grid',name:'variable',text:'字段信息'},
 			{xtype:'grid',name:'transition',text:'出口'},
@@ -327,7 +468,7 @@ GlobalNS.formDatas['fork']=(function(){
 		items:[
 			{xtype:'text',name:'name',text:'名称'},
 			{xtype:'text',name:'text',text:'描述'},
-			{xtype:'grid',name:'transition',text:'出口'},
+			{xtype:'grid',name:'transition',text:'分支'},
 			{xtype:'grid',name:'on',text:'事件'}
 		]
 	}
@@ -484,6 +625,26 @@ GlobalNS.formDatas['item-1']=(function(){
 		]
 	}
 })();
+// 分支
+GlobalNS.formDatas['branch']=(function(){
+	return {
+		name:'branch',
+		id:'dialog-branch',
+		idField:'name',
+		title:'出口',
+		width:400,
+		height:300,
+		labelWidth: 100,
+		cls:'',
+		items:[
+		       {xtype:'text',name:'name',text:'名称',modify:true},//modify:true,是否在编辑模式下可以修改,若为false则不可修改
+		       {xtype:'text',name:'text',text:'描述'},
+		       {xtype:'select',name:'to',text:'目的节点',loadDataMethod:GlobalNS.fn.loadBaseNodeNames,required:true},
+		       {xtype:'text',name:'condition',text:'条件', valueType : 'Object', item:'expr'},
+		       {xtype:'textarea',name:'event-listener',text:'自定义处理类',props:{rows : 5}, valueType : 'Array', items:['ATTR-class']}
+		       ]
+	}
+})();
 GlobalNS.formDatas['transition']=(function(){
 	return {
 		name:'transition',
@@ -513,8 +674,8 @@ GlobalNS.formDatas['condition']=(function(){
 		labelWidth: 150,
 		cls:'',
 		items:[
-			{xtype:'text',name:'expr',text:'条件表达式'}
-		]
+		       {xtype:'text',name:'expr',text:'条件表达式'}
+		       ]
 	}
 })();
 GlobalNS.formDatas['event-listener']=(function(){
@@ -548,6 +709,9 @@ GlobalNS.formDatas['on']=(function(){
 		]
 	}
 })();
+
+
+/*其它弹出窗口---------------------------------------------*/
 GlobalNS.formDatas['newProcess']=(function(){
 	return {
 		name:'newProcess',
@@ -658,6 +822,14 @@ $.each(GlobalNS.formDatas,function(index,obj){
 			];
 			
 			if(item.name=='transition'){
+				o.columns = [
+				    {header: "名称",dataIndex: 'name'},
+				    {header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},
+				    {header: "操作",width:'60px',renderer: GlobalNS.fn.renderAdd}
+				];
+				o.tbar.push({text:'新增节点',fn:GlobalNS.fn.openCreateNodeWindow});
+				o.idField = 'name';
+			}else if(item.name=='branch'){
 				o.columns = [
 				 	{header: "名称",dataIndex: 'name'},
 				 	{header: "目的节点",dataIndex: 'to',renderer: GlobalNS.fn.renderNodeName},

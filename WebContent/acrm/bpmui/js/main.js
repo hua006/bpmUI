@@ -30,7 +30,7 @@ var property = {
 	width : 1200,
 	height : 600,
 //	toolBtns : [ "start round", "end round", "task round", "node", "chat", "state", "plug", "join", "fork", "complex mix" ],
-	toolBtns : [ "start", "end", "task", "decision", "state", "sub-process", "join", "fork","math", "define" ],
+	toolBtns : [ "task", "task-call", "task-sms", "task-email", "task-dm", "-", "start", "end", "decision", "state", "sub-process", "join", "fork","math", "define" ],
 	haveHead : true,
 	headBtns : [ "new", "open", "save", "undo", "redo", "reload"
 	            ,{cls:"refreshForce",text:"强制刷新"}
@@ -41,19 +41,7 @@ var property = {
 			],// 如果haveHead=true，则定义HEAD区的按钮
 	haveTool : true,
 	haveGroup : false,
-	useOperStack : true,
-	iconContent:{
-		start:"jiediankaishi",
-		end:"jiedianjieshu",
-		task:"yonghurenwu",
-		decision:"tiaojian",
-		state:"tongzhizhuangtai",
-		"sub-process":"ziliucheng",
-		join:"join",
-		fork:"fork",
-		math:"jisuanqi",
-		define:"zidingyineirong",
-	}
+	useOperStack : true
 };
 
 // gooflow设计器节点的显示名称信息
@@ -70,7 +58,11 @@ var remark = {
 	fork : "分支结点",
 	"join" : "聚合结点",
 	math : "计算结点",
-	define : "赋值结点"
+	define : "赋值结点",
+	"task-call":"外呼任务",
+	"task-sms":"短信任务",
+	"task-email":"Email任务",
+	"task-dm":"直邮任务"
 };
 
 var demo; // 设计器对象
